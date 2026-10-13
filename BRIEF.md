@@ -164,7 +164,7 @@ L'objectif est d'avoir **le moins de choses possible à installer, à lancer et 
 | Les personnages | Un fichier `data/personnages.js` qui contient la liste (`window.PERSONNAGES = [...]`) | Lisible, modifiable à la main, fonctionne sans serveur. |
 | Le calendrier | Un fichier `data/calendrier.js` : la liste ordonnée des identifiants de personnages, mélangée une fois pour toutes | Tout le monde a le même personnage le même jour, sans serveur. |
 | La sauvegarde | `localStorage` du navigateur (petite mémoire propre à chaque navigateur) | Pas de base de données ni de comptes. Toujours entourer les lectures et écritures de `try/catch`. |
-| La mise en ligne | **GitHub Pages** | Gratuit, durable, et la mise à jour du site se fait automatiquement en envoyant le code sur GitHub. |
+| La mise en ligne | **Vercel** (décision changée avec Luca : il avait déjà un compte, lié à GitHub). Adresse : https://heros-du-jour.vercel.app/ | Gratuit pour un projet perso, et la mise à jour du site se fait automatiquement en envoyant le code sur GitHub. GitHub Pages a été supprimé. |
 | Sauvegarde des versions | **git** + un dépôt GitHub `heros-du-jour` | Permet de revenir en arrière et sert aussi à la mise en ligne. |
 | Dépendances externes | **Aucune** au départ. Une police Google Fonts est acceptable pour le style. | Rien qui puisse casser tout seul dans 2 ans. |
 
@@ -245,7 +245,7 @@ Chaque étape est petite. **À la fin de chaque étape** : expliquer à Luca en 
 - Créer `index.html` + `style.css` avec le titre, la date du jour et le style de base.
 - ✅ **Test :** « Ouvre le dossier du projet et double-clique sur `index.html`. Tu dois voir le titre **Héros du Jour** et la date d'aujourd'hui. »
 
-### Étape 2 : Mise en ligne dès maintenant — ✅ TERMINÉE (validée par Luca) : https://luckyle10e.github.io/heros-du-jour/
+### Étape 2 : Mise en ligne dès maintenant — ✅ TERMINÉE (validée par Luca) : https://heros-du-jour.vercel.app/ (passé de GitHub Pages à Vercel à la demande de Luca)
 
 - Activer GitHub Pages pour que Luca puisse tester sur son téléphone à chaque étape.
 - ✅ **Test :** « Ouvre ce lien sur ton téléphone : [lien]. Tu dois voir la même page que sur l'ordi. Ajoute-le à tes favoris. »
