@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Héros du Jour</title>
+  <meta name="description" content="Devine chaque jour le personnage de fiction mystère.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="entete">
+    <h1 class="titre">Héros du Jour</h1>
+    <p class="date-du-jour" id="date-du-jour"></p>
+  </header>
+
+  <main class="contenu">
+    <p class="bientot">Le jeu arrive bientôt…</p>
+  </main>
+
+  <script src="js/outils.js"></script>
+  <script>
+    // Affiche la date d'aujourd'hui sous le titre
+    document.getElementById("date-du-jour").textContent = dateDuJourEnFrancais();
+  </script>
+</body>
+</html>

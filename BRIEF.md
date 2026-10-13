@@ -233,14 +233,14 @@ heros-du-jour/
 
 Chaque étape est petite. **À la fin de chaque étape** : expliquer à Luca en 2 ou 3 phrases ce qui a été fait, lui donner le test à faire, attendre sa validation, puis sauvegarder avec git.
 
-### Étape 0 : Préparer l'ordinateur
+### Étape 0 : Préparer l'ordinateur — ✅ TERMINÉE (validée par Luca)
 
 - Vérifier le système (Windows / Mac) et si **git** est installé. Sinon, guider Luca pas à pas pour l'installer.
 - Aider Luca à créer un **compte GitHub** (gratuit) s'il n'en a pas, puis connecter git à ce compte.
 - Créer le dossier du projet et la première sauvegarde git.
 - ✅ **Test pour Luca :** « Va sur github.com, connecte-toi : tu dois voir un projet nommé **heros-du-jour**. »
 
-### Étape 1 : La première page
+### Étape 1 : La première page — ✅ TERMINÉE (validée par Luca)
 
 - Créer `index.html` + `style.css` avec le titre, la date du jour et le style de base.
 - ✅ **Test :** « Ouvre le dossier du projet et double-clique sur `index.html`. Tu dois voir le titre **Héros du Jour** et la date d'aujourd'hui. »
