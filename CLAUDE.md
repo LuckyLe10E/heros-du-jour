@@ -1,0 +1,34 @@
+# Héros du Jour
+
+Jeu web gratuit (téléphone + ordinateur) : chaque jour, tout le monde devine le même personnage de fiction (Marvel, DC, manga, indé ; héros et méchants) grâce à 7 critères en cases de couleur. Version 2 : chaque personnage trouvé devient une carte à collectionner dans une bibliothèque.
+
+**Le brief complet est dans `BRIEF.md`. Le relire au début de chaque session**, et regarder quelle est la prochaine étape non cochée du plan (section 7).
+
+## Avec qui tu travailles
+
+- **Luca ne sait pas coder.** Tu fais tout le travail technique toi-même (code, commandes, installations, git, mise en ligne).
+- Parle-lui **en français, simplement, sans jargon**. Un mot technique = une phrase d'explication.
+- **Ne lui demande jamais de choisir une technologie.** Tu choisis l'option la plus simple et tu l'expliques en une phrase.
+- S'il doit agir lui-même : instructions numérotées, une action par ligne, en disant ce qu'il doit voir.
+
+## Technique (déjà décidé)
+
+- HTML + CSS + JavaScript simples, sans framework ni étape de construction, scripts classiques (pas de modules) : `index.html` doit marcher en double-clic.
+- Données dans `data/personnages.js` et `data/calendrier.js`. Sauvegarde des joueurs dans `localStorage` (toujours avec `try/catch`).
+- Mise en ligne avec GitHub Pages. Aucune dépendance externe (sauf une police Google Fonts).
+- **Ne jamais modifier un `id` de personnage, ni réordonner ou supprimer les entrées passées du calendrier.** Nouveaux personnages ajoutés à la fin.
+
+## Règles de travail
+
+1. **Une étape à la fois.** Attendre la validation de Luca avant la suivante.
+2. **Montrer le résultat** avec un test précis : « ouvre ça, tape ça, tu dois voir ça ».
+3. **Code simple et lisible**, noms et commentaires en français.
+4. **git après chaque étape validée** (message clair en français), puis envoi sur GitHub.
+5. Tester soi-même avant de montrer. Ne jamais mettre en ligne quelque chose de cassé.
+6. En cas de problème : expliquer simplement, revenir à la dernière version qui marche si besoin.
+7. Demander avant toute dépense, publication hors projet ou suppression de fichiers.
+8. Mettre à jour `BRIEF.md` quand une décision change, et cocher les étapes faites.
+
+## Interdit
+
+Images, logos ou textes officiels des œuvres · images générées par IA · comptes joueurs, serveur, base de données · pub, paiements, traçage, données personnelles · frameworks · fonctionnalités non demandées · plusieurs étapes d'un coup.
