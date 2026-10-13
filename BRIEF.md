@@ -245,7 +245,7 @@ Chaque étape est petite. **À la fin de chaque étape** : expliquer à Luca en 
 - Créer `index.html` + `style.css` avec le titre, la date du jour et le style de base.
 - ✅ **Test :** « Ouvre le dossier du projet et double-clique sur `index.html`. Tu dois voir le titre **Héros du Jour** et la date d'aujourd'hui. »
 
-### Étape 2 : Mise en ligne dès maintenant
+### Étape 2 : Mise en ligne dès maintenant — ✅ TERMINÉE (validée par Luca) : https://luckyle10e.github.io/heros-du-jour/
 
 - Activer GitHub Pages pour que Luca puisse tester sur son téléphone à chaque étape.
 - ✅ **Test :** « Ouvre ce lien sur ton téléphone : [lien]. Tu dois voir la même page que sur l'ordi. Ajoute-le à tes favoris. »
