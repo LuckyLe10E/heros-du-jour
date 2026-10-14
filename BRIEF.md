@@ -297,7 +297,9 @@ Chaque étape est petite. **À la fin de chaque étape** : expliquer à Luca en 
 - Mise en ligne finale, choix d'une `DATE_LANCEMENT`, remise à zéro de toute donnée de test.
 - ✅ **Test :** « Envoie le lien à 2 ou 3 amis. Demain, vérifie que le personnage a bien changé et que le numéro a augmenté. » Recueillir leurs retours avec Luca avant d'attaquer la Version 2.
 
-### Étape 11 : Gagner une carte (Version 2)
+### Étape 11 : Gagner une carte (Version 2) — ✅ TERMINÉE (validée par Luca)
+
+Choix faits : les cartes sont rangées dans le navigateur (`heros-du-jour-collection`) ; en mode test `?perso=` elles vont dans une collection de test séparée (`heros-du-jour-collection-test`), effacée avec `?perso=...&recommencer`. Si la carte du personnage est déjà possédée, on garde l'ancienne (la montée de rareté est pour l'étape 13). La carte affiche une courte description = 1ʳᵉ + 4ᵉ phrase de la fiche. L'icône vient de l'espèce (émojis, aucune image officielle) ; l'emplacement d'illustration est prêt pour de futurs dessins originaux.
 
 - Création de la carte à la victoire, calcul de la rareté, animation de retournement, enregistrement dans la collection.
 - ✅ **Test :** « Avec `?perso=hulk` en mode test, trouve Hulk en 2 essais : une carte dorée Légendaire doit se retourner. » (Le mode test peut, pour ce test, enregistrer dans une collection de test séparée, à effacer ensuite.)

@@ -568,6 +568,229 @@ body {
   margin: 0 auto;
 }
 
+/* ---------- Les cartes à collectionner ---------- */
+
+.fin-carte {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 8px;
+}
+
+.fin-carte[hidden] {
+  display: none;
+}
+
+.fin-carte-message {
+  margin: 0 0 12px;
+  font-weight: 700;
+}
+
+/* La scène : donne la perspective pour que le retournement paraisse en 3D */
+.carte-scene {
+  width: min(262px, 100%);
+  aspect-ratio: 5 / 7;
+  perspective: 900px;
+}
+
+.carte {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.carte.retournee {
+  transform: rotateY(180deg);
+}
+
+.carte.sans-animation {
+  transition: none;
+}
+
+.carte-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Le dos : motif comics rouge à pois */
+.carte-dos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #ffffff;
+  background:
+    radial-gradient(rgba(255, 255, 255, 0.18) 18%, transparent 20%) 0 0 / 14px 14px,
+    linear-gradient(160deg, #e62429, #8c0f13);
+  border: 6px solid #1a1a1a;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.4);
+}
+
+.carte-dos-marque {
+  font-family: "Bangers", Impact, "Arial Black", sans-serif;
+  font-size: 5.5rem;
+  line-height: 1;
+  text-shadow: 4px 4px 0 #1a1a1a;
+}
+
+.carte-dos-titre {
+  font-family: "Bangers", Impact, "Arial Black", sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 0 #1a1a1a;
+}
+
+/* Le devant : un cadre (selon la rareté) qui entoure le contenu (selon l'univers) */
+.carte-avant {
+  padding: 6px;
+  transform: rotateY(180deg);
+  overflow: hidden;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.4);
+}
+
+.rarete-legendaire {
+  background: linear-gradient(135deg, #fff1a8 0%, #e6b422 25%, #fff7c9 50%, #c98f10 75%, #f6d55c 100%);
+  box-shadow: 0 0 22px rgba(255, 200, 40, 0.7), 0 6px 0 rgba(0, 0, 0, 0.4);
+}
+
+.rarete-rare {
+  background: linear-gradient(135deg, #f4f6f8 0%, #a7b0ba 30%, #ffffff 50%, #8b94a0 75%, #dfe4ea 100%);
+}
+
+.rarete-commune {
+  background: linear-gradient(135deg, #c9a074 0%, #8a6a45 50%, #b8936a 100%);
+}
+
+.carte-contenu {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  height: 100%;
+  padding: 7px 8px;
+  overflow: hidden;
+  color: #ffffff;
+  text-align: center;
+  border-radius: 9px;
+}
+
+/* La couleur de fond selon l'univers */
+.fond-marvel { background: linear-gradient(160deg, #c4161c, #6e0b0f); }
+.fond-dc     { background: linear-gradient(160deg, #2563c9, #0c2a63); }
+.fond-manga  { background: linear-gradient(160deg, #e08a0b, #8a3a07); }
+.fond-inde   { background: linear-gradient(160deg, #7a3bd0, #33135f); }
+
+.carte-entete p {
+  margin: 0;
+}
+
+.carte-rarete {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.rarete-legendaire .carte-rarete { color: #ffe27a; }
+.rarete-rare .carte-rarete       { color: #e6ebf0; }
+
+.carte-nom {
+  font-family: "Bangers", Impact, "Arial Black", sans-serif;
+  font-size: 1.3rem;
+  line-height: 1.05;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.45);
+}
+
+/* L'emplacement de l'illustration : plus tard, un dessin original pourra remplacer l'icône */
+.carte-illustration {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0.25));
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  border-radius: 8px;
+}
+
+.carte-icone {
+  font-size: 3.4rem;
+  line-height: 1;
+  filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.35));
+}
+
+.carte-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  justify-content: center;
+}
+
+.carte-badge {
+  padding: 1px 6px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 999px;
+}
+
+.carte-infos {
+  padding: 3px 6px;
+  font-size: 0.58rem;
+  line-height: 1.25;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+}
+
+.carte-infos p {
+  margin: 0;
+}
+
+.carte-description {
+  margin: 0;
+  font-size: 0.6rem;
+  line-height: 1.25;
+  font-style: italic;
+  text-align: left;
+}
+
+.carte-pied {
+  margin: 0;
+  font-size: 0.52rem;
+  line-height: 1.2;
+  opacity: 0.85;
+}
+
+/* L'effet brillant des cartes Légendaires : un reflet qui passe sur la carte */
+.carte-brillance {
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 32%, rgba(255, 255, 255, 0.55) 46%, rgba(255, 255, 255, 0.12) 54%, transparent 68%);
+  background-size: 260% 100%;
+  animation: brillance 3.4s ease-in-out infinite;
+}
+
+@keyframes brillance {
+  0%   { background-position: 160% 0; }
+  60%  { background-position: -60% 0; }
+  100% { background-position: -60% 0; }
+}
+
+/* Pour les personnes qui préfèrent peu d'animations : la carte ne bouge pas, le reflet est fixe */
+@media (prefers-reduced-motion: reduce) {
+  .carte { transition: none; }
+  .carte-brillance { animation: none; background-position: 40% 0; }
+}
+
 .fin-compte-a-rebours {
   margin: 0 0 16px;
   font-size: 1.05rem;

@@ -138,11 +138,49 @@ function ouvrirFenetreFin() {
   document.getElementById("fin-oeuvre").textContent = p.univers + " · " + p.oeuvre + " (" + p.annee + ")";
   document.getElementById("fin-fiche").textContent = p.description;
 
+  // Victoire : la carte gagnée remplace le texte (elle contient déjà le nom, l'œuvre et une courte fiche).
+  // Défaite : pas de carte, on montre le texte avec la fiche complète.
+  const avecCarte = gagne && partie.carte !== null;
+  ["fin-intro", "fin-nom", "fin-oeuvre", "fin-fiche"].forEach(id => {
+    document.getElementById(id).hidden = avecCarte;
+  });
+  if (avecCarte) afficherLaCarteGagnee();
+  document.getElementById("fin-carte").hidden = !avecCarte;
+  document.getElementById("fin-carte-message").hidden = !avecCarte;
+
   document.getElementById("fin-message").textContent = "";
   document.getElementById("fenetre-fin").className = "fenetre-fond " + (gagne ? "victoire" : "defaite");
   document.getElementById("fenetre-fin").hidden = false;
   document.getElementById("fin-fermer").focus();
   demarrerCompteARebours();
+}
+
+// Montre la carte gagnée dans la fenêtre de fin. Si elle vient d'être gagnée, elle commence face cachée
+// puis se retourne avec une animation (une seule fois : quand on rouvre la fenêtre, elle est déjà face visible).
+function afficherLaCarteGagnee() {
+  const zone = document.getElementById("fin-carte");
+  zone.innerHTML = "";
+
+  const reduireLesAnimations = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const animer = partie.carteNouvelle && !partie.carteRevelee && !reduireLesAnimations;
+
+  const scene = creerCarteDom(partie.carte, { retournee: !animer });
+  zone.appendChild(scene);
+  if (animer) {
+    // On laisse une demi-seconde pour voir le dos de la carte, puis elle se retourne
+    setTimeout(() => scene.querySelector(".carte").classList.add("retournee"), 600);
+  }
+  partie.carteRevelee = true;
+
+  // « Nouvelle carte » si elle vient d'être gagnée ; « ajoutée » si on la revoit après un rechargement ;
+  // « déjà dans ta collection » si le joueur la possédait avant cette partie.
+  const carte = partie.carte;
+  const gagneeDansCettePartie = carte.numero === partie.numero && carte.essais === partie.essais.length
+    && carte.date === dateDuJourEnTexte();
+  let message = "Cette carte est déjà dans ta collection.";
+  if (partie.carteNouvelle) message = "Nouvelle carte ajoutée à ta collection !";
+  else if (gagneeDansCettePartie) message = "Carte ajoutée à ta collection.";
+  document.getElementById("fin-carte-message").textContent = message;
 }
 
 // Ferme la fenêtre de fin de partie.

@@ -34,7 +34,10 @@ const partie = {
   mystere: mystere.personnage,    // le personnage à deviner
   modeTest: mystere.modeTest,     // vrai si on a utilisé ?perso=... dans l'adresse
   essais: [],                     // les "id" des personnages déjà proposés, du plus ancien au plus récent
-  statut: "en cours"              // "en cours", "gagne" ou "perdu"
+  statut: "en cours",             // "en cours", "gagne" ou "perdu"
+  carte: null,                    // la carte gagnée (quand la partie est gagnée)
+  carteNouvelle: false,           // vrai si la carte vient d'être gagnée (elle se retourne avec une animation)
+  carteRevelee: false             // vrai quand l'animation de retournement a déjà été montrée
 };
 
 // Combien d'essais ratés jusqu'ici (tous les essais, sauf le bon).
@@ -148,6 +151,7 @@ function ajouterEssai(id) {
   partie.essais.push(id);
   mettreAJourStatut();
   sauvegarderPartie();
+  if (partie.statut === "gagne") gagnerLaCarte();
   return true;
 }
 
@@ -178,10 +182,15 @@ function sauvegarderPartie() {
 // On ne la reprend que si elle date d'aujourd'hui (même numéro de jour, même personnage mystère)
 // et si elle est valide ; sinon on repart d'une partie vierge. Pas de sauvegarde en mode test.
 function restaurerPartie() {
-  if (partie.modeTest) return;
-
-  // Outil de test réservé à Luca : ajouter ?recommencer à l'adresse efface la partie du jour.
-  if (new URLSearchParams(window.location.search).has("recommencer")) effacerSauvegarde();
+  // Outil de test réservé à Luca : ajouter ?recommencer à l'adresse
+  //  - en jeu normal : efface la partie du jour sauvegardée ;
+  //  - en mode test (?perso=...) : efface la collection de TEST (jamais la vraie partie ni les vraies cartes).
+  const veutRecommencer = new URLSearchParams(window.location.search).has("recommencer");
+  if (partie.modeTest) {
+    if (veutRecommencer) effacerCollectionDeTest();
+    return;
+  }
+  if (veutRecommencer) effacerSauvegarde();
 
   const sauvegarde = lireSauvegarde();
   if (!sauvegarde) return;
@@ -198,6 +207,7 @@ function restaurerPartie() {
   const positionDuBon = ids.indexOf(partie.mystere.id);
   partie.essais = positionDuBon === -1 ? ids.slice() : ids.slice(0, positionDuBon + 1);
   mettreAJourStatut();
+  if (partie.statut === "gagne") retrouverLaCarte();
 }
 
 // Calcule à quel point un texte « ressemble » au début de la saisie du joueur.

@@ -39,6 +39,20 @@ window.CRITERES = {
   ]
 };
 
+// La grande icône de chaque carte, selon l'espèce du personnage (de simples émojis, aucune image officielle).
+window.ICONES_ESPECES = {
+  "Humain": "👤",
+  "Mutant": "🧬",
+  "Humain modifié": "💥",
+  "Alien": "👽",
+  "Dieu": "⚡",
+  "Robot/IA": "🤖",
+  "Démon": "😈",
+  "Mort-vivant": "💀",
+  "Hybride/Animal": "🐾",
+  "Autre": "✨"
+};
+
 // Versions courtes des pouvoirs et des groupes, pour qu'ils tiennent dans les petites cases
 // du jeu (téléphone). Un nom absent de ces listes est affiché tel quel.
 window.NOMS_COURTS = {
