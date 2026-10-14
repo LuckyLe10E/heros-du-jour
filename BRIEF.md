@@ -283,7 +283,7 @@ Chaque étape est petite. **À la fin de chaque étape** : expliquer à Luca en 
 
 - ✅ **Test :** « Fais 3 essais sur la vraie page du jour, ferme l'onglet, rouvre-le : tes 3 essais doivent être toujours là. »
 
-### Étape 8 : Partager et compte à rebours
+### Étape 8 : Partager et compte à rebours — ✅ TERMINÉE (validée par Luca)
 
 - ✅ **Test :** « Termine une partie sur ton téléphone, appuie sur Partager et envoie-le-toi sur WhatsApp. Tu dois voir les carrés de couleur et le lien, mais pas le nom du personnage. Le compte à rebours doit défiler. »
 

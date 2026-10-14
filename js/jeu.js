@@ -57,6 +57,38 @@ function indicesDevoiles() {
   return indices;
 }
 
+// L'adresse du site, écrite dans le message de partage.
+const ADRESSE_DU_SITE = "https://heros-du-jour.vercel.app/";
+
+// Les petits carrés de couleur du message de partage.
+const CARRES = { vert: "🟩", orange: "🟧", rouge: "🟥" };
+
+// Fabrique le message à partager, SANS révéler le personnage. Exemple :
+//   Héros du Jour n°12 — 4/10
+//   🟥🟩🟥🟧🟥🟥⬆️
+//   🟩🟩🟩🟩🟩🟩🟩
+//   https://heros-du-jour.vercel.app/
+// Une ligne par essai (du premier au dernier). Pour l'année : 🟩 si c'est la bonne, sinon la flèche seule.
+// Si la partie est perdue, on écrit X/10.
+function texteDePartage() {
+  const score = partie.statut === "gagne" ? partie.essais.length : "X";
+  const lignes = ["Héros du Jour n°" + partie.numero + " — " + score + "/" + MAX_ESSAIS];
+
+  partie.essais.forEach(id => {
+    const comparaisons = comparerAvecMystere(trouverPersonnage(id));
+    const carres = comparaisons.map((comparaison, i) => {
+      if (CRITERES_JEU[i].genre === "annee" && comparaison.fleche) {
+        return comparaison.fleche === "haut" ? "⬆️" : "⬇️";
+      }
+      return CARRES[comparaison.etat];
+    });
+    lignes.push(carres.join(""));
+  });
+
+  lignes.push(ADRESSE_DU_SITE);
+  return lignes.join("\n");
+}
+
 // Les 7 critères, dans l'ordre où ils s'affichent.
 // "genre" de comparaison : "simple" (identique ou pas), "liste" (plusieurs valeurs), "annee" (avec flèche).
 const CRITERES_JEU = [

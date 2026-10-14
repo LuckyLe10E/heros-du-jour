@@ -12,6 +12,22 @@ function simplifier(texte) {
     .trim();
 }
 
+// Combien de millisecondes avant le prochain minuit, heure locale ? (le moment où le héros change)
+function tempsAvantMinuit(maintenant) {
+  const minuit = new Date(maintenant.getFullYear(), maintenant.getMonth(), maintenant.getDate() + 1, 0, 0, 0);
+  return minuit - maintenant;
+}
+
+// Écrit une durée en millisecondes sous la forme « 05:12:47 » (heures:minutes:secondes).
+function formaterDuree(millisecondes) {
+  const secondesTotales = Math.max(0, Math.floor(millisecondes / 1000));
+  const deuxChiffres = nombre => String(nombre).padStart(2, "0");
+  const heures = Math.floor(secondesTotales / 3600);
+  const minutes = Math.floor((secondesTotales % 3600) / 60);
+  const secondes = secondesTotales % 60;
+  return deuxChiffres(heures) + ":" + deuxChiffres(minutes) + ":" + deuxChiffres(secondes);
+}
+
 // Coupe un texte en phrases. Chaque fiche de personnage est écrite avec des phrases
 // qui se terminent par un point suivi d'un espace (jamais de point à l'intérieur d'une phrase).
 function decouperEnPhrases(texte) {

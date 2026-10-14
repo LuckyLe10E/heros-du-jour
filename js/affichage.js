@@ -138,15 +138,104 @@ function ouvrirFenetreFin() {
   document.getElementById("fin-oeuvre").textContent = p.univers + " · " + p.oeuvre + " (" + p.annee + ")";
   document.getElementById("fin-fiche").textContent = p.description;
 
+  document.getElementById("fin-message").textContent = "";
   document.getElementById("fenetre-fin").className = "fenetre-fond " + (gagne ? "victoire" : "defaite");
   document.getElementById("fenetre-fin").hidden = false;
   document.getElementById("fin-fermer").focus();
+  demarrerCompteARebours();
 }
 
 // Ferme la fenêtre de fin de partie.
 function fermerFenetreFin() {
   document.getElementById("fenetre-fin").hidden = true;
+  arreterCompteARebours();
   document.getElementById("bouton-resultat").focus();
+}
+
+// ---------- Le compte à rebours jusqu'au prochain héros (minuit, heure du téléphone) ----------
+
+let minuteurCompteARebours = null;
+
+// Écrit le temps restant dans la fenêtre. À minuit pile, la page se recharge : un nouveau héros t'attend.
+function afficherCompteARebours() {
+  const reste = tempsAvantMinuit(new Date());
+  if (reste <= 1000) {
+    window.location.reload();
+    return;
+  }
+  document.getElementById("fin-compte-a-rebours").textContent = "Prochain héros dans " + formaterDuree(reste);
+}
+
+// Lance le compte à rebours (une mise à jour par seconde) tant que la fenêtre est ouverte.
+function demarrerCompteARebours() {
+  arreterCompteARebours();
+  afficherCompteARebours();
+  minuteurCompteARebours = setInterval(afficherCompteARebours, 1000);
+}
+
+// Arrête le compte à rebours.
+function arreterCompteARebours() {
+  if (minuteurCompteARebours !== null) {
+    clearInterval(minuteurCompteARebours);
+    minuteurCompteARebours = null;
+  }
+}
+
+// ---------- Le bouton Partager ----------
+
+let minuteurMessage = null;
+
+// Affiche un petit message sous les boutons (« Copié ! »…), qui disparaît tout seul après quelques secondes.
+function afficherMessage(texte) {
+  const zone = document.getElementById("fin-message");
+  zone.textContent = texte;
+  clearTimeout(minuteurMessage);
+  minuteurMessage = setTimeout(() => { zone.textContent = ""; }, 3500);
+}
+
+// Copie un texte dans le presse-papiers. Renvoie true si ça a marché.
+// Méthode moderne d'abord, puis une vieille méthode pour les navigateurs qui refusent la première.
+async function copierDansLePressePapiers(texte) {
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(texte);
+      return true;
+    }
+  } catch (erreur) {
+    // on essaie la méthode de secours ci-dessous
+  }
+  try {
+    const zone = document.createElement("textarea");
+    zone.value = texte;
+    zone.setAttribute("readonly", "");
+    zone.style.cssText = "position:fixed;top:-1000px;opacity:0;";
+    document.body.appendChild(zone);
+    zone.select();
+    const reussi = document.execCommand("copy");
+    document.body.removeChild(zone);
+    return reussi;
+  } catch (erreur) {
+    return false;
+  }
+}
+
+// Appui sur « Partager » : partage natif sur téléphone s'il existe, sinon copie dans le presse-papiers.
+async function partagerLeResultat() {
+  const texte = texteDePartage();
+  const surTelephone = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+
+  if (surTelephone && navigator.share) {
+    try {
+      await navigator.share({ text: texte });
+      return;
+    } catch (erreur) {
+      if (erreur && erreur.name === "AbortError") return;   // le joueur a fermé la fenêtre de partage
+      // autre problème : on copie à la place
+    }
+  }
+
+  const copie = await copierDansLePressePapiers(texte);
+  afficherMessage(copie ? "Copié ! Colle-le où tu veux." : "Impossible de copier : sélectionne et copie le texte à la main.");
 }
 
 // Le petit symbole de chaque case, pour les personnes qui ne distinguent pas bien les couleurs.
@@ -267,6 +356,7 @@ function demarrerAffichage() {
   document.getElementById("numero-du-jour").textContent = "n°" + partie.numero;
   document.getElementById("date-du-jour").textContent = dateDuJourEnFrancais();
   document.getElementById("fin-fermer").addEventListener("click", fermerFenetreFin);
+  document.getElementById("fin-partager").addEventListener("click", partagerLeResultat);
   document.getElementById("bouton-resultat").addEventListener("click", ouvrirFenetreFin);
   document.getElementById("fenetre-fin").addEventListener("mousedown", evenement => {
     if (evenement.target.id === "fenetre-fin") fermerFenetreFin();   // un clic à côté de la fenêtre la ferme

@@ -348,6 +348,11 @@ body {
   outline-offset: 3px;
 }
 
+/* Le bouton « Revoir le résultat » : de l'espace en dessous pour ne pas toucher les titres de colonnes */
+#bouton-resultat {
+  margin-bottom: 18px;
+}
+
 /* ---------- L'encadré des indices ---------- */
 
 .indices {
@@ -446,10 +451,37 @@ body {
 }
 
 .fin-fiche {
-  margin: 0 0 18px;
+  margin: 0 0 14px;
   font-size: 0.95rem;
   line-height: 1.45;
   text-align: left;
+}
+
+.fin-compte-a-rebours {
+  margin: 0 0 16px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;   /* les chiffres gardent la même largeur : le texte ne « saute » pas */
+}
+
+.fin-boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* Bouton secondaire (« Fermer ») : moins voyant que « Partager » */
+.bouton-discret {
+  color: var(--texte);
+  background: var(--carte);
+}
+
+.fin-message {
+  min-height: 1.4em;          /* on réserve la place pour que la fenêtre ne bouge pas quand le message arrive */
+  margin: 12px 0 0;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 .mode-test {
