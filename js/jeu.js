@@ -1,14 +1,68 @@
 // La logique du jeu (pas l'affichage).
 
-// L'état de la partie en cours.
-// Étape 4 : on garde seulement la liste des personnages déjà proposés (leurs "id").
-const partie = {
-  essais: []
-};
-
 // Cherche un personnage par son identifiant, par exemple "batman".
 function trouverPersonnage(id) {
   return window.PERSONNAGES.find(p => p.id === id);
+}
+
+// Choisit le personnage mystère.
+// Mode test : si l'adresse finit par ?perso=batman, c'est ce personnage (réservé à Luca, pour tester).
+// Sinon, PROVISOIRE (étape 5) : le premier du calendrier. L'étape 6 le choisira selon la date du jour.
+function choisirMystere() {
+  const idDemande = new URLSearchParams(window.location.search).get("perso");
+  if (idDemande) {
+    const personnage = trouverPersonnage(idDemande);
+    if (personnage) return { personnage, modeTest: true };
+    console.warn("Mode test : personnage inconnu « " + idDemande + " », il est ignoré.");
+  }
+  return { personnage: trouverPersonnage(window.CALENDRIER[0]), modeTest: false };
+}
+
+// L'état de la partie en cours.
+const mystere = choisirMystere();
+const partie = {
+  mystere: mystere.personnage,    // le personnage à deviner
+  modeTest: mystere.modeTest,     // vrai si on a utilisé ?perso=... dans l'adresse
+  essais: []                      // les "id" des personnages déjà proposés, du plus ancien au plus récent
+};
+
+// Les 7 critères, dans l'ordre où ils s'affichent.
+// "genre" de comparaison : "simple" (identique ou pas), "liste" (plusieurs valeurs), "annee" (avec flèche).
+const CRITERES_JEU = [
+  { cle: "univers",  titre: "Univers",   genre: "simple" },
+  { cle: "camp",     titre: "Camp",      genre: "simple" },
+  { cle: "genre",    titre: "Genre",     genre: "simple" },
+  { cle: "espece",   titre: "Espèce",    genre: "simple" },
+  { cle: "pouvoirs", titre: "Pouvoirs",  genre: "liste" },
+  { cle: "groupes",  titre: "Groupe",    genre: "liste" },
+  { cle: "annee",    titre: "Année",     genre: "annee" }
+];
+
+// Compare deux listes (pouvoirs ou groupes) :
+// "vert" si elles contiennent exactement les mêmes valeurs, "orange" si au moins une est commune, sinon "rouge".
+function comparerListes(listeEssai, listeMystere) {
+  const communs = listeEssai.filter(valeur => listeMystere.includes(valeur));
+  if (communs.length === listeEssai.length && communs.length === listeMystere.length) return "vert";
+  return communs.length > 0 ? "orange" : "rouge";
+}
+
+// Compare le personnage proposé au personnage mystère, critère par critère.
+// Renvoie 7 résultats : { etat: "vert" | "orange" | "rouge", fleche: "haut" | "bas" | null }.
+// La flèche (pour l'année) pointe vers le haut si le mystère est plus récent, vers le bas s'il est plus ancien.
+function comparerAvecMystere(personnage) {
+  return CRITERES_JEU.map(critere => {
+    const valeurEssai = personnage[critere.cle];
+    const valeurMystere = partie.mystere[critere.cle];
+
+    if (critere.genre === "liste") {
+      return { etat: comparerListes(valeurEssai, valeurMystere), fleche: null };
+    }
+    if (valeurEssai === valeurMystere) return { etat: "vert", fleche: null };
+    if (critere.genre === "annee") {
+      return { etat: "rouge", fleche: valeurMystere > valeurEssai ? "haut" : "bas" };
+    }
+    return { etat: "rouge", fleche: null };
+  });
 }
 
 // Dit si ce personnage a déjà été proposé dans la partie.

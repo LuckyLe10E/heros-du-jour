@@ -26,13 +26,19 @@
       <ul id="suggestions" class="suggestions" role="listbox" hidden></ul>
     </div>
 
-    <!-- Provisoire (étape 4) : la liste des essais. L'étape 5 la remplace par les cases de couleur. -->
+    <!-- La grille : les en-têtes des 7 critères, puis une ligne de cases par essai -->
     <p id="compteur-essais" class="compteur-essais"></p>
-    <ol id="liste-essais" class="liste-essais"></ol>
+    <section class="grille" aria-label="Tes essais">
+      <div id="entetes" class="entetes"></div>
+      <ol id="liste-essais" class="liste-essais"></ol>
+    </section>
+
+    <p id="mode-test" class="mode-test" hidden>Mode test</p>
   </main>
 
   <script src="data/constantes.js"></script>
   <script src="data/personnages.js"></script>
+  <script src="data/calendrier.js"></script>
   <script src="js/outils.js"></script>
   <script src="js/jeu.js"></script>
   <script src="js/affichage.js"></script>

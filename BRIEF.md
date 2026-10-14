@@ -269,7 +269,7 @@ Chaque étape est petite. **À la fin de chaque étape** : expliquer à Luca en 
 
 - ✅ **Test :** « Tape "bat" : tu dois voir Batman (et d'autres noms qui contiennent "bat"). Tape "peter parker" : tu dois voir Spider-Man. Tape "zzz" : aucune suggestion. »
 
-### Étape 5 : Les cases de couleur
+### Étape 5 : Les cases de couleur — ✅ TERMINÉE (validée par Luca)
 
 - Comparer l'essai au personnage mystère et afficher la ligne de 7 cases.
 - ✅ **Test :** « Ouvre la page en ajoutant `?perso=batman` à la fin du lien. Propose Superman : Univers doit être vert (DC), Camp vert (Héros), Pouvoirs rouge… Propose Batman : tout doit être vert. »

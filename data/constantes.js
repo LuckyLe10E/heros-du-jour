@@ -38,3 +38,28 @@ window.CRITERES = {
     "Aucun"
   ]
 };
+
+// Versions courtes des pouvoirs et des groupes, pour qu'ils tiennent dans les petites cases
+// du jeu (téléphone). Un nom absent de ces listes est affiché tel quel.
+window.NOMS_COURTS = {
+  "Résistance/Guérison": "Résist.",
+  "Technologie/Gadgets": "Techno",
+  "Combat/Arts martiaux": "Combat",
+  "Force surhumaine": "Force",
+  "Psychique/Télépathie": "Psy",
+  "Énergie/Rayons": "Énergie",
+  "Contrôle des éléments": "Éléments",
+  "Métamorphose": "Métam.",
+  "Confrérie des Mutants": "Confrérie",
+  "Quatre Fantastiques": "Fantastic 4",
+  "Gardiens de la Galaxie": "Gardiens Galaxie",
+  "Équipage du Chapeau de Paille": "Chapeau de Paille",
+  "Bataillon d'exploration": "Bataillon",
+  "Pourfendeurs de démons": "Chasseurs de démons",
+  "Lycée de Jujutsu": "Lycée Jujutsu",
+  "Alchimistes d'État": "Alchimie d'État",
+  "Les Sauveurs": "Sauveurs",
+  "Association des Héros": "Assoc. Héros",
+  "Gardiens du Globe": "Gardiens Globe",
+  "Sailor Guerrières": "Sailor"
+};

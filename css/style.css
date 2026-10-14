@@ -73,7 +73,7 @@ body {
 .contenu {
   max-width: 640px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 16px 10px;      /* sur téléphone, on garde le plus de largeur possible pour les cases */
   text-align: center;
 }
 
@@ -174,11 +174,30 @@ body {
   opacity: 0.8;
 }
 
-/* ---------- La liste des essais (provisoire) ---------- */
+/* ---------- La grille des essais : 7 cases de couleur par ligne ---------- */
 
 .compteur-essais {
   margin: 20px 0 8px;
   font-weight: 700;
+}
+
+/* La largeur relative des 7 colonnes (les pouvoirs et les groupes ont besoin de plus de place) */
+.entetes,
+.cases {
+  display: grid;
+  /* Largeurs proportionnelles au texte le plus long de chaque colonne */
+  grid-template-columns:
+    minmax(0, 38fr) minmax(0, 46fr) minmax(0, 42fr) minmax(0, 43fr)
+    minmax(0, 49fr) minmax(0, 50fr) minmax(0, 29fr);
+  gap: 2px;
+}
+
+.entete-critere {
+  padding: 4px 0;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .liste-essais {
@@ -187,10 +206,63 @@ body {
   list-style: none;
 }
 
-.liste-essais li {
-  margin-bottom: 6px;
-  padding: 10px 12px;
-  background: var(--carte);
-  border: 2px solid var(--contour);
-  border-radius: 8px;
+.essai {
+  margin-bottom: 10px;
+}
+
+.essai-nom {
+  margin: 0 0 3px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+.case {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 8px 1px 6px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: #ffffff;
+  text-align: center;
+  overflow-wrap: break-word;
+  border: 1.5px solid var(--contour);
+  border-radius: 6px;
+}
+
+.case-texte {
+  white-space: pre-line;     /* respecte les retours à la ligne (un pouvoir par ligne) */
+  min-width: 0;
+}
+
+.case-symbole {
+  position: absolute;
+  top: 0;
+  right: 3px;
+  font-size: 0.62rem;
+  line-height: 1.2;
+}
+
+.case.vert   { background: #1f8a43; }
+.case.orange { background: #f5a623; color: #1a1a1a; }
+.case.rouge  { background: #c62828; }
+
+.mode-test {
+  margin-top: 28px;
+  font-size: 0.7rem;
+  opacity: 0.5;
+}
+
+/* Sur ordinateur, on a plus de place : on agrandit un peu */
+@media (min-width: 560px) {
+  .contenu { padding: 16px; }
+  .entetes, .cases { gap: 3px; }
+  .entete-critere { font-size: 0.75rem; }
+  .essai-nom { font-size: 1rem; }
+  .case { min-height: 66px; font-size: 0.85rem; border-width: 2px; }
+  .case-symbole { font-size: 0.75rem; }
 }
