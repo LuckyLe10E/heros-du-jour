@@ -11,11 +11,31 @@
   --carte: #ffffff;
   --selection: #ffe38a;
   --accent: #e62429;
+  --entete-fond: #1a1a1a;      /* les encadrés des titres de colonnes (Univers, Camp…) */
+  --entete-texte: #fff6d6;
+  color-scheme: light;
 }
 
-/* Mode sombre automatique si le téléphone est en mode sombre */
+/* Le mode sombre : choisi avec le bouton ☀️/🌙 (js/theme.js ajoute data-theme="sombre") */
+:root[data-theme="sombre"] {
+  --fond: #1b1a2e;
+  --texte: #f4f1e6;
+  --contour: #f4f1e6;
+  --titre-fond: #e62429;
+  --titre-texte: #ffffff;
+  --ombre: #000000;
+  --trame: rgba(255, 255, 255, 0.07);
+  --carte: #2a2944;
+  --selection: #4b4880;
+  --accent: #ff6b6b;
+  --entete-fond: #f4f1e6;
+  --entete-texte: #1b1a2e;
+  color-scheme: dark;
+}
+
+/* Secours : si le script du thème ne se lance pas, on suit quand même le mode du téléphone */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     --fond: #1b1a2e;
     --texte: #f4f1e6;
     --contour: #f4f1e6;
@@ -26,6 +46,9 @@
     --carte: #2a2944;
     --selection: #4b4880;
     --accent: #ff6b6b;
+    --entete-fond: #f4f1e6;
+    --entete-texte: #1b1a2e;
+    color-scheme: dark;
   }
 }
 
@@ -45,8 +68,37 @@ body {
 }
 
 .entete {
+  position: relative;      /* pour placer le bouton clair/sombre dans le coin */
   text-align: center;
   padding: 24px 16px 12px;
+}
+
+/* Le bouton ☀️ / 🌙 en haut à droite */
+.bouton-theme {
+  position: absolute;
+  bottom: 6px;        /* en bas à droite de l'en-tête : il ne gêne pas le titre */
+  right: 10px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 1.3rem;
+  line-height: 1;
+  color: var(--texte);
+  background: var(--carte);
+  border: 3px solid var(--contour);
+  border-radius: 50%;
+  box-shadow: 3px 3px 0 var(--ombre);
+  cursor: pointer;
+}
+
+.bouton-theme:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ombre);
+}
+
+.bouton-theme:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
 }
 
 .titre {
@@ -188,16 +240,22 @@ body {
   /* Largeurs proportionnelles au texte le plus long de chaque colonne */
   grid-template-columns:
     minmax(0, 38fr) minmax(0, 46fr) minmax(0, 42fr) minmax(0, 43fr)
-    minmax(0, 49fr) minmax(0, 50fr) minmax(0, 29fr);
+    minmax(0, 49fr) minmax(0, 48fr) minmax(0, 33fr);
   gap: 2px;
 }
 
+/* Chaque titre de colonne est dans un encadré bien visible */
 .entete-critere {
-  padding: 4px 0;
-  font-size: 0.62rem;
+  padding: 5px 0;
+  font-size: 0.68rem;
   font-weight: 700;
+  line-height: 1.1;
+  color: var(--entete-texte);
   text-align: center;
-  text-transform: uppercase;
+  background: var(--entete-fond);
+  border: 2px solid var(--contour);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0 var(--ombre);
 }
 
 .liste-essais {
@@ -404,7 +462,7 @@ body {
 @media (min-width: 560px) {
   .contenu { padding: 16px; }
   .entetes, .cases { gap: 3px; }
-  .entete-critere { font-size: 0.75rem; }
+  .entete-critere { font-size: 0.85rem; padding: 7px 0; }
   .essai-nom { font-size: 1rem; }
   .case { min-height: 66px; font-size: 0.85rem; border-width: 2px; }
   .case-symbole { font-size: 0.75rem; }
