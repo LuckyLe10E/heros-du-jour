@@ -315,7 +315,9 @@ Choix faits : trois menus dans « Ma collection » (Trier : ordre de la liste / 
 
 - ✅ **Test :** « Trie par rareté : les Légendaires doivent être en premier. » Et vérifier qu'une carte rejouée avec un meilleur score monte en rareté, jamais l'inverse.
 
-### Étape 14 : Version 2 terminée 🎉
+### Étape 14 : Version 2 terminée 🎉 — mise en ligne faite (https://heros-du-jour.vercel.app/), en attente du test de Luca sur téléphone
+
+Rappel : l'étape 10 (lancement officiel : choix de la `DATE_LANCEMENT`, remise à zéro des données de test, envoi aux amis) reste à faire quand Luca le décidera. La date actuelle (`2026-10-14`) est provisoire.
 
 - Mise en ligne, test sur téléphone, retours des amis.
 
