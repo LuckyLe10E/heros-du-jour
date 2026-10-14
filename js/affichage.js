@@ -494,14 +494,6 @@ function demarrerAffichage() {
   document.getElementById("bouton-collection").addEventListener("click", ouvrirBibliotheque);
   document.getElementById("collection-fermer").addEventListener("click", fermerBibliotheque);
   document.getElementById("carte-grand-fermer").addEventListener("click", fermerCarteEnGrand);
-  document.getElementById("collection-sauvegarde").addEventListener("click", ouvrirSauvegarde);
-  document.getElementById("sauvegarde-fermer").addEventListener("click", fermerSauvegarde);
-  document.getElementById("sauvegarde-creer").addEventListener("click", creerEtAfficherLeCode);
-  document.getElementById("sauvegarde-copier").addEventListener("click", copierLeCode);
-  document.getElementById("sauvegarde-restaurer").addEventListener("click", restaurerLesCartes);
-  document.getElementById("fenetre-sauvegarde").addEventListener("mousedown", evenement => {
-    if (evenement.target.id === "fenetre-sauvegarde") fermerSauvegarde();
-  });
   document.getElementById("fenetre-collection").addEventListener("mousedown", evenement => {
     if (evenement.target.id === "fenetre-collection") fermerBibliotheque();
   });
@@ -518,7 +510,6 @@ function demarrerAffichage() {
     if (evenement.key !== "Escape") return;
     // Échap ferme la fenêtre qui est tout au-dessus
     if (!document.getElementById("fenetre-carte-grand").hidden) fermerCarteEnGrand();
-    else if (!document.getElementById("fenetre-sauvegarde").hidden) fermerSauvegarde();
     else if (!document.getElementById("fenetre-collection").hidden) fermerBibliotheque();
     else if (!document.getElementById("fenetre-regles").hidden) fermerRegles();
     else if (!document.getElementById("fenetre-fin").hidden) fermerFenetreFin();
