@@ -109,12 +109,58 @@ function ajouterEssai(id) {
   if (!trouverPersonnage(id) || dejaPropose(id)) return false;
 
   partie.essais.push(id);
-  if (id === partie.mystere.id) {
+  mettreAJourStatut();
+  sauvegarderPartie();
+  return true;
+}
+
+// Regarde si la partie est gagnée (le bon personnage a été proposé) ou perdue (10 essais utilisés).
+function mettreAJourStatut() {
+  if (partie.essais.includes(partie.mystere.id)) {
     partie.statut = "gagne";
   } else if (partie.essais.length >= MAX_ESSAIS) {
     partie.statut = "perdu";
+  } else {
+    partie.statut = "en cours";
   }
-  return true;
+}
+
+// Range la partie du jour dans la sauvegarde du navigateur.
+// En mode test (?perso=...), on ne touche JAMAIS à la sauvegarde.
+function sauvegarderPartie() {
+  if (partie.modeTest) return;
+  ecrireSauvegarde({
+    version: 1,
+    numero: partie.numero,
+    mystere: partie.mystere.id,
+    essais: partie.essais
+  });
+}
+
+// Au chargement de la page : on retrouve la partie du jour si le joueur l'avait commencée.
+// On ne la reprend que si elle date d'aujourd'hui (même numéro de jour, même personnage mystère)
+// et si elle est valide ; sinon on repart d'une partie vierge. Pas de sauvegarde en mode test.
+function restaurerPartie() {
+  if (partie.modeTest) return;
+
+  // Outil de test réservé à Luca : ajouter ?recommencer à l'adresse efface la partie du jour.
+  if (new URLSearchParams(window.location.search).has("recommencer")) effacerSauvegarde();
+
+  const sauvegarde = lireSauvegarde();
+  if (!sauvegarde) return;
+  if (sauvegarde.numero !== partie.numero || sauvegarde.mystere !== partie.mystere.id) return;
+
+  // On vérifie que chaque essai est un vrai personnage, sans doublon, et pas plus de 10 essais
+  const ids = sauvegarde.essais;
+  const valide = ids.length <= MAX_ESSAIS
+    && ids.every(id => typeof id === "string" && trouverPersonnage(id))
+    && new Set(ids).size === ids.length;
+  if (!valide) return;
+
+  // Si le bon personnage est dans la liste, la partie s'arrête à lui (on ignore ce qui viendrait après)
+  const positionDuBon = ids.indexOf(partie.mystere.id);
+  partie.essais = positionDuBon === -1 ? ids.slice() : ids.slice(0, positionDuBon + 1);
+  mettreAJourStatut();
 }
 
 // Calcule à quel point un texte « ressemble » au début de la saisie du joueur.
@@ -161,3 +207,6 @@ function chercherPersonnages(texteTape) {
   resultats.sort((a, b) => a.note - b.note || a.personnage.nom.localeCompare(b.personnage.nom, "fr"));
   return resultats;
 }
+
+// Dernière chose au chargement : on retrouve la partie du jour sauvegardée, s'il y en a une.
+restaurerPartie();

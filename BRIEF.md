@@ -226,7 +226,7 @@ heros-du-jour/
 - Une constante `DATE_LANCEMENT` fixe le jour n°1. Le numéro du jour = nombre de jours écoulés depuis le lancement + 1, selon la date locale du téléphone.
 - Personnage du jour = `calendrier[(numero - 1) % calendrier.length]`.
 - **Ne jamais réordonner ni supprimer des entrées passées du calendrier.** Les nouveaux personnages s'ajoutent **à la fin**. Sinon les parties et les cartes des joueurs deviennent incohérentes.
-- Prévoir un **mode test** : ajouter `?perso=spider-man` à l'adresse force le personnage mystère, sans toucher à la sauvegarde. Il sert à Luca pour tester. Ne pas en parler aux joueurs.
+- Prévoir un **mode test** : ajouter `?perso=spider-man` à l'adresse force le personnage mystère, sans toucher à la sauvegarde. Il sert à Luca pour tester. Ne pas en parler aux joueurs. Autre outil de test pour Luca : ajouter `?recommencer` à l'adresse efface la partie du jour sauvegardée dans son navigateur (pour rejouer la vraie partie du jour).
 
 ### Style visuel
 
@@ -279,7 +279,7 @@ Chaque étape est petite. **À la fin de chaque étape** : expliquer à Luca en 
 - Personnage selon la date, numéro du jour, limite de 10 essais, indices progressifs (dès 3 essais ratés, voir section 4), écrans de victoire et de défaite.
 - ✅ **Test :** « Avec `?perso=thanos`, trouve Thanos : un écran "Bravo" doit s'afficher. Recharge avec `?perso=goku` et rate 10 fois : la réponse "Goku" doit s'afficher. Après 3 essais ratés, le premier indice doit apparaître, puis il doit s'enrichir à chaque essai raté suivant. »
 
-### Étape 7 : La sauvegarde de la partie
+### Étape 7 : La sauvegarde de la partie — ✅ TERMINÉE (validée par Luca)
 
 - ✅ **Test :** « Fais 3 essais sur la vraie page du jour, ferme l'onglet, rouvre-le : tes 3 essais doivent être toujours là. »
 
