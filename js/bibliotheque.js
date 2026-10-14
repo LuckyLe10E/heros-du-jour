@@ -1,4 +1,4 @@
-// L'écran « Ma collection » : la grille de toutes les cartes, avec des cases « ? » pour celles qui manquent.
+// L'écran « Ma collection » : l'album avec un emplacement par personnage (vide tant que la carte n'est pas gagnée).
 // Toucher une carte l'affiche en grand.
 
 // Le nombre de cartes que le joueur possède.
@@ -64,7 +64,10 @@ function dessinerBibliotheque() {
   const possedees = Object.keys(collection.cartes).length;
   const cases = listerLesCases(collection);
 
-  document.getElementById("collection-compteur").textContent = possedees + " / " + total + " cartes";
+  document.getElementById("collection-nombre").textContent = possedees;
+  document.getElementById("collection-sur").textContent = (possedees > 1 ? "cartes" : "carte") + " sur " + total;
+  document.getElementById("collection-progres").setAttribute("aria-label", possedees + " sur " + total);
+  document.getElementById("collection-progres-barre").style.width = (total > 0 ? Math.round(100 * possedees / total) : 0) + "%";
   document.getElementById("collection-test").hidden = !partie.modeTest;
 
   // Quand un filtre est actif, on dit combien de cartes correspondent
@@ -81,19 +84,23 @@ function dessinerBibliotheque() {
   grille.innerHTML = "";
   cases.forEach(c => {
     const ligne = document.createElement("li");
-    ligne.appendChild(creerVignetteDom(c.carte, ouvrirCarteEnGrand));
+    ligne.appendChild(creerVignetteDom(c.carte, c.personnage.id, ouvrirCarteEnGrand));
     grille.appendChild(ligne);
+  });
+
+  // Les onglets d'univers : celui du filtre actif est enfoncé
+  document.querySelectorAll("#collection-univers button").forEach(bouton => {
+    bouton.setAttribute("aria-pressed", String(bouton.dataset.univers === reglagesBibliotheque.univers));
   });
 
   document.getElementById("collection-vide").hidden = possedees > 0;
   document.getElementById("collection-aucune").hidden = cases.length > 0;
 }
 
-// Branche les trois listes de choix (tri, univers, rareté) : à chaque changement, on redessine la grille.
+// Branche les deux listes de choix (tri, rareté) : à chaque changement, on redessine la grille.
 function brancherLesReglagesDeLaBibliotheque() {
   const liaisons = [
     ["collection-tri", "tri"],
-    ["collection-univers", "univers"],
     ["collection-rarete", "rarete"]
   ];
   liaisons.forEach(([idElement, cle]) => {
@@ -106,14 +113,19 @@ function brancherLesReglagesDeLaBibliotheque() {
   });
 }
 
-// Remplit la liste des univers et des raretés à partir des listes fixes du jeu.
+// Fabrique les onglets d'univers (« Tous » puis un par univers du jeu) et la liste des raretés.
 function preparerLesListesDeLaBibliotheque() {
-  const univers = document.getElementById("collection-univers");
-  window.CRITERES.univers.forEach(nom => {
-    const option = document.createElement("option");
-    option.value = nom;
-    option.textContent = nom;
-    univers.appendChild(option);
+  const onglets = document.getElementById("collection-univers");
+  [""].concat(window.CRITERES.univers).forEach(nom => {
+    const bouton = creerElement("button", nom === "" ? "tous" : "univers-" + simplifier(nom), nom === "" ? "Tous" : nom);
+    bouton.type = "button";
+    bouton.dataset.univers = nom;
+    bouton.addEventListener("click", () => {
+      reglagesBibliotheque.univers = nom;
+      dessinerBibliotheque();
+      document.querySelector("#fenetre-collection .fenetre").scrollTop = 0;
+    });
+    onglets.appendChild(bouton);
   });
   const raretes = document.getElementById("collection-rarete");
   Object.keys(RARETES).forEach(cle => {

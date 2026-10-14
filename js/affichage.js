@@ -114,11 +114,12 @@ function afficherIndices() {
   const indices = indicesDevoiles();
   const liste = document.getElementById("liste-indices");
   liste.innerHTML = "";
-  indices.forEach(indice => {
+  const angles = [-1.3, 0.9, -0.6, 1.2];   // chaque post-it est collé un peu de travers, pas pareil que son voisin
+  indices.forEach((indice, i) => {
     const ligne = document.createElement("li");
-    const titre = document.createElement("strong");
-    titre.textContent = indice.titre + " : ";
-    ligne.appendChild(titre);
+    ligne.className = "postit";
+    ligne.style.setProperty("--angle", angles[i % angles.length] + "deg");
+    ligne.appendChild(creerElement("b", "", indice.titre));
     ligne.appendChild(document.createTextNode(indice.texte));
     liste.appendChild(ligne);
   });
@@ -136,7 +137,7 @@ function ouvrirFenetreFin() {
     : "Raté !";
   document.getElementById("fin-intro").textContent = gagne ? "Le héros du jour était :" : "C'était…";
   document.getElementById("fin-nom").textContent = p.nom;
-  document.getElementById("fin-oeuvre").textContent = p.univers + " · " + p.oeuvre + " (" + p.annee + ")";
+  document.getElementById("fin-oeuvre").textContent = p.univers + ", " + p.oeuvre + " (" + p.annee + ")";
   document.getElementById("fin-fiche").textContent = p.description;
 
   // Victoire : la carte gagnée remplace le texte (elle contient déjà le nom, l'œuvre et une courte fiche).
@@ -300,7 +301,7 @@ function texteDeLaCase(critere, personnage, comparaison) {
   const valeur = personnage[critere.cle];
   if (critere.genre === "liste") return valeur.map(nomCourt).join("\n");
   if (critere.genre === "annee") {
-    const fleche = comparaison.fleche === "haut" ? "\n⬆️" : comparaison.fleche === "bas" ? "\n⬇️" : "";
+    const fleche = comparaison.fleche === "haut" ? "\n↑" : comparaison.fleche === "bas" ? "\n↓" : "";
     return valeur + fleche;
   }
   return String(valeur).replace("/", "\n");   // « Hybride/Animal » s'écrit sur deux lignes
@@ -343,6 +344,18 @@ function afficherEntetes() {
   });
 }
 
+// Dessine les pastilles du compteur : une par essai possible (pleine = utilisé, contour = l'essai en cours).
+function afficherPastilles(termine) {
+  const zone = document.getElementById("pastilles");
+  zone.innerHTML = "";
+  for (let i = 0; i < MAX_ESSAIS; i++) {
+    const pastille = document.createElement("i");
+    if (i < partie.essais.length) pastille.className = "pris";
+    else if (i === partie.essais.length && !termine) pastille.className = "actuel";
+    zone.appendChild(pastille);
+  }
+}
+
 // Dessine la liste des essais déjà faits : une ligne de 7 cases par essai, le dernier en haut.
 function afficherEssais() {
   listeEssais.innerHTML = "";
@@ -353,10 +366,16 @@ function afficherEssais() {
     const essai = document.createElement("li");
     essai.className = "essai";
 
-    const nom = document.createElement("p");
-    nom.className = "essai-nom";
-    nom.textContent = personnage.nom;
-    essai.appendChild(nom);
+    // La tête de la fiche : la photo (une silhouette pour l'instant), le nom et le numéro de l'essai
+    const tete = document.createElement("div");
+    tete.className = "essai-tete";
+    const photo = document.createElement("div");
+    photo.className = "photo";
+    photo.appendChild(creerSilhouette());
+    tete.appendChild(photo);
+    tete.appendChild(creerElement("strong", "essai-nom", personnage.nom));
+    tete.appendChild(creerElement("span", "essai-numero", "essai " + (partie.essais.indexOf(id) + 1)));
+    essai.appendChild(tete);
 
     const cases = document.createElement("div");
     cases.className = "cases";
@@ -373,8 +392,9 @@ function afficherEssais() {
   } else if (partie.statut === "perdu") {
     compteurEssais.textContent = "Partie terminée : les " + MAX_ESSAIS + " essais sont utilisés";
   } else {
-    compteurEssais.textContent = "Essai " + (partie.essais.length + 1) + " / " + MAX_ESSAIS;
+    compteurEssais.textContent = "Essai " + (partie.essais.length + 1) + " sur " + MAX_ESSAIS;
   }
+  afficherPastilles(termine);
   champSaisie.disabled = termine;
   champSaisie.placeholder = termine ? "Partie terminée" : "Tape un nom de personnage…";
   document.getElementById("bouton-resultat").hidden = !termine;
@@ -427,7 +447,7 @@ function phraseExplicative(comparaisons) {
     morceaux.push(listeEnFrancais(mots) + (mots.length > 1 ? " sont " : " est ") + adjectifs[couleur] + accord + " (" + couleur + ")");
   });
   if (fleche) {
-    morceaux.push("le mystère est apparu " + (fleche === "haut" ? "plus tard (⬆️)" : "plus tôt (⬇️)"));
+    morceaux.push("le mystère est apparu " + (fleche === "haut" ? "plus tard (↑)" : "plus tôt (↓)"));
   }
   return "Ici : " + morceaux.join(" ; ") + ".";
 }
@@ -484,7 +504,8 @@ function fermerRegles() {
 
 // Démarrage : on branche tous les boutons et la case de saisie.
 function demarrerAffichage() {
-  document.getElementById("numero-du-jour").textContent = "n°" + partie.numero;
+  document.getElementById("numero-du-jour").textContent = partie.numero;
+  document.getElementById("tampon-numero").setAttribute("aria-label", "Numéro " + partie.numero);
   document.getElementById("date-du-jour").textContent = dateDuJourEnFrancais();
   document.getElementById("fin-fermer").addEventListener("click", fermerFenetreFin);
   document.getElementById("fin-partager").addEventListener("click", partagerLeResultat);

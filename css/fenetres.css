@@ -1,0 +1,374 @@
+/* Héros du Jour : les fenêtres (fin de partie, règles, collection, carte en grand).
+   Chaque fenêtre est une feuille de papier posée sur la table, qui s'assombrit derrière. */
+
+.fenetre-fond {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: rgba(6, 12, 24, 0.72);
+}
+
+.fenetre-fond[hidden] {
+  display: none;
+}
+
+.fenetre {
+  width: 100%;
+  max-width: 460px;
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 22px 20px;
+  text-align: center;
+  color: var(--encre);
+  background: var(--papier);
+  border-radius: 3px;
+  box-shadow: 0 24px 40px -16px rgba(0, 0, 0, 0.8);
+}
+
+.fenetre-titre {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+/* ---------- Fin de partie ---------- */
+
+.fenetre-titre {
+  margin-bottom: 6px;
+}
+
+.victoire .fenetre-titre { color: var(--ok); }
+.defaite  .fenetre-titre { color: var(--non); }
+
+.fin-intro {
+  color: var(--encre-douce);
+}
+
+.fin-nom {
+  margin: 4px 0;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.fin-oeuvre {
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--encre-douce);
+}
+
+.fin-fiche {
+  margin-bottom: 14px;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.fin-carte {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 8px;
+}
+
+.fin-carte[hidden] {
+  display: none;
+}
+
+.fin-carte-message {
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.fin-compte-a-rebours {
+  margin-bottom: 16px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;   /* les chiffres gardent la même largeur : le texte ne « saute » pas */
+}
+
+.fin-boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.fin-message {
+  min-height: 1.4em;          /* on réserve la place pour que la fenêtre ne bouge pas quand le message arrive */
+  margin-top: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* ---------- La fenêtre « Comment jouer » ---------- */
+
+.fenetre-regles {
+  max-width: 560px;
+  padding: 20px 14px;
+  text-align: left;
+}
+
+.fenetre-regles .fenetre-titre {
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.regles-liste,
+.legende {
+  margin: 0 0 10px;
+  padding-left: 22px;
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+.regles-liste li,
+.legende li {
+  margin-bottom: 4px;
+}
+
+.legende {
+  list-style: none;
+  padding-left: 4px;
+}
+
+/* Chaque ligne de la légende : la pastille à gauche, le texte à droite */
+.legende li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.legende-texte {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Les petites pastilles de couleur de la légende */
+.pastille {
+  flex: none;
+  width: 1.7em;
+  font-weight: 700;
+  line-height: 1.6em;
+  text-align: center;
+  color: #ffffff;
+  border-radius: 3px;
+}
+
+.pastille.vert   { background: var(--ok); }
+.pastille.orange { background: var(--partiel); color: #231a05; }
+.pastille.rouge  { background: var(--non); }
+
+.pastille-fleche {
+  flex: none;
+  width: 1.7em;
+  font-weight: 700;
+  line-height: 1.6em;
+  text-align: center;
+}
+
+.regles-intro-exemple {
+  margin: 14px 0 8px;
+  font-size: 0.95rem;
+}
+
+/* La ligne d'exemple est un peu plus petite que dans le jeu, pour tenir dans la fenêtre */
+.regles-exemple .entetes { padding: 0; margin-bottom: 0; }
+.regles-exemple .entete-critere { font-size: 0.6rem; padding: 6px 0 5px; }
+.regles-exemple .case { font-size: 0.6rem; min-height: 48px; }
+.regles-exemple .case-symbole { font-size: 0.56rem; }
+
+.regles-explication {
+  margin: 10px 0 12px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.regles-fin {
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.fenetre-regles .bouton {
+  display: block;
+  margin: 0 auto;
+}
+
+/* ---------- L'album : « Ma collection » ---------- */
+
+.fenetre-collection {
+  max-width: 640px;
+  padding: 18px 14px 14px;
+  text-align: left;
+}
+
+.album-titre {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.album-compte {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.album-compte b {
+  font-size: 2.4rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.album-compte span {
+  color: var(--encre-douce);
+}
+
+.progres {
+  height: 6px;
+  margin: 10px 0 16px;
+  overflow: hidden;
+  background: var(--papier-2);
+  border-radius: 3px;
+}
+
+.progres i {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--encre);
+}
+
+.collection-test {
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+  color: var(--encre-douce);
+}
+
+.collection-vide {
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+}
+
+/* Les onglets d'univers, comme les intercalaires d'un classeur */
+.collection-univers {
+  display: flex;
+  gap: 4px;
+  margin: 0 -14px 14px;
+  padding: 0 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.collection-univers::-webkit-scrollbar {
+  display: none;
+}
+
+.collection-univers button {
+  flex: none;
+  padding: 7px 12px 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--c, var(--encre));
+  border: 0;
+  border-radius: 6px 6px 0 0;
+  opacity: 0.55;
+  cursor: pointer;
+}
+
+.collection-univers button[aria-pressed="true"] {
+  opacity: 1;
+}
+
+.collection-univers .tous {
+  color: var(--papier);
+}
+
+/* Les deux listes de choix (tri, rareté) */
+.collection-outils {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.collection-choix {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--encre-douce);
+}
+
+.collection-choix select {
+  width: 100%;
+  padding: 8px 6px;
+  font-size: 1rem;           /* au moins 16 px : sinon l'iPhone zoome sur la page quand on touche le menu */
+  font-weight: 400;
+  color: var(--encre);
+  background: var(--papier);
+  border: 1.5px solid var(--trait);
+  border-radius: 3px;
+}
+
+.collection-filtre-resultat {
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* La page d'album : 3 cartes par ligne sur téléphone, plus sur grand écran */
+.collection-grille {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 480px) {
+  .collection-grille { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (min-width: 600px) {
+  .collection-grille { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+
+/* La grille est longue : le bouton « Fermer » reste toujours visible en bas de l'écran */
+#collection-fermer {
+  position: sticky;
+  bottom: 8px;
+  display: block;
+  margin: 14px auto 0;
+  box-shadow: 0 0 0 8px var(--papier);   /* un fond de papier derrière le bouton : on ne voit pas les cartes passer dessous */
+}
+
+/* ---------- Une carte en grand : pas de feuille autour, la carte est seule sur la table ---------- */
+
+.fenetre-carte-grand {
+  max-width: 360px;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.fenetre-carte-grand .carte-scene {
+  width: min(340px, 100%);
+}
+
+.fenetre-carte-grand .fin-carte {
+  margin: 4px 0 16px;
+}

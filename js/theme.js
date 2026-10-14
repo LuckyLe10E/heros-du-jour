@@ -1,5 +1,5 @@
 // Le choix entre mode clair et mode sombre.
-// Par défaut, on suit le mode du téléphone ; si le joueur appuie sur le bouton ☀️/🌙, on retient son choix.
+// Par défaut, on suit le mode du téléphone ; si le joueur appuie sur le bouton soleil / lune, on retient son choix.
 
 const CLE_THEME = "heros-du-jour-theme";   // le nom sous lequel on range le choix dans le navigateur
 
@@ -29,13 +29,17 @@ function sauvegarderTheme(theme) {
   }
 }
 
+// Les deux petits dessins du bouton : une lune (pour passer en mode sombre) et un soleil (pour revenir au clair).
+const DESSIN_LUNE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>';
+const DESSIN_SOLEIL = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>';
+
 // Applique un thème à la page et met à jour le bouton (qui propose toujours l'autre mode).
 function appliquerTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
   const bouton = document.getElementById("bouton-theme");
   if (!bouton) return;
   const autre = (theme === "sombre") ? "clair" : "sombre";
-  bouton.textContent = (theme === "sombre") ? "☀️" : "🌙";
+  bouton.innerHTML = (theme === "sombre") ? DESSIN_SOLEIL : DESSIN_LUNE;
   bouton.setAttribute("aria-label", "Passer en mode " + autre);
   bouton.title = "Passer en mode " + autre;
 }

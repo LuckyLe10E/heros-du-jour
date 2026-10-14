@@ -1,0 +1,445 @@
+/* Héros du Jour : l'écran de jeu (la table de casting) */
+
+.page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 16px 48px;
+}
+
+/* ---------- En-tête : un bandeau de papier avec le tampon du numéro ---------- */
+
+.bandeau {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 14px;
+  padding: 14px 16px 14px 18px;
+  color: var(--encre);
+  background: var(--papier);
+  border-radius: 3px;
+  box-shadow: var(--ombre-papier);
+}
+
+.marque h1 {
+  font-size: clamp(1.9rem, 9vw, 2.6rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+
+.date-du-jour {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color: var(--encre-douce);
+}
+
+.tampon {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  color: var(--tampon);
+  border: 3px solid currentColor;
+  border-radius: 50%;
+  outline: 1.5px solid currentColor;
+  outline-offset: 3px;
+  transform: rotate(-9deg);
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+  opacity: 0.92;
+}
+
+.tampon small {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.tampon span {
+  font-size: 1.7rem;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- La rangée de boutons : Ma collection, règles, mode clair / sombre ---------- */
+
+.outils {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.outils button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--encre);
+  background: var(--papier);
+  border: 0;
+  border-radius: 3px;
+  box-shadow: var(--ombre-papier);
+  cursor: pointer;
+}
+
+.outils button:active {
+  transform: translateY(1px);
+}
+
+.outils .plein {
+  flex: 1;
+}
+
+.outils .compte {
+  margin-left: auto;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- La case de saisie et les suggestions ---------- */
+
+.zone-saisie {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.zone-saisie label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.saisie {
+  width: 100%;
+  padding: 14px 14px 10px;
+  font-size: 1.2rem;           /* au moins 16 px : sinon le téléphone zoome tout seul */
+  color: var(--encre);
+  background: var(--papier);
+  border: 0;
+  border-bottom: 4px solid var(--encre);
+  border-radius: 3px 3px 0 0;
+}
+
+.saisie::placeholder {
+  color: var(--encre-douce);
+}
+
+.saisie:disabled {
+  opacity: 0.6;
+}
+
+.saisie:focus-visible {
+  outline-offset: 3px;
+}
+
+.suggestions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  margin: 0;
+  padding: 0;
+  max-height: 46vh;
+  overflow-y: auto;
+  list-style: none;
+  color: var(--encre);
+  background: var(--papier);
+  border-radius: 0 0 3px 3px;
+  box-shadow: 0 14px 20px -8px rgba(0, 0, 0, 0.6);
+}
+
+.suggestion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--trait);
+}
+
+.suggestion:last-child {
+  border-bottom: 0;
+}
+
+.suggestion[aria-selected="true"] {
+  background: var(--papier-2);
+  box-shadow: inset 4px 0 0 var(--encre);
+}
+
+.suggestion-nom {
+  font-weight: 700;
+}
+
+.suggestion-autre {
+  font-size: 0.9rem;
+  color: var(--encre-douce);
+}
+
+.suggestion-univers {
+  margin-left: auto;
+  padding: 3px 8px 2px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--c, var(--encre-douce));
+  border-radius: 3px;
+}
+
+.aucune-suggestion {
+  padding: 14px;
+  color: var(--encre-douce);
+}
+
+/* ---------- Le compteur : une pastille par essai ---------- */
+
+.essais {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.compteur-essais {
+  font-weight: 700;
+}
+
+.pastilles {
+  display: flex;
+  gap: 5px;
+}
+
+.pastilles i {
+  width: 14px;
+  height: 14px;
+  border: 2px dashed rgba(243, 246, 251, 0.55);
+  border-radius: 50%;
+}
+
+.pastilles i.pris {
+  background: var(--sur-bureau);
+  border: 2px solid var(--sur-bureau);
+}
+
+.pastilles i.actuel {
+  border: 2px solid var(--sur-bureau);
+}
+
+#bouton-resultat {
+  margin-bottom: 18px;
+}
+
+/* ---------- Les indices : des post-it ---------- */
+
+.indices {
+  margin: 0 0 24px;
+}
+
+.indices[hidden] {
+  display: none;
+}
+
+/* Le titre est aussi le bouton pour replier ou déplier les post-it */
+.indices-titre {
+  margin-bottom: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.liste-indices {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0 4px;
+  list-style: none;
+}
+
+.postit {
+  position: relative;
+  padding: 16px 16px 14px;
+  font-size: 0.98rem;
+  line-height: 1.35;
+  color: var(--postit-texte);
+  background: var(--postit);
+  box-shadow: 0 10px 14px -10px rgba(0, 0, 0, 0.6);
+  transform: rotate(var(--angle, -1deg));
+}
+
+/* Le petit morceau de ruban adhésif */
+.postit::before {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 64px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.45);
+  transform: translateX(-50%) rotate(2deg);
+}
+
+.postit b {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  opacity: 0.75;
+}
+
+/* ---------- Les essais : une fiche par personnage, avec les onglets en haut ---------- */
+
+/* La largeur relative des 7 colonnes (les pouvoirs et les groupes ont besoin de plus de place) */
+.entetes,
+.cases {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 38fr) minmax(0, 46fr) minmax(0, 42fr) minmax(0, 43fr)
+    minmax(0, 49fr) minmax(0, 48fr) minmax(0, 33fr);
+  gap: 3px;
+}
+
+.entetes {
+  margin-bottom: -1px;
+  padding: 0 10px;           /* alignés avec les cases de la fiche */
+}
+
+.entete-critere {
+  padding: 7px 0 6px;
+  font-size: clamp(0.5rem, 2.9vw, 0.66rem);
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  color: var(--onglet-texte);
+  background: var(--onglet);
+  border-radius: 6px 6px 0 0;
+}
+
+.liste-essais {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Tant qu'il n'y a aucun essai : une fiche vide qui montre où ils viendront */
+.liste-essais:empty::before {
+  content: "Tes propositions apparaîtront ici.";
+  display: block;
+  padding: 18px 12px;
+  text-align: center;
+  color: var(--encre-douce);
+  background: var(--papier);
+  border-radius: 0 0 3px 3px;
+  box-shadow: var(--ombre-papier);
+}
+
+.essai {
+  margin-bottom: 12px;
+  padding: 12px 10px 10px;
+  color: var(--encre);
+  background: var(--papier);
+  border-radius: 3px;
+  box-shadow: var(--ombre-papier);
+}
+
+/* La première fiche s'accroche aux onglets */
+.liste-essais > .essai:first-child {
+  border-radius: 0 0 3px 3px;
+}
+
+.essai-tete {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.photo {
+  display: grid;
+  place-items: end center;
+  flex: none;
+  width: 36px;
+  height: 46px;
+  overflow: hidden;
+  color: var(--trait);
+  background: var(--papier-2);
+  border: 1px solid var(--trait);
+  border-radius: 2px;
+}
+
+.photo svg {
+  width: 100%;
+  height: 100%;
+}
+
+.essai-nom {
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.essai-numero {
+  margin-left: auto;
+  flex: none;
+  font-size: 0.82rem;
+  color: var(--encre-douce);
+}
+
+.case {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 54px;
+  padding: 8px 1px 6px;
+  font-size: clamp(0.5rem, 2.9vw, 0.68rem);   /* le texte rétrécit un peu sur les très petits écrans */
+  font-weight: 700;
+  line-height: 1.12;
+  color: #ffffff;
+  text-align: center;
+  overflow-wrap: break-word;
+  border-radius: 3px;
+}
+
+.case-texte {
+  white-space: pre-line;     /* respecte les retours à la ligne (un pouvoir par ligne) */
+  min-width: 0;
+}
+
+/* Le petit symbole de chaque case, pour les personnes qui ne distinguent pas bien les couleurs */
+.case-symbole {
+  position: absolute;
+  top: 1px;
+  right: 3px;
+  font-size: 0.58rem;
+  opacity: 0.9;
+}
+
+.case.vert   { background: var(--ok); }
+.case.orange { background: var(--partiel); color: #231a05; }
+.case.rouge  { background: var(--non); }
+
+.mode-test {
+  margin-top: 28px;
+  font-size: 0.7rem;
+  opacity: 0.6;
+}
+
+/* Très petits écrans (environ 320 px de large) : on réduit les marges pour garder le plus de place aux cases */
+@media (max-width: 350px) {
+  .page { padding-left: 10px; padding-right: 10px; }
+  .entetes, .cases { gap: 2px; }
+  .entetes { padding: 0 6px; }
+  .essai { padding-left: 6px; padding-right: 6px; }
+}
+
+/* Sur ordinateur, on a plus de place : on agrandit un peu */
+@media (min-width: 560px) {
+  .entete-critere { font-size: 0.8rem; padding: 9px 0 8px; }
+  .case { min-height: 66px; font-size: 0.85rem; }
+  .case-symbole { font-size: 0.72rem; }
+}

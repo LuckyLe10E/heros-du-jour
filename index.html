@@ -5,15 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Héros du Jour</title>
   <meta name="description" content="Devine chaque jour le personnage de fiction mystère : comics, manga, héros ou méchant.">
-  <meta name="theme-color" content="#e62429">
+  <meta name="theme-color" content="#2d4a78">
   <meta property="og:title" content="Héros du Jour">
   <meta property="og:description" content="Devine chaque jour le personnage de fiction mystère.">
-  <!-- Icône de l'onglet : un petit éclair dessiné directement dans l'adresse, sans fichier à part -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%23e62429'/%3E%3Ctext x='50' y='72' font-size='64' text-anchor='middle'%3E⚡%3C/text%3E%3C/svg%3E">
+  <!-- Icône de l'onglet : un tampon rond sur fond bleu nuit, dessiné directement dans l'adresse, sans fichier à part -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%232d4a78'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='%23fdfdfb' stroke-width='7'/%3E%3Cpath d='M38 36v28M62 36v28M38 50h24' stroke='%23fdfdfb' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/jeu.css">
+  <link rel="stylesheet" href="css/cartes.css">
+  <link rel="stylesheet" href="css/fenetres.css">
   <script src="js/theme.js"></script>
 </head>
 <body>
@@ -21,23 +24,35 @@
     <p class="sans-javascript">Héros du Jour a besoin de JavaScript pour fonctionner. Active-le dans ton navigateur pour jouer.</p>
   </noscript>
 
-  <header class="entete">
-    <button type="button" id="bouton-aide" class="bouton-rond bouton-aide" aria-label="Comment jouer ?" title="Comment jouer ?">?</button>
-    <button type="button" id="bouton-theme" class="bouton-rond bouton-theme" aria-label="Changer de mode"></button>
-    <h1 class="titre">Héros du Jour</h1>
-    <p class="numero-du-jour" id="numero-du-jour"></p>
-    <p class="date-du-jour" id="date-du-jour"></p>
-  </header>
+  <!-- La silhouette : l'emplacement des futures illustrations des personnages (utilisée par js/carte.js) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="silhouette" viewBox="0 0 100 120"><circle cx="50" cy="38" r="22"/><path d="M6 120c0-30 20-46 44-46s44 16 44 46z"/></symbol>
+  </svg>
 
-  <main class="contenu">
-    <!-- Le bouton qui ouvre l'écran « Ma collection » (avec le nombre de cartes possédées) -->
-    <button type="button" id="bouton-collection" class="bouton bouton-collection">
-      🃏 Ma collection <span id="bouton-collection-compteur" class="bouton-collection-compteur"></span>
-    </button>
+  <main class="page">
+    <header class="bandeau">
+      <div class="marque">
+        <h1>Héros du Jour</h1>
+        <p class="date-du-jour" id="date-du-jour"></p>
+      </div>
+      <div class="tampon" role="img" id="tampon-numero"><div><small>NUMÉRO</small><span id="numero-du-jour"></span></div></div>
+    </header>
+
+    <!-- Les boutons : la collection (avec le nombre de cartes possédées), les règles, le mode clair / sombre -->
+    <div class="outils">
+      <button type="button" id="bouton-collection" class="plein">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="9" rx="1"/><rect x="13.5" y="3.5" width="7" height="9" rx="1"/><rect x="3.5" y="15.5" width="7" height="5" rx="1"/><rect x="13.5" y="15.5" width="7" height="5" rx="1"/></svg>
+        Ma collection <span id="bouton-collection-compteur" class="compte"></span>
+      </button>
+      <button type="button" id="bouton-aide" aria-label="Comment jouer ?" title="Comment jouer ?">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.2c-.8.5-1.2 1-1.2 1.9"/><circle cx="12" cy="16.8" r=".6"/></svg>
+      </button>
+      <button type="button" id="bouton-theme" aria-label="Changer de mode"></button>
+    </div>
 
     <!-- La case de saisie et sa liste de suggestions -->
     <div class="zone-saisie">
-      <label for="saisie" class="invisible">Nom du personnage</label>
+      <label for="saisie">Nom du personnage</label>
       <input type="text" id="saisie" class="saisie" placeholder="Tape un nom de personnage…"
              autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
              role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggestions">
@@ -45,8 +60,11 @@
     </div>
 
     <!-- Le compteur d'essais, et le bouton pour revoir le résultat quand la partie est finie -->
-    <p id="compteur-essais" class="compteur-essais" aria-live="polite"></p>
-    <button type="button" id="bouton-resultat" class="bouton" hidden>Revoir le résultat</button>
+    <div class="essais">
+      <p id="compteur-essais" class="compteur-essais" aria-live="polite"></p>
+      <div id="pastilles" class="pastilles" aria-hidden="true"></div>
+    </div>
+    <button type="button" id="bouton-resultat" class="bouton bouton-table" hidden>Revoir le résultat</button>
 
     <!-- Les indices qui s'ajoutent au fil des essais ratés -->
     <details id="indices" class="indices" open hidden>
@@ -55,23 +73,27 @@
     </details>
 
     <!-- La grille : les en-têtes des 7 critères, puis une ligne de cases par essai -->
-    <section class="grille" aria-label="Tes essais">
-      <div id="entetes" class="entetes"></div>
+    <section aria-label="Tes essais">
+      <div id="entetes" class="entetes" aria-hidden="true"></div>
       <ol id="liste-essais" class="liste-essais"></ol>
     </section>
 
     <p id="mode-test" class="mode-test" hidden>Mode test</p>
   </main>
 
-  <!-- L'écran « Ma collection » : la grille de toutes les cartes -->
+  <!-- L'écran « Ma collection » : l'album, avec un emplacement par personnage -->
   <div id="fenetre-collection" class="fenetre-fond" hidden>
     <div class="fenetre fenetre-collection" role="dialog" aria-modal="true" aria-labelledby="collection-titre">
-      <h2 id="collection-titre" class="fin-titre">Ma collection</h2>
-      <p id="collection-compteur" class="collection-compteur"></p>
+      <h2 id="collection-titre" class="album-titre">Ma collection</h2>
+      <div class="album-compte"><b id="collection-nombre"></b><span id="collection-sur"></span></div>
+      <div id="collection-progres" class="progres" role="img"><i id="collection-progres-barre"></i></div>
       <p id="collection-test" class="collection-test" hidden>Mode test : ce sont les cartes de test, pas tes vraies cartes.</p>
       <p id="collection-vide" class="collection-vide" hidden>Aucune carte pour l'instant. Trouve le héros du jour pour gagner ta première carte !</p>
 
-      <!-- Trier et filtrer la grille -->
+      <!-- Les onglets d'univers (remplis par js/bibliotheque.js) -->
+      <div id="collection-univers" class="collection-univers" role="group" aria-label="Filtrer par univers"></div>
+
+      <!-- Trier et filtrer par rareté -->
       <div class="collection-outils">
         <label class="collection-choix">Trier
           <select id="collection-tri">
@@ -79,9 +101,6 @@
             <option value="rarete">Les plus rares d'abord</option>
             <option value="date">Les plus récentes d'abord</option>
           </select>
-        </label>
-        <label class="collection-choix">Univers
-          <select id="collection-univers"><option value="">Tous</option></select>
         </label>
         <label class="collection-choix">Rareté
           <select id="collection-rarete"><option value="">Toutes</option></select>
@@ -99,17 +118,17 @@
   <div id="fenetre-carte-grand" class="fenetre-fond" hidden>
     <div class="fenetre fenetre-carte-grand" role="dialog" aria-modal="true" aria-label="Carte en grand">
       <div id="carte-grand-zone" class="fin-carte"></div>
-      <button type="button" id="carte-grand-fermer" class="bouton">Fermer</button>
+      <button type="button" id="carte-grand-fermer" class="bouton bouton-table">Fermer</button>
     </div>
   </div>
 
   <!-- La fenêtre « Comment jouer » (ouverte toute seule à la première visite) -->
   <div id="fenetre-regles" class="fenetre-fond" hidden>
     <div class="fenetre fenetre-regles" role="dialog" aria-modal="true" aria-labelledby="regles-titre">
-      <h2 id="regles-titre" class="fin-titre">Comment jouer ?</h2>
+      <h2 id="regles-titre" class="fenetre-titre">Comment jouer ?</h2>
 
       <ol class="regles-liste">
-        <li>Chaque jour, un <strong>personnage de fiction</strong> (comics, manga, héros ou méchant) est à deviner. C'est le même pour tout le monde.</li>
+        <li>Chaque jour, un <strong>personnage de fiction</strong> (héros ou méchant) est à deviner. C'est le même pour tout le monde.</li>
         <li>Tape un nom et choisis-le dans la liste. Tu as <strong>10 essais</strong>.</li>
         <li>Après chaque essai, 7 cases comparent ton personnage au mystère :</li>
       </ol>
@@ -118,7 +137,7 @@
         <li><span class="pastille vert">✓</span><span class="legende-texte"><strong>vert</strong> : identique</span></li>
         <li><span class="pastille orange">~</span><span class="legende-texte"><strong>orange</strong> : en partie identique (au moins un pouvoir ou un groupe en commun)</span></li>
         <li><span class="pastille rouge">✗</span><span class="legende-texte"><strong>rouge</strong> : différent</span></li>
-        <li><span class="pastille-fleche">⬆️⬇️</span><span class="legende-texte">pour l'année : le mystère est apparu <strong>plus tard</strong> (⬆️) ou <strong>plus tôt</strong> (⬇️)</span></li>
+        <li><span class="pastille-fleche">↑ ↓</span><span class="legende-texte">pour l'année : le mystère est apparu <strong>plus tard</strong> (↑) ou <strong>plus tôt</strong> (↓)</span></li>
       </ul>
 
       <p id="regles-intro-exemple" class="regles-intro-exemple"></p>
@@ -133,7 +152,7 @@
   <!-- La fenêtre de fin de partie (victoire ou défaite), par-dessus le jeu -->
   <div id="fenetre-fin" class="fenetre-fond" hidden>
     <div class="fenetre" role="dialog" aria-modal="true" aria-labelledby="fin-titre">
-      <h2 id="fin-titre" class="fin-titre"></h2>
+      <h2 id="fin-titre" class="fenetre-titre"></h2>
       <div id="fin-carte" class="fin-carte" hidden></div>
       <p id="fin-carte-message" class="fin-carte-message" hidden></p>
       <p id="fin-intro" class="fin-intro"></p>

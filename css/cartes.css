@@ -1,0 +1,353 @@
+/* Héros du Jour : les cartes à collectionner.
+   L'illustration occupe presque toute la carte. En attendant les vrais dessins, une silhouette tient la place. */
+
+/* La scène : donne la perspective pour que le retournement paraisse en 3D.
+   C'est aussi un « conteneur » : tout le texte de la carte est calculé à partir de sa largeur,
+   donc la carte garde les mêmes proportions quelle que soit sa taille. */
+.carte-scene {
+  width: min(300px, 100%);
+  aspect-ratio: 5 / 7;
+  perspective: 900px;
+  container-type: inline-size;
+}
+
+.carte {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-size: 13.3px;                      /* repli pour les vieux navigateurs */
+  font-size: calc(100cqw / 22.5);         /* sinon : 1 unité = 1/22,5 de la largeur de la carte */
+  transform-style: preserve-3d;
+  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.carte.retournee {
+  transform: rotateY(180deg);
+}
+
+.carte.sans-animation {
+  transition: none;
+}
+
+.carte-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.56em;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* ---------- Le dos : bleu nuit, avec un tampon ---------- */
+
+.carte-dos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9em;
+  color: #f3f6fb;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 0.5em, transparent 0.5em 1em),
+    linear-gradient(160deg, #2d4a78, #0f1d35);
+  border: 0.6em solid #fdfdfb;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 1.2em 1.6em -1em rgba(0, 0, 0, 0.7);
+}
+
+.carte-dos-marque {
+  display: grid;
+  place-items: center;
+  width: 4.6em;
+  height: 4.6em;
+  font-size: 2.6em;
+  font-weight: 800;
+  line-height: 1;
+  border: 0.12em solid currentColor;
+  border-radius: 50%;
+  outline: 0.06em solid currentColor;
+  outline-offset: 0.12em;
+  transform: rotate(-9deg);
+}
+
+.carte-dos-titre {
+  font-size: 1.5em;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- Le devant : une feuille de rareté autour d'une fiche de papier ---------- */
+
+.carte-avant {
+  padding: 0.69em;
+  transform: rotateY(180deg);
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3), 0 1.4em 1.8em -1em rgba(0, 0, 0, 0.7);
+}
+
+.carte-avant.rarete-legendaire {
+  --tampon-carte: #c4352c;
+  background: linear-gradient(120deg, var(--or-2), var(--or-3) 35%, var(--or-2) 55%, var(--or-1) 80%, var(--or-2));
+}
+
+.carte-avant.rarete-rare {
+  --tampon-carte: #2f5dba;
+  background: linear-gradient(120deg, var(--argent-2), var(--argent-3) 35%, var(--argent-2) 60%, var(--argent-1));
+}
+
+.carte-avant.rarete-commune {
+  --tampon-carte: #6b5236;
+  background: linear-gradient(120deg, var(--bronze-2), var(--bronze-3) 40%, var(--bronze-1));
+}
+
+.carte-interieur {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  color: var(--encre);
+  background: var(--papier);
+  border-radius: 0.25em;
+  text-align: left;
+}
+
+.carte-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
+  padding: 0.6em 0.75em 0.5em;
+}
+
+.carte-nom {
+  font-size: 1.75em;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.carte-univers {
+  flex: none;
+  padding: 0.3em 0.6em 0.2em;
+  font-size: 0.74em;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--c, var(--encre-douce));
+  border-radius: 0.25em;
+}
+
+/* La grande illustration (pour l'instant : la silhouette) */
+.carte-illustration {
+  position: relative;
+  flex: 1;
+  display: grid;
+  place-items: end center;
+  min-height: 7em;
+  margin: 0 0.62em;
+  overflow: hidden;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--c, #555) 72%, #fff), var(--c, #555));
+  border-radius: 0.2em;
+}
+
+.carte-illustration svg {
+  width: 70%;
+  max-height: 100%;
+  color: rgba(255, 255, 255, 0.38);
+}
+
+/* Le tampon qui dit la rareté, posé de travers sur l'illustration */
+.carte-tampon {
+  position: absolute;
+  right: 0.62em;
+  bottom: 0.85em;
+  padding: 0.25em 0.6em 0.15em;
+  font-size: 0.95em;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--tampon-carte);
+  background: rgba(253, 253, 251, 0.88);
+  border: 0.16em solid currentColor;
+  border-radius: 0.2em;
+  transform: rotate(-7deg);
+}
+
+.carte-sous-titre {
+  padding: 0.5em 0.75em 0;
+  font-size: 0.84em;
+  color: var(--encre-douce);
+}
+
+.carte-fiche {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.2em 0.85em;
+  margin: 0;
+  padding: 0.35em 0.75em 0;
+  font-size: 0.82em;
+}
+
+.carte-fiche div {
+  display: flex;
+  gap: 0.4em;
+}
+
+.carte-fiche dt {
+  font-weight: 700;
+}
+
+.carte-fiche dd {
+  margin: 0;
+  min-width: 0;
+}
+
+.carte-texte {
+  padding: 0.45em 0.75em 0;
+  font-size: 0.8em;
+  line-height: 1.3;
+}
+
+.carte-pied {
+  margin-top: auto;
+  padding: 0.45em 0.75em 0.55em;
+  font-size: 0.72em;
+  color: var(--encre-douce);
+}
+
+/* L'effet brillant des cartes Légendaires : un reflet qui passe sur la carte */
+.carte-brillance {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.56em;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 32%, rgba(255, 255, 255, 0.5) 46%, rgba(255, 255, 255, 0.12) 54%, transparent 68%);
+  background-size: 260% 100%;
+  animation: brillance 3.4s ease-in-out infinite;
+}
+
+@keyframes brillance {
+  0%   { background-position: 160% 0; }
+  60%  { background-position: -60% 0; }
+  100% { background-position: -60% 0; }
+}
+
+/* Pour les personnes qui préfèrent peu d'animations : la carte ne bouge pas, le reflet est fixe */
+@media (prefers-reduced-motion: reduce) {
+  .carte { transition: none; }
+  .carte-brillance { animation: none; background-position: 40% 0; }
+}
+
+/* ---------- La collection : emplacements et vignettes de l'album ---------- */
+
+.vignette,
+.emplacement {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  aspect-ratio: 5 / 7;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+/* Un emplacement vide : on voit son numéro, mais pas qui se cache derrière */
+.emplacement {
+  display: grid;
+  color: var(--trait);
+  border: 1.5px dashed var(--trait);
+}
+
+.emplacement svg {
+  align-self: end;
+  justify-self: center;
+  width: 78%;
+  opacity: 0.55;
+}
+
+.numero-carte {
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  z-index: 1;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* Une carte rangée dans l'album */
+.vignette {
+  padding: 0;
+  color: var(--encre);
+  text-align: left;
+  background: var(--papier);
+  border: 0;
+  cursor: pointer;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25), 0 6px 10px -6px rgba(0, 0, 0, 0.5);
+}
+
+.vignette:active {
+  transform: translateY(1px);
+}
+
+.vignette .corps {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.vignette .numero-carte {
+  color: #ffffff;
+  font-size: 0.62rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
+.vignette .art {
+  flex: 1;
+  display: grid;
+  place-items: end center;
+  min-height: 0;
+  overflow: hidden;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--c, #555) 78%, #fff), var(--c, #555));
+}
+
+.vignette .art svg {
+  width: 84%;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.vignette-nom {
+  padding: 5px 6px 4px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+  background: var(--papier);
+}
+
+/* La bande du bas de la vignette : or, argent ou bronze selon la rareté */
+.feuille {
+  height: 7px;
+}
+
+.vignette.rarete-legendaire .feuille {
+  background: linear-gradient(100deg, var(--or-2), var(--or-3) 40%, var(--or-2) 60%, var(--or-1));
+  background-size: 220% 100%;
+  animation: reflet 4s ease-in-out infinite;
+}
+
+.vignette.rarete-rare .feuille {
+  background: linear-gradient(100deg, var(--argent-2), var(--argent-3) 45%, var(--argent-2));
+}
+
+.vignette.rarete-commune .feuille {
+  background: linear-gradient(100deg, var(--bronze-2), var(--bronze-1));
+}
+
+@keyframes reflet {
+  0%, 100% { background-position: 0 0; }
+  50% { background-position: 100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vignette.rarete-legendaire .feuille { animation: none; }
+}
