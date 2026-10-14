@@ -30,6 +30,11 @@
   </header>
 
   <main class="contenu">
+    <!-- Le bouton qui ouvre l'écran « Ma collection » (avec le nombre de cartes possédées) -->
+    <button type="button" id="bouton-collection" class="bouton bouton-collection">
+      🃏 Ma collection <span id="bouton-collection-compteur" class="bouton-collection-compteur"></span>
+    </button>
+
     <!-- La case de saisie et sa liste de suggestions -->
     <div class="zone-saisie">
       <label for="saisie" class="invisible">Nom du personnage</label>
@@ -57,6 +62,26 @@
 
     <p id="mode-test" class="mode-test" hidden>Mode test</p>
   </main>
+
+  <!-- L'écran « Ma collection » : la grille de toutes les cartes -->
+  <div id="fenetre-collection" class="fenetre-fond" hidden>
+    <div class="fenetre fenetre-collection" role="dialog" aria-modal="true" aria-labelledby="collection-titre">
+      <h2 id="collection-titre" class="fin-titre">Ma collection</h2>
+      <p id="collection-compteur" class="collection-compteur"></p>
+      <p id="collection-test" class="collection-test" hidden>Mode test : ce sont les cartes de test, pas tes vraies cartes.</p>
+      <p id="collection-vide" class="collection-vide" hidden>Aucune carte pour l'instant. Trouve le héros du jour pour gagner ta première carte !</p>
+      <ul id="collection-grille" class="collection-grille"></ul>
+      <button type="button" id="collection-fermer" class="bouton">Fermer</button>
+    </div>
+  </div>
+
+  <!-- Une carte affichée en grand, par-dessus la bibliothèque -->
+  <div id="fenetre-carte-grand" class="fenetre-fond" hidden>
+    <div class="fenetre fenetre-carte-grand" role="dialog" aria-modal="true" aria-label="Carte en grand">
+      <div id="carte-grand-zone" class="fin-carte"></div>
+      <button type="button" id="carte-grand-fermer" class="bouton">Fermer</button>
+    </div>
+  </div>
 
   <!-- La fenêtre « Comment jouer » (ouverte toute seule à la première visite) -->
   <div id="fenetre-regles" class="fenetre-fond" hidden>
@@ -111,6 +136,7 @@
   <script src="js/stockage.js"></script>
   <script src="js/collection.js"></script>
   <script src="js/carte.js"></script>
+  <script src="js/bibliotheque.js"></script>
   <script src="js/jeu.js"></script>
   <script src="js/affichage.js"></script>
 </body>

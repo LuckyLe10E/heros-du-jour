@@ -101,6 +101,7 @@ function choisirPersonnage(id) {
   fermerSuggestions();
   afficherEssais();
   if (partie.statut !== "en cours") ouvrirFenetreFin();
+  afficherBoutonCollection();   // le compteur de cartes a peut-être changé
 }
 
 // Écrit « 1 essai » ou « 4 essais ».
@@ -483,6 +484,15 @@ function demarrerAffichage() {
   document.getElementById("bouton-resultat").addEventListener("click", ouvrirFenetreFin);
   document.getElementById("bouton-aide").addEventListener("click", ouvrirRegles);
   document.getElementById("regles-fermer").addEventListener("click", fermerRegles);
+  document.getElementById("bouton-collection").addEventListener("click", ouvrirBibliotheque);
+  document.getElementById("collection-fermer").addEventListener("click", fermerBibliotheque);
+  document.getElementById("carte-grand-fermer").addEventListener("click", fermerCarteEnGrand);
+  document.getElementById("fenetre-collection").addEventListener("mousedown", evenement => {
+    if (evenement.target.id === "fenetre-collection") fermerBibliotheque();
+  });
+  document.getElementById("fenetre-carte-grand").addEventListener("mousedown", evenement => {
+    if (evenement.target.id === "fenetre-carte-grand") fermerCarteEnGrand();
+  });
   document.getElementById("fenetre-fin").addEventListener("mousedown", evenement => {
     if (evenement.target.id === "fenetre-fin") fermerFenetreFin();   // un clic à côté de la fenêtre la ferme
   });
@@ -491,7 +501,10 @@ function demarrerAffichage() {
   });
   document.addEventListener("keydown", evenement => {
     if (evenement.key !== "Escape") return;
-    if (!document.getElementById("fenetre-regles").hidden) fermerRegles();
+    // Échap ferme la fenêtre qui est tout au-dessus
+    if (!document.getElementById("fenetre-carte-grand").hidden) fermerCarteEnGrand();
+    else if (!document.getElementById("fenetre-collection").hidden) fermerBibliotheque();
+    else if (!document.getElementById("fenetre-regles").hidden) fermerRegles();
     else if (!document.getElementById("fenetre-fin").hidden) fermerFenetreFin();
   });
   preparerExempleDesRegles();
@@ -504,6 +517,7 @@ function demarrerAffichage() {
   // Toucher la liste (pour la faire défiler) ne doit pas fermer la liste
   listeSuggestions.addEventListener("mousedown", evenement => evenement.preventDefault());
   afficherEssais();
+  afficherBoutonCollection();
 
   // À la toute première visite, les règles s'ouvrent toutes seules
   if (!reglesDejaVues()) ouvrirRegles();

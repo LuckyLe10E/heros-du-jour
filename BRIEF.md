@@ -304,7 +304,7 @@ Choix faits : les cartes sont rangées dans le navigateur (`heros-du-jour-collec
 - Création de la carte à la victoire, calcul de la rareté, animation de retournement, enregistrement dans la collection.
 - ✅ **Test :** « Avec `?perso=hulk` en mode test, trouve Hulk en 2 essais : une carte dorée Légendaire doit se retourner. » (Le mode test peut, pour ce test, enregistrer dans une collection de test séparée, à effacer ensuite.)
 
-### Étape 12 : La bibliothèque
+### Étape 12 : La bibliothèque — ✅ TERMINÉE (validée par Luca)
 
 - Page ou écran « Ma collection » : grille, cases « ? », compteur, carte en grand.
 - ✅ **Test :** « Touche "Ma collection" : tu dois voir ta carte et des cases "?" pour les autres, avec "1 / 100". Touche ta carte : elle s'affiche en grand. »

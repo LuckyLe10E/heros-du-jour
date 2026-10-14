@@ -17,6 +17,35 @@ function descriptionCourte(personnage) {
   return phrases[0] + " " + phrases[phrases.length - 1];
 }
 
+// Fabrique une petite vignette de carte pour la bibliothèque : un bouton qu'on peut toucher pour voir la carte en grand.
+// carte = les données de la carte gagnée, ou null si le joueur n'a pas encore cette carte (case « ? »).
+function creerVignetteDom(carte, apresToucher) {
+  // Case vide : on ne révèle pas de quel personnage il s'agit
+  if (!carte) {
+    const vide = creerElement("button", "vignette vide", "?");
+    vide.type = "button";
+    vide.disabled = true;
+    vide.setAttribute("aria-label", "Carte pas encore découverte");
+    return vide;
+  }
+
+  const p = trouverPersonnage(carte.id);
+  const rarete = RARETES[carte.rarete];
+
+  const bouton = creerElement("button", "vignette rarete-" + carte.rarete);
+  bouton.type = "button";
+  bouton.setAttribute("aria-label", p.nom + ", carte " + rarete.nom + ". Toucher pour la voir en grand.");
+
+  const contenu = creerElement("span", "vignette-contenu fond-" + simplifier(p.univers));
+  contenu.appendChild(creerElement("span", "vignette-icone", window.ICONES_ESPECES[p.espece] || "✨"));
+  contenu.appendChild(creerElement("span", "vignette-nom", p.nom));
+  contenu.appendChild(creerElement("span", "vignette-rarete", rarete.nom));
+  bouton.appendChild(contenu);
+
+  bouton.addEventListener("click", () => apresToucher(carte));
+  return bouton;
+}
+
 // Fabrique l'élément HTML d'une carte.
 // carte = { id, rarete, essais, date, numero } ; options.retournee = true si la carte est déjà face visible
 // (sinon elle commence face cachée, et il suffira d'ajouter la classe « retournee » pour la retourner).
