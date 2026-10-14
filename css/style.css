@@ -843,6 +843,46 @@ body {
   font-size: 0.9rem;
 }
 
+/* Les trois listes de choix (tri, univers, rareté) */
+.collection-outils {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.collection-choix {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+.collection-choix select {
+  width: 100%;
+  padding: 8px 6px;
+  font: inherit;
+  font-size: 1rem;           /* au moins 16 px : sinon l'iPhone zoome sur la page quand on touche le menu */
+  font-weight: 400;
+  color: var(--texte);
+  background: var(--carte);
+  border: 2px solid var(--contour);
+  border-radius: 8px;
+}
+
+@media (max-width: 400px) {
+  .collection-outils { grid-template-columns: 1fr 1fr; }
+  .collection-choix:first-child { grid-column: 1 / -1; }
+}
+
+.collection-filtre-resultat {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
 /* La grille : 4 cartes par ligne sur téléphone, plus sur grand écran */
 .collection-grille {
   display: grid;

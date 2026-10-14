@@ -309,7 +309,9 @@ Choix faits : les cartes sont rangées dans le navigateur (`heros-du-jour-collec
 - Page ou écran « Ma collection » : grille, cases « ? », compteur, carte en grand.
 - ✅ **Test :** « Touche "Ma collection" : tu dois voir ta carte et des cases "?" pour les autres, avec "1 / 100". Touche ta carte : elle s'affiche en grand. »
 
-### Étape 13 : Tri et amélioration des cartes
+### Étape 13 : Tri et amélioration des cartes — ✅ TERMINÉE (validée par Luca)
+
+Choix faits : trois menus dans « Ma collection » (Trier : ordre de la liste / les plus rares d'abord / les plus récentes d'abord ; Univers ; Rareté). Une carte rejouée avec une rareté plus haute est remplacée (message « Carte améliorée : Rare → Légendaire ! ») ; à rareté égale ou inférieure on garde l'ancienne carte. La date d'obtention d'une carte améliorée est celle de l'amélioration. Pour tester l'amélioration en mode test, ne pas mettre `&recommencer` (il efface la collection de test).
 
 - ✅ **Test :** « Trie par rareté : les Légendaires doivent être en premier. » Et vérifier qu'une carte rejouée avec un meilleur score monte en rareté, jamais l'inverse.
 

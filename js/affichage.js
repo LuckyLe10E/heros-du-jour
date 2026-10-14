@@ -163,7 +163,7 @@ function afficherLaCarteGagnee() {
   zone.innerHTML = "";
 
   const reduireLesAnimations = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const animer = partie.carteNouvelle && !partie.carteRevelee && !reduireLesAnimations;
+  const animer = (partie.carteNouvelle || partie.carteAmelioree) && !partie.carteRevelee && !reduireLesAnimations;
 
   const scene = creerCarteDom(partie.carte, { retournee: !animer });
   zone.appendChild(scene);
@@ -173,14 +173,21 @@ function afficherLaCarteGagnee() {
   }
   partie.carteRevelee = true;
 
-  // « Nouvelle carte » si elle vient d'être gagnée ; « ajoutée » si on la revoit après un rechargement ;
-  // « déjà dans ta collection » si le joueur la possédait avant cette partie.
+  // Le message sous la carte :
+  //  - nouvelle carte, ou carte améliorée (rareté plus haute) ;
+  //  - carte gagnée aujourd'hui qu'on revoit après un rechargement ;
+  //  - sinon : le joueur la possédait déjà avec une rareté au moins aussi bonne, on la garde.
   const carte = partie.carte;
   const gagneeDansCettePartie = carte.numero === partie.numero && carte.essais === partie.essais.length
     && carte.date === dateDuJourEnTexte();
-  let message = "Cette carte est déjà dans ta collection.";
-  if (partie.carteNouvelle) message = "Nouvelle carte ajoutée à ta collection !";
-  else if (gagneeDansCettePartie) message = "Carte ajoutée à ta collection.";
+  let message = "Tu avais déjà cette carte en " + RARETES[carte.rarete].nom + " : elle est conservée.";
+  if (partie.carteNouvelle) {
+    message = "Nouvelle carte ajoutée à ta collection !";
+  } else if (partie.carteAmelioree) {
+    message = "Carte améliorée : " + RARETES[partie.ancienneRarete].nom + " → " + RARETES[carte.rarete].nom + " !";
+  } else if (gagneeDansCettePartie) {
+    message = "Carte gagnée aujourd'hui, rangée dans ta collection.";
+  }
   document.getElementById("fin-carte-message").textContent = message;
 }
 
@@ -518,6 +525,7 @@ function demarrerAffichage() {
   listeSuggestions.addEventListener("mousedown", evenement => evenement.preventDefault());
   afficherEssais();
   afficherBoutonCollection();
+  preparerLesListesDeLaBibliotheque();
 
   // À la toute première visite, les règles s'ouvrent toutes seules
   if (!reglesDejaVues()) ouvrirRegles();

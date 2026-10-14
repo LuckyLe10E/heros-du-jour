@@ -91,21 +91,34 @@ function creerCarteDeLaPartie() {
 }
 
 // À la victoire : le joueur gagne la carte du personnage et elle rejoint sa collection.
-// Si la carte est déjà dans la collection, on garde l'ancienne (la montée de rareté viendra à l'étape 13).
-// Résultat dans partie.carte (la carte à montrer) et partie.carteNouvelle (vrai si elle vient d'être gagnée).
+//  - Carte jamais gagnée : elle est ajoutée (partie.carteNouvelle = vrai).
+//  - Carte déjà possédée et le joueur a fait MIEUX (rareté plus haute) : la carte est améliorée
+//    (partie.carteAmelioree = vrai, partie.ancienneRarete = l'ancienne rareté).
+//  - Carte déjà possédée et le joueur n'a pas fait mieux : on garde l'ancienne. Une carte ne descend JAMAIS en rareté.
+// Résultat dans partie.carte : la carte à montrer.
 function gagnerLaCarte() {
   const collection = lireCollection();
   const existante = collection.cartes[partie.mystere.id];
-  if (existante) {
+  const gagnee = creerCarteDeLaPartie();
+
+  partie.carteNouvelle = false;
+  partie.carteAmelioree = false;
+  partie.ancienneRarete = null;
+
+  if (!existante) {
+    collection.cartes[gagnee.id] = gagnee;
+    ecrireCollection(collection);
+    partie.carte = gagnee;
+    partie.carteNouvelle = true;
+  } else if (RARETES[gagnee.rarete].ordre > RARETES[existante.rarete].ordre) {
+    collection.cartes[gagnee.id] = gagnee;
+    ecrireCollection(collection);
+    partie.carte = gagnee;
+    partie.carteAmelioree = true;
+    partie.ancienneRarete = existante.rarete;
+  } else {
     partie.carte = existante;
-    partie.carteNouvelle = false;
-    return;
   }
-  const carte = creerCarteDeLaPartie();
-  collection.cartes[carte.id] = carte;
-  ecrireCollection(collection);
-  partie.carte = carte;
-  partie.carteNouvelle = true;
 }
 
 // Quand on recharge la page avec une partie déjà gagnée : on retrouve la carte dans la collection

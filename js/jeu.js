@@ -37,6 +37,8 @@ const partie = {
   statut: "en cours",             // "en cours", "gagne" ou "perdu"
   carte: null,                    // la carte gagnée (quand la partie est gagnée)
   carteNouvelle: false,           // vrai si la carte vient d'être gagnée (elle se retourne avec une animation)
+  carteAmelioree: false,          // vrai si la carte était déjà possédée et vient de monter en rareté
+  ancienneRarete: null,           // la rareté qu'avait la carte avant d'être améliorée
   carteRevelee: false             // vrai quand l'animation de retournement a déjà été montrée
 };
 

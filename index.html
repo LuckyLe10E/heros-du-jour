@@ -70,6 +70,26 @@
       <p id="collection-compteur" class="collection-compteur"></p>
       <p id="collection-test" class="collection-test" hidden>Mode test : ce sont les cartes de test, pas tes vraies cartes.</p>
       <p id="collection-vide" class="collection-vide" hidden>Aucune carte pour l'instant. Trouve le héros du jour pour gagner ta première carte !</p>
+
+      <!-- Trier et filtrer la grille -->
+      <div class="collection-outils">
+        <label class="collection-choix">Trier
+          <select id="collection-tri">
+            <option value="defaut">Ordre de la liste</option>
+            <option value="rarete">Les plus rares d'abord</option>
+            <option value="date">Les plus récentes d'abord</option>
+          </select>
+        </label>
+        <label class="collection-choix">Univers
+          <select id="collection-univers"><option value="">Tous</option></select>
+        </label>
+        <label class="collection-choix">Rareté
+          <select id="collection-rarete"><option value="">Toutes</option></select>
+        </label>
+      </div>
+      <p id="collection-filtre-resultat" class="collection-filtre-resultat" hidden></p>
+      <p id="collection-aucune" class="collection-vide" hidden>Aucune carte ne correspond à ce filtre.</p>
+
       <ul id="collection-grille" class="collection-grille"></ul>
       <button type="button" id="collection-fermer" class="bouton">Fermer</button>
     </div>
