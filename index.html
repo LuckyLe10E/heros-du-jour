@@ -13,6 +13,7 @@
 <body>
   <header class="entete">
     <h1 class="titre">Héros du Jour</h1>
+    <p class="numero-du-jour" id="numero-du-jour"></p>
     <p class="date-du-jour" id="date-du-jour"></p>
   </header>
 
@@ -26,8 +27,17 @@
       <ul id="suggestions" class="suggestions" role="listbox" hidden></ul>
     </div>
 
+    <!-- Le compteur d'essais, et le bouton pour revoir le résultat quand la partie est finie -->
+    <p id="compteur-essais" class="compteur-essais" aria-live="polite"></p>
+    <button type="button" id="bouton-resultat" class="bouton" hidden>Revoir le résultat</button>
+
+    <!-- Les indices qui s'ajoutent au fil des essais ratés -->
+    <details id="indices" class="indices" open hidden>
+      <summary id="indices-titre" class="indices-titre">Indices</summary>
+      <ul id="liste-indices" class="liste-indices" aria-live="polite"></ul>
+    </details>
+
     <!-- La grille : les en-têtes des 7 critères, puis une ligne de cases par essai -->
-    <p id="compteur-essais" class="compteur-essais"></p>
     <section class="grille" aria-label="Tes essais">
       <div id="entetes" class="entetes"></div>
       <ol id="liste-essais" class="liste-essais"></ol>
@@ -35,6 +45,18 @@
 
     <p id="mode-test" class="mode-test" hidden>Mode test</p>
   </main>
+
+  <!-- La fenêtre de fin de partie (victoire ou défaite), par-dessus le jeu -->
+  <div id="fenetre-fin" class="fenetre-fond" hidden>
+    <div class="fenetre" role="dialog" aria-modal="true" aria-labelledby="fin-titre">
+      <h2 id="fin-titre" class="fin-titre"></h2>
+      <p id="fin-intro" class="fin-intro"></p>
+      <p id="fin-nom" class="fin-nom"></p>
+      <p id="fin-oeuvre" class="fin-oeuvre"></p>
+      <p id="fin-fiche" class="fin-fiche"></p>
+      <button type="button" id="fin-fermer" class="bouton">Fermer</button>
+    </div>
+  </div>
 
   <script src="data/constantes.js"></script>
   <script src="data/personnages.js"></script>

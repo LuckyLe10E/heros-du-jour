@@ -5,9 +5,16 @@ function trouverPersonnage(id) {
   return window.PERSONNAGES.find(p => p.id === id);
 }
 
-// Choisit le personnage mystère.
+// Le nombre maximum d'essais par partie.
+const MAX_ESSAIS = 10;
+
+// Le numéro du jour : 1 le jour du lancement, 2 le lendemain, etc. (selon la date du téléphone).
+function numeroDuJour() {
+  return joursEntre(window.DATE_LANCEMENT, new Date()) + 1;
+}
+
+// Choisit le personnage mystère du jour : calendrier[(numéro - 1) % nombre de personnages].
 // Mode test : si l'adresse finit par ?perso=batman, c'est ce personnage (réservé à Luca, pour tester).
-// Sinon, PROVISOIRE (étape 5) : le premier du calendrier. L'étape 6 le choisira selon la date du jour.
 function choisirMystere() {
   const idDemande = new URLSearchParams(window.location.search).get("perso");
   if (idDemande) {
@@ -15,16 +22,40 @@ function choisirMystere() {
     if (personnage) return { personnage, modeTest: true };
     console.warn("Mode test : personnage inconnu « " + idDemande + " », il est ignoré.");
   }
-  return { personnage: trouverPersonnage(window.CALENDRIER[0]), modeTest: false };
+  const total = window.CALENDRIER.length;
+  const position = ((numeroDuJour() - 1) % total + total) % total;   // reste toujours entre 0 et total - 1
+  return { personnage: trouverPersonnage(window.CALENDRIER[position]), modeTest: false };
 }
 
 // L'état de la partie en cours.
 const mystere = choisirMystere();
 const partie = {
+  numero: numeroDuJour(),         // « Héros du Jour n°… »
   mystere: mystere.personnage,    // le personnage à deviner
   modeTest: mystere.modeTest,     // vrai si on a utilisé ?perso=... dans l'adresse
-  essais: []                      // les "id" des personnages déjà proposés, du plus ancien au plus récent
+  essais: [],                     // les "id" des personnages déjà proposés, du plus ancien au plus récent
+  statut: "en cours"              // "en cours", "gagne" ou "perdu"
 };
+
+// Combien d'essais ratés jusqu'ici (tous les essais, sauf le bon).
+function nombreEchecs() {
+  return partie.essais.filter(id => id !== partie.mystere.id).length;
+}
+
+// La liste des indices déjà dévoilés, selon le nombre d'essais ratés. Chaque indice s'ajoute au précédent :
+//   3 ratés : l'indice discret   |   4 ratés : le titre de l'œuvre
+//   5, 6, 7, 8 ratés : la 1re, 2e, 3e puis 4e phrase de la fiche
+// Renvoie une liste de { titre, texte }.
+function indicesDevoiles() {
+  const echecs = nombreEchecs();
+  const indices = [];
+  if (echecs >= 3) indices.push({ titre: "Indice", texte: partie.mystere.indice });
+  if (echecs >= 4) indices.push({ titre: "Œuvre", texte: partie.mystere.oeuvre });
+  decouperEnPhrases(partie.mystere.description).forEach((phrase, i) => {
+    if (echecs >= 5 + i) indices.push({ titre: "Détail " + (i + 1), texte: phrase });
+  });
+  return indices;
+}
 
 // Les 7 critères, dans l'ordre où ils s'affichent.
 // "genre" de comparaison : "simple" (identique ou pas), "liste" (plusieurs valeurs), "annee" (avec flèche).
@@ -70,11 +101,19 @@ function dejaPropose(id) {
   return partie.essais.includes(id);
 }
 
-// Note un essai : on ajoute le personnage à la liste (sauf s'il y est déjà).
+// Note un essai : on ajoute le personnage à la liste (sauf s'il y est déjà ou si la partie est finie),
+// puis on regarde si la partie est gagnée (bon personnage) ou perdue (10 essais utilisés).
 // Renvoie true si l'essai a été pris en compte.
 function ajouterEssai(id) {
+  if (partie.statut !== "en cours") return false;
   if (!trouverPersonnage(id) || dejaPropose(id)) return false;
+
   partie.essais.push(id);
+  if (id === partie.mystere.id) {
+    partie.statut = "gagne";
+  } else if (partie.essais.length >= MAX_ESSAIS) {
+    partie.statut = "perdu";
+  }
   return true;
 }
 

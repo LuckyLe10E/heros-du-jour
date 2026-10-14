@@ -12,6 +12,21 @@ function simplifier(texte) {
     .trim();
 }
 
+// Coupe un texte en phrases. Chaque fiche de personnage est écrite avec des phrases
+// qui se terminent par un point suivi d'un espace (jamais de point à l'intérieur d'une phrase).
+function decouperEnPhrases(texte) {
+  return texte.split(/\.\s+/).map(phrase => (phrase.endsWith(".") ? phrase : phrase + "."));
+}
+
+// Compte le nombre de jours entre une date de départ (texte « 2026-10-14 ») et une autre date.
+// Les deux sont lues en heure locale, à minuit. Le résultat est 0 le jour même, 1 le lendemain, etc.
+function joursEntre(departTexte, date) {
+  const morceaux = departTexte.split("-");
+  const depart = Date.UTC(Number(morceaux[0]), Number(morceaux[1]) - 1, Number(morceaux[2]));
+  const arrivee = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+  return Math.round((arrivee - depart) / 86400000);
+}
+
 // Transforme un texte « 2026-10-14 » en vraie date (à minuit, heure locale),
 // puis y ajoute un nombre de jours (0 par défaut).
 function dateDepuisTexte(texte, joursEnPlus) {

@@ -251,6 +251,149 @@ body {
 .case.orange { background: #f5a623; color: #1a1a1a; }
 .case.rouge  { background: #c62828; }
 
+/* ---------- Le numéro du jour ---------- */
+
+.numero-du-jour {
+  margin: 14px 0 0;
+  font-family: "Bangers", Impact, "Arial Black", sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  color: var(--accent);
+}
+
+.numero-du-jour + .date-du-jour {
+  margin-top: 0;
+}
+
+/* ---------- Les boutons ---------- */
+
+.bouton {
+  padding: 12px 22px;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--titre-fond);
+  border: 3px solid var(--contour);
+  border-radius: 10px;
+  box-shadow: 4px 4px 0 var(--ombre);
+  cursor: pointer;
+}
+
+.bouton:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ombre);
+}
+
+.bouton:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ---------- L'encadré des indices ---------- */
+
+.indices {
+  margin: 8px 0 16px;
+  padding: 8px 12px;
+  text-align: left;
+  background: var(--selection);
+  border: 3px dashed var(--contour);
+  border-radius: 10px;
+}
+
+.indices[hidden] {
+  display: none;
+}
+
+/* Le titre est aussi le bouton pour replier ou déplier la liste */
+.indices-titre {
+  font-family: "Bangers", Impact, "Arial Black", sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.liste-indices {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.liste-indices li {
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  line-height: 1.3;
+}
+
+/* ---------- La fenêtre de fin de partie ---------- */
+
+.fenetre-fond {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.fenetre-fond[hidden] {
+  display: none;
+}
+
+.fenetre {
+  width: 100%;
+  max-width: 460px;
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 22px 20px;
+  text-align: center;
+  color: var(--texte);
+  background: var(--fond);
+  border: 5px solid var(--contour);
+  border-radius: 14px;
+  box-shadow: 8px 8px 0 var(--ombre);
+}
+
+.fin-titre {
+  margin: 0 0 6px;
+  font-family: "Bangers", Impact, "Arial Black", sans-serif;
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: 1px;
+  line-height: 1.1;
+}
+
+.victoire .fin-titre { color: #1f8a43; }
+.defaite  .fin-titre { color: #c62828; }
+
+.fin-intro {
+  margin: 0;
+}
+
+.fin-nom {
+  margin: 4px 0;
+  font-family: "Bangers", Impact, "Arial Black", sans-serif;
+  font-size: 2.2rem;
+  letter-spacing: 1px;
+  line-height: 1.1;
+}
+
+.fin-oeuvre {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  opacity: 0.8;
+}
+
+.fin-fiche {
+  margin: 0 0 18px;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  text-align: left;
+}
+
 .mode-test {
   margin-top: 28px;
   font-size: 0.7rem;

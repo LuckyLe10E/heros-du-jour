@@ -274,7 +274,7 @@ Chaque étape est petite. **À la fin de chaque étape** : expliquer à Luca en 
 - Comparer l'essai au personnage mystère et afficher la ligne de 7 cases.
 - ✅ **Test :** « Ouvre la page en ajoutant `?perso=batman` à la fin du lien. Propose Superman : Univers doit être vert (DC), Camp vert (Héros), Pouvoirs rouge… Propose Batman : tout doit être vert. »
 
-### Étape 6 : Le personnage du jour et la fin de partie
+### Étape 6 : Le personnage du jour et la fin de partie — ✅ TERMINÉE (validée par Luca)
 
 - Personnage selon la date, numéro du jour, limite de 10 essais, indices progressifs (dès 3 essais ratés, voir section 4), écrans de victoire et de défaite.
 - ✅ **Test :** « Avec `?perso=thanos`, trouve Thanos : un écran "Bravo" doit s'afficher. Recharge avec `?perso=goku` et rate 10 fois : la réponse "Goku" doit s'afficher. Après 3 essais ratés, le premier indice doit apparaître, puis il doit s'enrichir à chaque essai raté suivant. »

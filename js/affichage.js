@@ -94,11 +94,59 @@ function afficherSuggestions() {
 }
 
 // Le joueur a choisi un personnage : on note l'essai et on remet la case à zéro.
+// Si la partie vient de se terminer, on ouvre la fenêtre de fin.
 function choisirPersonnage(id) {
   if (!ajouterEssai(id)) return;
   champSaisie.value = "";
   fermerSuggestions();
   afficherEssais();
+  if (partie.statut !== "en cours") ouvrirFenetreFin();
+}
+
+// Écrit « 1 essai » ou « 4 essais ».
+function texteNombreEssais(nombre) {
+  return nombre + (nombre > 1 ? " essais" : " essai");
+}
+
+// Dessine l'encadré des indices (caché tant qu'il n'y en a aucun).
+function afficherIndices() {
+  const indices = indicesDevoiles();
+  const liste = document.getElementById("liste-indices");
+  liste.innerHTML = "";
+  indices.forEach(indice => {
+    const ligne = document.createElement("li");
+    const titre = document.createElement("strong");
+    titre.textContent = indice.titre + " : ";
+    ligne.appendChild(titre);
+    ligne.appendChild(document.createTextNode(indice.texte));
+    liste.appendChild(ligne);
+  });
+  document.getElementById("indices-titre").textContent = "Indices (" + indices.length + ")";
+  document.getElementById("indices").hidden = (indices.length === 0);
+}
+
+// Ouvre la fenêtre de fin de partie : victoire ou défaite, avec le personnage et sa fiche.
+function ouvrirFenetreFin() {
+  const gagne = (partie.statut === "gagne");
+  const p = partie.mystere;
+
+  document.getElementById("fin-titre").textContent = gagne
+    ? "Bravo ! Trouvé en " + texteNombreEssais(partie.essais.length)
+    : "Raté !";
+  document.getElementById("fin-intro").textContent = gagne ? "Le héros du jour était :" : "C'était…";
+  document.getElementById("fin-nom").textContent = p.nom;
+  document.getElementById("fin-oeuvre").textContent = p.univers + " · " + p.oeuvre + " (" + p.annee + ")";
+  document.getElementById("fin-fiche").textContent = p.description;
+
+  document.getElementById("fenetre-fin").className = "fenetre-fond " + (gagne ? "victoire" : "defaite");
+  document.getElementById("fenetre-fin").hidden = false;
+  document.getElementById("fin-fermer").focus();
+}
+
+// Ferme la fenêtre de fin de partie.
+function fermerFenetreFin() {
+  document.getElementById("fenetre-fin").hidden = true;
+  document.getElementById("bouton-resultat").focus();
 }
 
 // Le petit symbole de chaque case, pour les personnes qui ne distinguent pas bien les couleurs.
@@ -182,9 +230,20 @@ function afficherEssais() {
 
     listeEssais.appendChild(essai);
   });
-  compteurEssais.textContent = partie.essais.length === 0
-    ? "Aucun essai pour l'instant"
-    : "Essais : " + partie.essais.length;
+
+  // Le compteur, la case de saisie et le bouton « Revoir le résultat » selon l'état de la partie
+  const termine = (partie.statut !== "en cours");
+  if (partie.statut === "gagne") {
+    compteurEssais.textContent = "Trouvé en " + texteNombreEssais(partie.essais.length) + " !";
+  } else if (partie.statut === "perdu") {
+    compteurEssais.textContent = "Partie terminée : les " + MAX_ESSAIS + " essais sont utilisés";
+  } else {
+    compteurEssais.textContent = "Essai " + (partie.essais.length + 1) + " / " + MAX_ESSAIS;
+  }
+  champSaisie.disabled = termine;
+  champSaisie.placeholder = termine ? "Partie terminée" : "Tape un nom de personnage…";
+  document.getElementById("bouton-resultat").hidden = !termine;
+  afficherIndices();
 }
 
 // Gère les touches du clavier dans la case de saisie.
@@ -205,7 +264,16 @@ function gererClavier(evenement) {
 
 // Démarrage : on branche la case de saisie.
 function demarrerAffichage() {
+  document.getElementById("numero-du-jour").textContent = "n°" + partie.numero;
   document.getElementById("date-du-jour").textContent = dateDuJourEnFrancais();
+  document.getElementById("fin-fermer").addEventListener("click", fermerFenetreFin);
+  document.getElementById("bouton-resultat").addEventListener("click", ouvrirFenetreFin);
+  document.getElementById("fenetre-fin").addEventListener("mousedown", evenement => {
+    if (evenement.target.id === "fenetre-fin") fermerFenetreFin();   // un clic à côté de la fenêtre la ferme
+  });
+  document.addEventListener("keydown", evenement => {
+    if (evenement.key === "Escape" && !document.getElementById("fenetre-fin").hidden) fermerFenetreFin();
+  });
   afficherEntetes();
   if (partie.modeTest) document.getElementById("mode-test").hidden = false;
   champSaisie.addEventListener("input", afficherSuggestions);
