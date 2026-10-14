@@ -31,7 +31,7 @@ function carteValide(carte) {
     && typeof carte.id === "string" && Boolean(trouverPersonnage(carte.id))
     && Boolean(RARETES[carte.rarete])
     && Number.isInteger(carte.essais) && carte.essais >= 1 && carte.essais <= MAX_ESSAIS
-    && typeof carte.date === "string"
+    && typeof carte.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(carte.date)
     && Number.isInteger(carte.numero);
 }
 

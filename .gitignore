@@ -1,2 +1,5 @@
 # Réglages locaux de l'outil de travail, pas utiles en ligne
 .claude/
+
+# Maquettes de design (pas des pages du site)
+maquettes/

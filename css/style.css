@@ -820,9 +820,79 @@ body {
 }
 
 /* La grille est longue : le bouton « Fermer » reste toujours visible en bas de l'écran */
-.fenetre-collection .bouton {
+#collection-fermer {
   position: sticky;
   bottom: 4px;
+}
+
+/* Petit bouton (sauvegarde, etc.) */
+.bouton-petit {
+  padding: 9px 16px;
+  font-size: 0.9rem;
+}
+
+/* ---------- La fenêtre de sauvegarde des cartes ---------- */
+
+.fenetre-sauvegarde {
+  max-width: 520px;
+  padding: 18px 14px;
+  text-align: left;
+}
+
+.fenetre-sauvegarde .fin-titre {
+  text-align: center;
+}
+
+.fenetre-sauvegarde .bouton {
+  display: block;
+  margin: 8px auto 0;
+}
+
+.sauvegarde-aide {
+  margin: 0 0 10px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.sauvegarde-sous-titre {
+  margin: 14px 0 8px;
+  font-family: "Bangers", Impact, "Arial Black", sans-serif;
+  font-size: 1.15rem;
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+
+/* Les zones de texte pour le code */
+.sauvegarde-zone {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 1rem;            /* au moins 16 px : sinon l'iPhone zoome sur la page */
+  color: var(--texte);
+  background: var(--carte);
+  border: 2px solid var(--contour);
+  border-radius: 8px;
+  resize: vertical;
+  word-break: break-all;
+}
+
+.sauvegarde-message {
+  min-height: 1.4em;
+  margin: 12px 0 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.sauvegarde-message.bon   { color: #1f8a43; }
+.sauvegarde-message.souci { color: #c62828; }
+
+/* Dans la bibliothèque : le bouton de sauvegarde est centré, sous le compteur */
+#collection-sauvegarde {
+  display: block;
+  margin: 0 auto 12px;
 }
 
 .collection-compteur {

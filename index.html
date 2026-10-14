@@ -70,6 +70,7 @@
       <p id="collection-compteur" class="collection-compteur"></p>
       <p id="collection-test" class="collection-test" hidden>Mode test : ce sont les cartes de test, pas tes vraies cartes.</p>
       <p id="collection-vide" class="collection-vide" hidden>Aucune carte pour l'instant. Trouve le héros du jour pour gagner ta première carte !</p>
+      <button type="button" id="collection-sauvegarde" class="bouton bouton-discret bouton-petit">💾 Sauvegarder / restaurer mes cartes</button>
 
       <!-- Trier et filtrer la grille -->
       <div class="collection-outils">
@@ -92,6 +93,32 @@
 
       <ul id="collection-grille" class="collection-grille"></ul>
       <button type="button" id="collection-fermer" class="bouton">Fermer</button>
+    </div>
+  </div>
+
+  <!-- La fenêtre pour sauvegarder et restaurer ses cartes (code à copier-coller) -->
+  <div id="fenetre-sauvegarde" class="fenetre-fond" hidden>
+    <div class="fenetre fenetre-sauvegarde" role="dialog" aria-modal="true" aria-labelledby="sauvegarde-titre">
+      <h2 id="sauvegarde-titre" class="fin-titre">Sauvegarder mes cartes</h2>
+      <p id="sauvegarde-test" class="collection-test" hidden>Mode test : cela concerne les cartes de test.</p>
+      <p class="sauvegarde-aide">Tes cartes sont rangées dans ce navigateur. Si tu changes de téléphone ou si tu effaces les données du navigateur, elles disparaissent. Avec un <strong>code de sauvegarde</strong>, tu peux les retrouver partout.</p>
+
+      <h3 class="sauvegarde-sous-titre">1. Créer mon code</h3>
+      <button type="button" id="sauvegarde-creer" class="bouton bouton-petit">Créer mon code</button>
+      <label class="invisible" for="sauvegarde-code">Mon code de sauvegarde</label>
+      <textarea id="sauvegarde-code" class="sauvegarde-zone" rows="4" readonly
+                placeholder="Ton code apparaîtra ici" spellcheck="false"></textarea>
+      <button type="button" id="sauvegarde-copier" class="bouton bouton-petit" hidden>Copier le code</button>
+
+      <h3 class="sauvegarde-sous-titre">2. Retrouver mes cartes</h3>
+      <p class="sauvegarde-aide">Colle ici le code créé sur l'autre appareil. Tes cartes actuelles sont gardées : on ajoute seulement celles qui manquent, et on garde toujours la meilleure rareté.</p>
+      <label class="invisible" for="sauvegarde-restaurer-texte">Code à restaurer</label>
+      <textarea id="sauvegarde-restaurer-texte" class="sauvegarde-zone" rows="4"
+                placeholder="Colle ton code ici" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></textarea>
+      <button type="button" id="sauvegarde-restaurer" class="bouton bouton-petit">Restaurer mes cartes</button>
+
+      <p id="sauvegarde-message" class="sauvegarde-message" role="status"></p>
+      <button type="button" id="sauvegarde-fermer" class="bouton bouton-discret">Fermer</button>
     </div>
   </div>
 
@@ -156,6 +183,7 @@
   <script src="js/stockage.js"></script>
   <script src="js/collection.js"></script>
   <script src="js/carte.js"></script>
+  <script src="js/sauvegarde.js"></script>
   <script src="js/bibliotheque.js"></script>
   <script src="js/jeu.js"></script>
   <script src="js/affichage.js"></script>
