@@ -17,13 +17,24 @@
   </header>
 
   <main class="contenu">
-    <p class="bientot">Le jeu arrive bientôt…</p>
+    <!-- La case de saisie et sa liste de suggestions -->
+    <div class="zone-saisie">
+      <label for="saisie" class="invisible">Nom du personnage</label>
+      <input type="text" id="saisie" class="saisie" placeholder="Tape un nom de personnage…"
+             autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+             role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggestions">
+      <ul id="suggestions" class="suggestions" role="listbox" hidden></ul>
+    </div>
+
+    <!-- Provisoire (étape 4) : la liste des essais. L'étape 5 la remplace par les cases de couleur. -->
+    <p id="compteur-essais" class="compteur-essais"></p>
+    <ol id="liste-essais" class="liste-essais"></ol>
   </main>
 
+  <script src="data/constantes.js"></script>
+  <script src="data/personnages.js"></script>
   <script src="js/outils.js"></script>
-  <script>
-    // Affiche la date d'aujourd'hui sous le titre
-    document.getElementById("date-du-jour").textContent = dateDuJourEnFrancais();
-  </script>
+  <script src="js/jeu.js"></script>
+  <script src="js/affichage.js"></script>
 </body>
 </html>

@@ -27,11 +27,6 @@ function creerCellule(texte, classe) {
   return td;
 }
 
-// Enlève majuscules et accents pour que la recherche soit souple.
-function simplifier(texte) {
-  return texte.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
-}
-
 // Renvoie la liste des personnages après filtres et tri.
 function personnagesAffiches() {
   const mot = simplifier(document.getElementById("recherche").value.trim());

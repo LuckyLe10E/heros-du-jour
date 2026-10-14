@@ -265,7 +265,7 @@ Chaque étape est petite. **À la fin de chaque étape** : expliquer à Luca en 
 - ✅ **Test :** « Ouvre `verification.html`. Tu dois voir un tableau d'environ 100 personnages. Relis-les à ton rythme et dis-moi tout ce qui te paraît faux, surtout les lignes marquées "à vérifier". »
 - Corriger selon les retours de Luca (ça peut se faire en parallèle des étapes suivantes).
 
-### Étape 4 : La case de saisie et les suggestions
+### Étape 4 : La case de saisie et les suggestions — ✅ TERMINÉE (validée par Luca)
 
 - ✅ **Test :** « Tape "bat" : tu dois voir Batman (et d'autres noms qui contiennent "bat"). Tape "peter parker" : tu dois voir Spider-Man. Tape "zzz" : aucune suggestion. »
 

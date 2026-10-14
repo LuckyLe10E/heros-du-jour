@@ -1,5 +1,17 @@
 // Fonctions communes à tout le site.
 
+// Rend un texte « neutre » pour les recherches : sans majuscules, sans accents,
+// avec les tirets et apostrophes remplacés par des espaces.
+// Exemple : « L'Homme-Araignée » devient « l homme araignee ».
+function simplifier(texte) {
+  return texte
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
 // Transforme un texte « 2026-10-14 » en vraie date (à minuit, heure locale),
 // puis y ajoute un nombre de jours (0 par défaut).
 function dateDepuisTexte(texte, joursEnPlus) {
