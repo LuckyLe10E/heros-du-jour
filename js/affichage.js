@@ -351,19 +351,112 @@ function gererClavier(evenement) {
   }
 }
 
-// Démarrage : on branche la case de saisie.
+// ---------- La fenêtre « Comment jouer » ----------
+
+// Assemble des mots en français : ["a", "b", "c"] devient « a, b et c ».
+function listeEnFrancais(mots) {
+  if (mots.length <= 1) return mots.join("");
+  return mots.slice(0, -1).join(", ") + " et " + mots[mots.length - 1];
+}
+
+// Écrit une phrase qui explique les couleurs de la ligne d'exemple (elle suit toujours les vraies données).
+// Exemple de résultat : « Ici : univers, camp et genre sont identiques (vert) ; espèce est différent (rouge)… »
+function phraseExplicative(comparaisons) {
+  const groupes = { vert: [], orange: [], rouge: [] };
+  let fleche = null;
+  CRITERES_JEU.forEach((critere, i) => {
+    if (critere.genre === "annee" && comparaisons[i].fleche) {
+      fleche = comparaisons[i].fleche;
+    } else {
+      groupes[comparaisons[i].etat].push(critere.titre.toLowerCase());
+    }
+  });
+
+  const morceaux = [];
+  const adjectifs = { vert: "identique", orange: "en partie identique", rouge: "différent" };
+  ["vert", "orange", "rouge"].forEach(couleur => {
+    const mots = groupes[couleur];
+    if (mots.length === 0) return;
+    const accord = mots.length > 1 ? "s" : "";
+    morceaux.push(listeEnFrancais(mots) + (mots.length > 1 ? " sont " : " est ") + adjectifs[couleur] + accord + " (" + couleur + ")");
+  });
+  if (fleche) {
+    morceaux.push("le mystère est apparu " + (fleche === "haut" ? "plus tard (⬆️)" : "plus tôt (⬇️)"));
+  }
+  return "Ici : " + morceaux.join(" ; ") + ".";
+}
+
+// Construit la ligne d'exemple de la fenêtre (en comparant deux vrais personnages) et son explication.
+function preparerExempleDesRegles() {
+  const essai = trouverPersonnage("superman") || window.PERSONNAGES[0];
+  const cible = trouverPersonnage("batman") || window.PERSONNAGES[1];
+  const comparaisons = comparerPersonnages(essai, cible);
+
+  const intro = document.getElementById("regles-intro-exemple");
+  intro.textContent = "Exemple : le mystère est ";
+  const nomCible = document.createElement("strong");
+  nomCible.textContent = cible.nom;
+  const nomEssai = document.createElement("strong");
+  nomEssai.textContent = essai.nom;
+  intro.appendChild(nomCible);
+  intro.appendChild(document.createTextNode(" et tu proposes "));
+  intro.appendChild(nomEssai);
+  intro.appendChild(document.createTextNode(" :"));
+
+  const zone = document.getElementById("regles-exemple");
+  const entetes = document.createElement("div");
+  entetes.className = "entetes";
+  CRITERES_JEU.forEach(critere => {
+    const titre = document.createElement("div");
+    titre.className = "entete-critere";
+    titre.textContent = critere.titre;
+    entetes.appendChild(titre);
+  });
+  const cases = document.createElement("div");
+  cases.className = "cases";
+  CRITERES_JEU.forEach((critere, i) => cases.appendChild(creerCase(critere, essai, comparaisons[i])));
+  zone.appendChild(entetes);
+  zone.appendChild(cases);
+
+  document.getElementById("regles-explication").textContent = phraseExplicative(comparaisons);
+}
+
+// Ouvre la fenêtre « Comment jouer » (et retient que le joueur l'a vue).
+function ouvrirRegles() {
+  document.getElementById("fenetre-regles").hidden = false;
+  document.getElementById("regles-fermer").focus();
+  noterReglesVues();
+}
+
+// Ferme la fenêtre « Comment jouer ».
+function fermerRegles() {
+  document.getElementById("fenetre-regles").hidden = true;
+  document.getElementById("bouton-aide").focus();
+}
+
+// ---------- Démarrage ----------
+
+// Démarrage : on branche tous les boutons et la case de saisie.
 function demarrerAffichage() {
   document.getElementById("numero-du-jour").textContent = "n°" + partie.numero;
   document.getElementById("date-du-jour").textContent = dateDuJourEnFrancais();
   document.getElementById("fin-fermer").addEventListener("click", fermerFenetreFin);
   document.getElementById("fin-partager").addEventListener("click", partagerLeResultat);
   document.getElementById("bouton-resultat").addEventListener("click", ouvrirFenetreFin);
+  document.getElementById("bouton-aide").addEventListener("click", ouvrirRegles);
+  document.getElementById("regles-fermer").addEventListener("click", fermerRegles);
   document.getElementById("fenetre-fin").addEventListener("mousedown", evenement => {
     if (evenement.target.id === "fenetre-fin") fermerFenetreFin();   // un clic à côté de la fenêtre la ferme
   });
-  document.addEventListener("keydown", evenement => {
-    if (evenement.key === "Escape" && !document.getElementById("fenetre-fin").hidden) fermerFenetreFin();
+  document.getElementById("fenetre-regles").addEventListener("mousedown", evenement => {
+    if (evenement.target.id === "fenetre-regles") fermerRegles();
   });
+  document.addEventListener("keydown", evenement => {
+    if (evenement.key !== "Escape") return;
+    if (!document.getElementById("fenetre-regles").hidden) fermerRegles();
+    else if (!document.getElementById("fenetre-fin").hidden) fermerFenetreFin();
+  });
+  preparerExempleDesRegles();
   afficherEntetes();
   if (partie.modeTest) document.getElementById("mode-test").hidden = false;
   champSaisie.addEventListener("input", afficherSuggestions);
@@ -373,6 +466,9 @@ function demarrerAffichage() {
   // Toucher la liste (pour la faire défiler) ne doit pas fermer la liste
   listeSuggestions.addEventListener("mousedown", evenement => evenement.preventDefault());
   afficherEssais();
+
+  // À la toute première visite, les règles s'ouvrent toutes seules
+  if (!reglesDejaVues()) ouvrirRegles();
 }
 
 demarrerAffichage();

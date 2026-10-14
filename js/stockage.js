@@ -28,6 +28,25 @@ function ecrireSauvegarde(donnees) {
   }
 }
 
+// Savoir si le joueur a déjà vu la fenêtre « Comment jouer » (elle s'ouvre toute seule à la première visite).
+const CLE_REGLES_VUES = "heros-du-jour-regles-vues";
+
+function reglesDejaVues() {
+  try {
+    return localStorage.getItem(CLE_REGLES_VUES) === "oui";
+  } catch (erreur) {
+    return false;
+  }
+}
+
+function noterReglesVues() {
+  try {
+    localStorage.setItem(CLE_REGLES_VUES, "oui");
+  } catch (erreur) {
+    // pas grave : la fenêtre pourra s'ouvrir de nouveau à la prochaine visite
+  }
+}
+
 // Efface la partie sauvegardée.
 function effacerSauvegarde() {
   try {

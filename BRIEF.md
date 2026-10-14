@@ -287,7 +287,7 @@ Chaque étape est petite. **À la fin de chaque étape** : expliquer à Luca en 
 
 - ✅ **Test :** « Termine une partie sur ton téléphone, appuie sur Partager et envoie-le-toi sur WhatsApp. Tu dois voir les carrés de couleur et le lien, mais pas le nom du personnage. Le compte à rebours doit défiler. »
 
-### Étape 9 : Règles et finitions
+### Étape 9 : Règles et finitions — ✅ TERMINÉE (validée par Luca)
 
 - Fenêtre « Comment jouer », finitions visuelles, vérification de l'affichage sur petit écran, mode sombre.
 - ✅ **Test :** « Ouvre le site dans une fenêtre de navigation privée sur ton téléphone : les règles doivent s'afficher toutes seules. Tout doit être lisible sans zoomer. »

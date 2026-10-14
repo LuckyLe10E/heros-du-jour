@@ -4,7 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Héros du Jour</title>
-  <meta name="description" content="Devine chaque jour le personnage de fiction mystère.">
+  <meta name="description" content="Devine chaque jour le personnage de fiction mystère : comics, manga, héros ou méchant.">
+  <meta name="theme-color" content="#e62429">
+  <meta property="og:title" content="Héros du Jour">
+  <meta property="og:description" content="Devine chaque jour le personnage de fiction mystère.">
+  <!-- Icône de l'onglet : un petit éclair dessiné directement dans l'adresse, sans fichier à part -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%23e62429'/%3E%3Ctext x='50' y='72' font-size='64' text-anchor='middle'%3E⚡%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
@@ -12,8 +17,13 @@
   <script src="js/theme.js"></script>
 </head>
 <body>
+  <noscript>
+    <p class="sans-javascript">Héros du Jour a besoin de JavaScript pour fonctionner. Active-le dans ton navigateur pour jouer.</p>
+  </noscript>
+
   <header class="entete">
-    <button type="button" id="bouton-theme" class="bouton-theme" aria-label="Changer de mode"></button>
+    <button type="button" id="bouton-aide" class="bouton-rond bouton-aide" aria-label="Comment jouer ?" title="Comment jouer ?">?</button>
+    <button type="button" id="bouton-theme" class="bouton-rond bouton-theme" aria-label="Changer de mode"></button>
     <h1 class="titre">Héros du Jour</h1>
     <p class="numero-du-jour" id="numero-du-jour"></p>
     <p class="date-du-jour" id="date-du-jour"></p>
@@ -47,6 +57,33 @@
 
     <p id="mode-test" class="mode-test" hidden>Mode test</p>
   </main>
+
+  <!-- La fenêtre « Comment jouer » (ouverte toute seule à la première visite) -->
+  <div id="fenetre-regles" class="fenetre-fond" hidden>
+    <div class="fenetre fenetre-regles" role="dialog" aria-modal="true" aria-labelledby="regles-titre">
+      <h2 id="regles-titre" class="fin-titre">Comment jouer ?</h2>
+
+      <ol class="regles-liste">
+        <li>Chaque jour, un <strong>personnage de fiction</strong> (comics, manga, héros ou méchant) est à deviner. C'est le même pour tout le monde.</li>
+        <li>Tape un nom et choisis-le dans la liste. Tu as <strong>10 essais</strong>.</li>
+        <li>Après chaque essai, 7 cases comparent ton personnage au mystère :</li>
+      </ol>
+
+      <ul class="legende">
+        <li><span class="pastille vert">✓</span><span class="legende-texte"><strong>vert</strong> : identique</span></li>
+        <li><span class="pastille orange">~</span><span class="legende-texte"><strong>orange</strong> : en partie identique (au moins un pouvoir ou un groupe en commun)</span></li>
+        <li><span class="pastille rouge">✗</span><span class="legende-texte"><strong>rouge</strong> : différent</span></li>
+        <li><span class="pastille-fleche">⬆️⬇️</span><span class="legende-texte">pour l'année : le mystère est apparu <strong>plus tard</strong> (⬆️) ou <strong>plus tôt</strong> (⬇️)</span></li>
+      </ul>
+
+      <p id="regles-intro-exemple" class="regles-intro-exemple"></p>
+      <div id="regles-exemple" class="regles-exemple"></div>
+      <p id="regles-explication" class="regles-explication"></p>
+
+      <p class="regles-fin">Dès 3 essais ratés, des <strong>indices</strong> apparaissent, de plus en plus précis. Un nouveau héros t'attend chaque jour à minuit.</p>
+      <button type="button" id="regles-fermer" class="bouton">C'est parti !</button>
+    </div>
+  </div>
 
   <!-- La fenêtre de fin de partie (victoire ou défaite), par-dessus le jeu -->
   <div id="fenetre-fin" class="fenetre-fond" hidden>

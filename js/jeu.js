@@ -109,23 +109,28 @@ function comparerListes(listeEssai, listeMystere) {
   return communs.length > 0 ? "orange" : "rouge";
 }
 
-// Compare le personnage proposé au personnage mystère, critère par critère.
+// Compare un personnage proposé à un personnage « cible », critère par critère.
 // Renvoie 7 résultats : { etat: "vert" | "orange" | "rouge", fleche: "haut" | "bas" | null }.
-// La flèche (pour l'année) pointe vers le haut si le mystère est plus récent, vers le bas s'il est plus ancien.
-function comparerAvecMystere(personnage) {
+// La flèche (pour l'année) pointe vers le haut si la cible est plus récente, vers le bas si elle est plus ancienne.
+function comparerPersonnages(personnage, cible) {
   return CRITERES_JEU.map(critere => {
     const valeurEssai = personnage[critere.cle];
-    const valeurMystere = partie.mystere[critere.cle];
+    const valeurCible = cible[critere.cle];
 
     if (critere.genre === "liste") {
-      return { etat: comparerListes(valeurEssai, valeurMystere), fleche: null };
+      return { etat: comparerListes(valeurEssai, valeurCible), fleche: null };
     }
-    if (valeurEssai === valeurMystere) return { etat: "vert", fleche: null };
+    if (valeurEssai === valeurCible) return { etat: "vert", fleche: null };
     if (critere.genre === "annee") {
-      return { etat: "rouge", fleche: valeurMystere > valeurEssai ? "haut" : "bas" };
+      return { etat: "rouge", fleche: valeurCible > valeurEssai ? "haut" : "bas" };
     }
     return { etat: "rouge", fleche: null };
   });
+}
+
+// Compare le personnage proposé au personnage mystère du jour.
+function comparerAvecMystere(personnage) {
+  return comparerPersonnages(personnage, partie.mystere);
 }
 
 // Dit si ce personnage a déjà été proposé dans la partie.
