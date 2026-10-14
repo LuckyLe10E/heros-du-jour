@@ -44,7 +44,7 @@ L'objectif de Luca est un **vrai projet durable**, qu'il fera grandir longtemps.
 - Il s'affiche bien sur téléphone (priorité) et sur ordinateur.
 - Chaque jour, un personnage mystère est choisi automatiquement, le même pour tout le monde.
 - Le joueur tape un nom, choisit dans une liste de suggestions, et voit une ligne de 7 cases de couleur.
-- Il a 10 essais. Un indice bonus apparaît après 5 essais.
+- Il a 10 essais. Des indices de plus en plus précis apparaissent dès 3 essais ratés (voir section 4, point 5).
 - En fin de partie, un écran de victoire ou de défaite s'affiche, avec un bouton **Partager** et un compte à rebours jusqu'au prochain personnage.
 - Si le joueur ferme la page, il retrouve sa partie en revenant.
 - La base contient **environ 100 personnages** parmi les plus populaires.
@@ -76,8 +76,12 @@ L'objectif de Luca est un **vrai projet durable**, qu'il fera grandir longtemps.
    **Accessibilité** : en plus des couleurs, chaque case porte un petit symbole (✓, ~, ✗) pour les daltoniens.
 
 4. **10 essais maximum**.
-5. **Indice bonus après 5 essais** : le titre de l'œuvre d'origine et une courte description **écrite par nous** (pas de citation copiée d'une œuvre).
-6. **Écran de fin** : victoire (« Trouvé en 4 essais ! ») ou défaite (la réponse est révélée), avec le nom du personnage et sa courte description.
+5. **Indices de plus en plus précis au fil des essais ratés** (décision de Luca) ; chaque indice s'ajoute au précédent, texte **écrit par nous** (pas de citation copiée d'une œuvre) :
+   - après 3 essais ratés : l'**indice** discret (`indice`)
+   - après 4 essais ratés : + le **titre de l'œuvre** d'origine (`oeuvre`)
+   - après 5, 6, 7 et 8 essais ratés : + la **1ʳᵉ, 2ᵉ, 3ᵉ puis 4ᵉ phrase de la fiche** (`description`), de la plus vague à la plus révélatrice
+   (Chaque `description` fait **exactement 4 phrases**, sans point à l'intérieur d'une phrase ; le code la découpe aux points. Ce calendrier est une proposition à confirmer avec Luca à l'étape 6.)
+6. **Écran de fin** : victoire (« Trouvé en 4 essais ! ») ou défaite (la réponse est révélée), avec le nom du personnage et sa **fiche détaillée** (`description`).
 7. **Bouton Partager** : copie un texte du type ci-dessous, sans révéler la réponse, avec le lien du site. Sur téléphone, utiliser le partage natif si disponible.
    ```
    Héros du Jour n°12 — 4/10
@@ -131,7 +135,7 @@ L'objectif de Luca est un **vrai projet durable**, qu'il fera grandir longtemps.
 - Au centre : une grande case « Tape un nom de personnage… ». En tapant, une liste de suggestions s'ouvre en dessous (nom + univers). Toucher une suggestion valide l'essai.
 - En dessous : les en-têtes des 7 critères, puis une ligne de cases par essai. Sur téléphone, les 7 cases doivent tenir sur la largeur de l'écran (cases compactes, texte court) ; si vraiment impossible, défilement horizontal du tableau seulement, jamais de la page entière.
 - Un compteur « Essai 3 / 10 ».
-- Après 5 essais ratés : un encadré « Indice : il vient de *…* » apparaît.
+- Après 3 essais ratés : un encadré « Indice » apparaît, puis il s'enrichit après 5, 7 et 9 essais ratés (voir section 4, point 5).
 
 ### Écran 2 : la fin de partie (fenêtre par-dessus le jeu)
 
@@ -205,9 +209,13 @@ heros-du-jour/
     groupes: ["Avengers"],
     annee: 1962,
     oeuvre: "Amazing Fantasy",
-    description: "Un étudiant de New York mordu par une araignée radioactive."
+    indice: "Un jeune qui doit concilier une vie ordinaire compliquée avec une double vie.",
+    description: "Orphelin élevé par son oncle et sa tante, ce lycéen timide est mordu pendant une démonstration scientifique…"
   }
   ```
+- **Deux textes par personnage** (décision de Luca) : `indice` = court et discret, premier indice de la partie, montré après 3 essais ratés (il ne doit trahir ni l'équipe, ni le costume, ni les proches, ni le nom) ; `description` = la fiche détaillée en **4 phrases** (de la plus vague à la plus révélatrice), dévoilée phrase par phrase au fil des essais ratés (voir section 4, point 5), puis montrée en entier à la fin de la partie. Ni l'indice ni la fiche ne contiennent le nom du personnage ni un de ses surnoms (vérifié par un contrôle automatique).
+- **Dates de 1ʳᵉ apparition** : année de la date de couverture pour les comics, année de publication dans le magazine pour les mangas. Tous les faits ont été recoupés avec des sources (Wikipédia anglophone surtout) en octobre 2026.
+- Le champ facultatif `averifier` contient un doute à trancher par Luca (à supprimer une fois vérifié).
 - Les valeurs de chaque critère viennent **uniquement des listes fixes** de la section 4 (un fichier de constantes les définit). Pas de variantes d'orthographe.
 - `id` ne change **jamais** une fois créé : la sauvegarde des joueurs et leurs cartes en dépendent.
 - **Choix des ~100 personnages** : les plus populaires de chaque univers, avec un mélange de héros, méchants et anti-héros. Répartition indicative : ~35 Marvel, ~25 DC, ~30 manga, ~10 indé. Exemples d'indé : Hellboy, Spawn, Invincible, Omni-Man, les Tortues Ninja, Usagi Yojimbo, Judge Dredd, Rick Grimes. Luca pourra ajouter ses favoris.
@@ -250,7 +258,7 @@ Chaque étape est petite. **À la fin de chaque étape** : expliquer à Luca en 
 - Activer GitHub Pages pour que Luca puisse tester sur son téléphone à chaque étape.
 - ✅ **Test :** « Ouvre ce lien sur ton téléphone : [lien]. Tu dois voir la même page que sur l'ordi. Ajoute-le à tes favoris. »
 
-### Étape 3 : Les personnages
+### Étape 3 : Les personnages — ✅ TERMINÉE (validée par Luca) : 127 personnages vérifiés
 
 - Créer la liste fixe des valeurs de critères, `personnages.js` (~100 fiches) et `calendrier.js`.
 - Créer `verification.html`.
@@ -268,8 +276,8 @@ Chaque étape est petite. **À la fin de chaque étape** : expliquer à Luca en 
 
 ### Étape 6 : Le personnage du jour et la fin de partie
 
-- Personnage selon la date, numéro du jour, limite de 10 essais, indice après 5, écrans de victoire et de défaite.
-- ✅ **Test :** « Avec `?perso=thanos`, trouve Thanos : un écran "Bravo" doit s'afficher. Recharge avec `?perso=goku` et rate 10 fois : la réponse "Goku" doit s'afficher. Au 6ᵉ essai, l'indice doit apparaître. »
+- Personnage selon la date, numéro du jour, limite de 10 essais, indices progressifs (dès 3 essais ratés, voir section 4), écrans de victoire et de défaite.
+- ✅ **Test :** « Avec `?perso=thanos`, trouve Thanos : un écran "Bravo" doit s'afficher. Recharge avec `?perso=goku` et rate 10 fois : la réponse "Goku" doit s'afficher. Après 3 essais ratés, le premier indice doit apparaître, puis il doit s'enrichir à chaque essai raté suivant. »
 
 ### Étape 7 : La sauvegarde de la partie
 

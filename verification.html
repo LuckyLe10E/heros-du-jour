@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Vérification des fiches</title>
+  <link rel="stylesheet" href="css/verification.css">
+</head>
+<body>
+  <header>
+    <h1>Vérification des fiches</h1>
+    <p class="aide">Page de relecture pour Luca (pas pour les joueurs). Clique sur le titre d'une colonne pour trier.
+      Les lignes <span class="pastille">à vérifier</span> sont celles où j'ai un doute : c'est toi qui tranches.</p>
+    <p id="resume" class="resume"></p>
+  </header>
+
+  <nav class="onglets">
+    <button type="button" id="onglet-fiches" class="actif">Les personnages</button>
+    <button type="button" id="onglet-calendrier">Le calendrier</button>
+  </nav>
+
+  <section id="section-fiches">
+    <div class="filtres">
+      <input type="search" id="recherche" placeholder="Chercher un nom, un pouvoir, un groupe…" autocomplete="off">
+      <select id="filtre-univers"><option value="">Tous les univers</option></select>
+      <label><input type="checkbox" id="filtre-averifier"> Seulement « à vérifier »</label>
+      <span id="compteur" class="compteur"></span>
+    </div>
+    <div class="defilement">
+      <table id="tableau-fiches">
+        <thead><tr id="entetes"></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="section-calendrier" hidden>
+    <p class="aide">Quel personnage tombe quel jour. La date de départ est <strong>provisoire</strong> (elle sera fixée au lancement).
+      Quand la liste est finie, elle recommence au début.</p>
+    <div class="defilement">
+      <table id="tableau-calendrier">
+        <thead><tr><th>Jour n°</th><th>Date</th><th>Personnage</th><th>Univers</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <script src="data/constantes.js"></script>
+  <script src="data/personnages.js"></script>
+  <script src="data/calendrier.js"></script>
+  <script src="js/outils.js"></script>
+  <script src="js/verification.js"></script>
+</body>
+</html>

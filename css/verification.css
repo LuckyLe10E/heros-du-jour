@@ -1,0 +1,88 @@
+/* Page de vérification (pour Luca) : simple et lisible, pas de décor. */
+
+:root {
+  --fond: #f6f3ea;
+  --texte: #1a1a1a;
+  --ligne: #d9d3c0;
+  --entete: #1a1a1a;
+  --entete-texte: #ffffff;
+  --doute: #fff0c2;
+  --aujourdhui: #d8f0d2;
+  --accent: #e62429;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fond: #1b1a2e;
+    --texte: #f4f1e6;
+    --ligne: #3b3a55;
+    --entete: #000000;
+    --entete-texte: #ffffff;
+    --doute: #4a3d12;
+    --aujourdhui: #1f4a2a;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 12px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  color: var(--texte);
+  background: var(--fond);
+}
+
+h1 { margin: 0 0 6px; font-size: 1.5rem; }
+.aide { margin: 4px 0; max-width: 70ch; line-height: 1.4; }
+.resume { font-weight: 700; }
+
+.pastille {
+  background: var(--doute);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+/* Onglets */
+.onglets { display: flex; gap: 8px; margin: 12px 0; }
+.onglets button {
+  padding: 8px 14px;
+  font: inherit;
+  font-weight: 700;
+  color: var(--texte);
+  background: transparent;
+  border: 2px solid var(--texte);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.onglets button.actif { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* Filtres */
+.filtres { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 10px; }
+.filtres input[type="search"] { flex: 1 1 240px; padding: 8px; font: inherit; }
+.filtres select { padding: 8px; font: inherit; }
+.filtres label { display: flex; gap: 6px; align-items: center; }
+.compteur { font-weight: 700; }
+
+/* Seul le tableau défile en largeur, jamais la page entière */
+.defilement { overflow-x: auto; border: 1px solid var(--ligne); border-radius: 6px; }
+
+table { border-collapse: collapse; width: 100%; min-width: 1300px; }
+th, td { padding: 6px 8px; border-bottom: 1px solid var(--ligne); text-align: left; vertical-align: top; }
+thead th { background: var(--entete); color: var(--entete-texte); position: sticky; top: 0; white-space: nowrap; }
+thead th button {
+  font: inherit; font-weight: 700; color: inherit; background: none; border: 0; padding: 0; cursor: pointer;
+}
+thead th[data-tri]::after { content: " " attr(data-tri); }
+
+.petit { font-size: 0.8rem; opacity: 0.75; }
+td.description { min-width: 220px; }
+td.large { min-width: 380px; }
+td.doute { min-width: 180px; font-weight: 600; }
+
+tr.a-verifier { background: var(--doute); }
+tr.aujourdhui { background: var(--aujourdhui); font-weight: 700; }
+
+#tableau-calendrier { min-width: 420px; }
