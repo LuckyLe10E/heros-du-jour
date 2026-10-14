@@ -332,6 +332,11 @@ Même méthode qu'avant : une étape à la fois, test précis, validation de Luc
 - **Étape 17 : Cases qui se révèlent une par une** — les 7 cases se retournent l'une après l'autre à chaque essai ; petits effets (secousse si le nom est déjà joué, confettis à la victoire). Respecter « moins d'animations » du téléphone.
 - **Étape 18 : Mode entraînement** — personnage au hasard, parties illimitées, sans carte à gagner, sans toucher à la partie du jour ni aux statistiques.
 
+- **💡 Idées à réfléchir plus tard (étape pas encore choisie, aucune décision prise, ne pas coder sans accord de Luca)** :
+  1. **Un personnage différent par joueur chaque jour**, pour limiter la triche (qu'un ami ne souffle pas la réponse). Attention : ça change le cœur du jeu (« tout le monde devine le même personnage ») et le texte de partage ne se comparerait plus de la même façon. Pistes à discuter : personnage différent par joueur mais tiré d'une même liste ; ou garder le même pour tous et ajouter un mode supplémentaire.
+  2. **Pouvoir débloquer plusieurs personnages par jour**, car avec beaucoup de personnages la collection serait impossible à compléter. Pistes à discuter : des parties supplémentaires qui donnent des cartes (lien avec le mode entraînement de l'étape 18), un nombre de parties bonus par jour, etc.
+  Ces deux idées sont liées : à décider ensemble, probablement après la connexion Google (étape 15) et les statistiques (étape 16).
+
 - Mise en ligne, test sur téléphone, retours des amis.
 
 ---
