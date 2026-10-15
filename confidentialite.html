@@ -5,42 +5,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Confidentialité · Héros du Jour</title>
   <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#2d4a78">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/jeu.css">
   <link rel="stylesheet" href="css/confidentialite.css">
   <script src="js/theme.js"></script>
 </head>
 <body>
   <main class="page">
-    <a class="retour-jeu" href="index.html">Retour au jeu</a>
+    <header class="bandeau">
+      <div class="marque">
+        <h1>Héros du Jour</h1>
+        <p class="date-du-jour">Confidentialité</p>
+      </div>
+      <div class="bandeau-actions">
+        <a href="index.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>
+          Retour au jeu
+        </a>
+        <button type="button" id="bouton-theme" aria-label="Changer de mode"></button>
+      </div>
+    </header>
 
-    <article class="feuille-texte">
-      <h1>Confidentialité</h1>
-      <p>Héros du Jour est un jeu gratuit, sans publicité et sans suivi des joueurs. Cette page explique, simplement, ce qui est gardé.</p>
+    <p class="resume"><b>En bref</b>Sans compte, rien ne quitte ton appareil. Avec un compte Google, on garde seulement ton e-mail et tes cartes, pour te les rendre sur tous tes appareils.</p>
 
-      <h2>Si tu ne te connectes pas</h2>
-      <p>Rien ne quitte ton appareil. Ta partie du jour, tes cartes et ton choix de mode clair ou sombre sont rangés dans ton navigateur (téléphone ou ordinateur). Nous n'en recevons aucune copie.</p>
+    <section class="rubrique">
+      <h2>Sans te connecter</h2>
+      <div class="fiche-texte">
+        <p>Rien ne quitte ton appareil. Ta partie du jour, tes cartes et ton choix de mode clair ou sombre sont rangés dans ton navigateur (téléphone ou ordinateur). Nous n'en recevons aucune copie.</p>
+        <p>Héros du Jour est gratuit, sans publicité et sans suivi des joueurs.</p>
+      </div>
+    </section>
 
-      <h2>Si tu te connectes avec Google (facultatif)</h2>
-      <p>Pour retrouver tes cartes sur plusieurs appareils, tu peux te connecter avec ton compte Google. Sont alors gardés en ligne :</p>
-      <ul>
-        <li>ton adresse e-mail et un identifiant, fournis par Google pour te reconnaître ;</li>
-        <li>la liste de tes cartes (personnage, rareté, nombre d'essais, date).</li>
-      </ul>
-      <p>Nous ne récupérons ni ton nom, ni ta photo, ni tes contacts, et nous n'avons jamais accès à ton mot de passe Google.</p>
+    <section class="rubrique">
+      <h2>Avec Google (facultatif)</h2>
+      <div class="fiche-texte">
+        <p>Pour retrouver tes cartes sur plusieurs appareils, tu peux te connecter avec ton compte Google. Sont alors gardés en ligne :</p>
+        <ul>
+          <li>ton adresse e-mail et un identifiant, fournis par Google pour te reconnaître ;</li>
+          <li>la liste de tes cartes (personnage, rareté, nombre d'essais, date).</li>
+        </ul>
+        <p>Nous ne récupérons ni ton nom, ni ta photo, ni tes contacts, et nous n'avons jamais accès à ton mot de passe Google.</p>
+      </div>
+    </section>
 
+    <section class="rubrique">
       <h2>À quoi ça sert</h2>
-      <p>Uniquement à sauvegarder tes cartes et à te les montrer quand tu te connectes. Pas de publicité, pas de revente, pas de statistiques sur toi.</p>
+      <div class="fiche-texte">
+        <p>Uniquement à sauvegarder tes cartes et à te les montrer quand tu te connectes. Pas de publicité, pas de revente, pas de statistiques sur toi.</p>
+      </div>
+    </section>
 
+    <section class="rubrique">
       <h2>Qui les garde</h2>
-      <p>Les données sont hébergées par Firebase, un service de Google, dans un centre de données situé en Europe. Le site lui-même est hébergé par Vercel.</p>
+      <div class="fiche-texte">
+        <p>Les données sont hébergées par Firebase, un service de Google, dans un centre de données situé en Europe. Le site lui-même est hébergé par Vercel.</p>
+      </div>
+    </section>
 
+    <section class="rubrique">
       <h2>Tes droits</h2>
-      <p>Tu peux à tout moment te déconnecter, ou supprimer ton compte et tes cartes en ligne avec le bouton « Supprimer mon compte » de la fenêtre « Mon compte ». Tout est alors effacé. Tes cartes restent sur ton appareil.</p>
-      <p>CONTACT_A_COMPLETER</p>
-    </article>
+      <div class="fiche-texte">
+        <p>Tu peux à tout moment te déconnecter, ou supprimer ton compte et tes cartes en ligne avec le bouton « Supprimer mon compte » de la fenêtre « Mon compte ». Tout est alors effacé en ligne ; tes cartes restent sur ton appareil.</p>
+        <p>Une question, ou une demande à nous adresser ? Écris-nous : <a href="mailto:jourduheros@gmail.com">jourduheros@gmail.com</a></p>
+      </div>
+    </section>
   </main>
 </body>
 </html>

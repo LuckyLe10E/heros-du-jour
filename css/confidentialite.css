@@ -1,40 +1,110 @@
-/* La page « Confidentialité » : une feuille de papier posée sur la table, comme le reste du site */
+/* La page « Confidentialité » : même univers que le jeu (table bleu nuit, fiches de papier, onglets, post-it) */
 
-.feuille-texte {
-  margin-bottom: 16px;
-  padding: 20px 18px 22px;
+.bandeau-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bandeau-actions a,
+.bandeau-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--papier);
+  text-decoration: none;
+  background: var(--encre);
+  border: 0;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.bandeau-actions svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Le résumé en haut : un post-it */
+.resume {
+  position: relative;
+  margin: 22px 4px 26px;
+  padding: 16px 16px 14px;
+  line-height: 1.4;
+  color: var(--postit-texte);
+  background: var(--postit);
+  box-shadow: 0 10px 14px -10px rgba(0, 0, 0, 0.6);
+  transform: rotate(-0.8deg);
+}
+
+.resume::before {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 64px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.45);
+  transform: translateX(-50%) rotate(2deg);
+}
+
+.resume b {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.78rem;
+  opacity: 0.75;
+}
+
+/* Une rubrique : un onglet sombre et une fiche de papier dessous */
+.rubrique {
+  margin-bottom: 20px;
+}
+
+.rubrique h2 {
+  display: inline-block;
+  margin: 0 0 -1px 10px;
+  padding: 8px 14px 7px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--onglet-texte);
+  background: var(--onglet);
+  border-radius: 6px 6px 0 0;
+}
+
+.fiche-texte {
+  padding: 16px 16px 18px;
   color: var(--encre);
   background: var(--papier);
   border-radius: 3px;
   box-shadow: var(--ombre-papier);
 }
 
-.feuille-texte h1 {
-  margin-bottom: 14px;
-  font-size: 2rem;
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-}
-
-.feuille-texte h2 {
-  margin: 20px 0 6px;
-  font-size: 1.15rem;
-  font-weight: 800;
-}
-
-.feuille-texte p,
-.feuille-texte li {
+.fiche-texte p,
+.fiche-texte li {
   line-height: 1.5;
 }
 
-.feuille-texte ul {
-  margin: 6px 0 0;
+.fiche-texte p + p,
+.fiche-texte ul + p {
+  margin-top: 10px;
+}
+
+.fiche-texte ul {
+  margin: 8px 0 0;
   padding-left: 20px;
 }
 
-.retour-jeu {
-  display: inline-block;
-  margin-bottom: 14px;
-  color: var(--sur-bureau);
+.fiche-texte a {
+  color: inherit;
+  font-weight: 700;
 }
