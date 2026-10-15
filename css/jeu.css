@@ -117,6 +117,66 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ---------- Les parties bonus ---------- */
+
+.zone-bonus {
+  margin-bottom: 18px;
+}
+
+.zone-bonus[hidden] {
+  display: none;
+}
+
+.bonus-etat {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.bonus-boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.bonus-boutons button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--encre);
+  background: var(--papier);
+  border: 0;
+  border-radius: 3px;
+  box-shadow: var(--ombre-papier);
+  cursor: pointer;
+}
+
+.bonus-boutons button[hidden] {
+  display: none;
+}
+
+.bonus-boutons button:active {
+  transform: translateY(1px);
+}
+
+.bonus-boutons svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bonus-boutons .compte {
+  font-weight: 700;
+}
+
 /* ---------- La case de saisie et les suggestions ---------- */
 
 .zone-saisie {

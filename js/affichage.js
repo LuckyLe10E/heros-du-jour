@@ -140,6 +140,113 @@ function afficherIndices() {
   document.getElementById("indices").hidden = (indices.length === 0);
 }
 
+// ---------- L'en-tête et les parties bonus ----------
+
+// Le bandeau du haut : le numéro du jour (partie du jour), « BONUS » (partie bonus) ou « LIBRE » (entraînement).
+function afficherEnTete() {
+  const etiquette = document.querySelector("#tampon-numero small");
+  const nombre = document.getElementById("numero-du-jour");
+  const tampon = document.getElementById("tampon-numero");
+  const date = document.getElementById("date-du-jour");
+  if (partie.mode === "jour") {
+    etiquette.textContent = "NUMÉRO";
+    nombre.textContent = partie.numero;
+    tampon.setAttribute("aria-label", "Numéro " + partie.numero);
+    date.textContent = dateDuJourEnFrancais();
+  } else if (partie.mode === "bonus") {
+    etiquette.textContent = "BONUS";
+    nombre.textContent = partie.numeroBonus;
+    tampon.setAttribute("aria-label", "Partie bonus " + partie.numeroBonus);
+    date.textContent = "Partie bonus " + partie.numeroBonus + " sur " + MAX_BONUS;
+  } else {
+    etiquette.textContent = "LIBRE";
+    nombre.textContent = "∞";
+    tampon.setAttribute("aria-label", "Entraînement libre");
+    date.textContent = "Entraînement libre";
+  }
+}
+
+// Écrit « 3 restantes » ou « 1 restante ».
+function texteBonusRestants(nombre) {
+  return nombre + (nombre > 1 ? " restantes" : " restante");
+}
+
+// Le texte du bouton qui lance la partie suivante (une fois la partie bonus finie).
+function libelleDeLaPartieSuivante() {
+  return typeDeLaProchainePartie() === "bonus"
+    ? "Nouvelle partie bonus (" + texteBonusRestants(partiesBonusRestantes()) + ")"
+    : "Entraînement libre";
+}
+
+// Les boutons des parties bonus, sous le bandeau : ils changent selon la partie qu'on joue.
+function afficherLeBonus() {
+  const zone = document.getElementById("zone-bonus");
+  if (partie.modeTest) {   // pas de parties bonus en mode test
+    zone.hidden = true;
+    return;
+  }
+  zone.hidden = false;
+  const etat = document.getElementById("bonus-etat");
+  const lancer = document.getElementById("bonus-lancer");
+  const retour = document.getElementById("bonus-retour");
+  const texte = document.getElementById("bonus-lancer-texte");
+  const compte = document.getElementById("bonus-lancer-compte");
+  const reste = partiesBonusRestantes();
+
+  if (partie.mode === "jour") {
+    etat.hidden = true;
+    retour.hidden = true;
+    lancer.hidden = false;
+    const enCours = lireBonus().enCours;
+    if (enCours) {
+      texte.textContent = "Reprendre la partie bonus " + enCours.numeroBonus;
+      compte.textContent = "";
+    } else if (reste > 0) {
+      texte.textContent = "Partie bonus";
+      compte.textContent = texteBonusRestants(reste);
+    } else {
+      texte.textContent = "Entraînement libre";
+      compte.textContent = "";
+    }
+    return;
+  }
+
+  etat.hidden = false;
+  retour.hidden = false;
+  etat.textContent = partie.mode === "bonus"
+    ? "Partie bonus " + partie.numeroBonus + " sur " + MAX_BONUS + " : un personnage rien que pour toi, avec une carte à gagner."
+    : "Entraînement libre : pas de carte à gagner, et rien n'entre dans tes statistiques.";
+  lancer.hidden = (partie.statut === "en cours");   // on termine d'abord la partie en cours
+  if (typeDeLaProchainePartie() === "bonus") {
+    texte.textContent = "Nouvelle partie bonus";
+    compte.textContent = texteBonusRestants(reste);
+  } else {
+    texte.textContent = "Entraînement libre";
+    compte.textContent = "";
+  }
+}
+
+// Redessine tout l'écran de jeu après un changement de partie (bonus, entraînement, retour à la partie du jour).
+function afficherLaPartie() {
+  document.getElementById("fenetre-fin").hidden = true;
+  arreterCompteARebours();
+  champSaisie.value = "";
+  fermerSuggestions();
+  afficherEnTete();
+  afficherEssais(null);   // redessine aussi le compteur, les indices et les boutons bonus
+  window.scrollTo(0, 0);
+}
+
+function passerALaPartieSuivante() {
+  lancerUnePartieSupplementaire();
+  afficherLaPartie();
+}
+
+function retourALaPartieDuJour() {
+  revenirALaPartieDuJour();
+  afficherLaPartie();
+}
+
 // Ouvre la fenêtre de fin de partie : victoire ou défaite, avec le personnage et sa fiche.
 function ouvrirFenetreFin() {
   const gagne = (partie.statut === "gagne");
@@ -148,7 +255,9 @@ function ouvrirFenetreFin() {
   document.getElementById("fin-titre").textContent = gagne
     ? "Bravo ! Trouvé en " + texteNombreEssais(partie.essais.length)
     : "Raté !";
-  document.getElementById("fin-intro").textContent = gagne ? "Le héros du jour était :" : "C'était…";
+  document.getElementById("fin-intro").textContent = gagne
+    ? (partie.mode === "jour" ? "Le héros du jour était :" : "Le personnage était :")
+    : "C'était…";
   document.getElementById("fin-nom").textContent = p.nom;
   document.getElementById("fin-oeuvre").textContent = p.univers + ", " + p.oeuvre + " (" + p.annee + ")";
   document.getElementById("fin-fiche").textContent = p.description;
@@ -163,11 +272,25 @@ function ouvrirFenetreFin() {
   document.getElementById("fin-carte").hidden = !avecCarte;
   document.getElementById("fin-carte-message").hidden = !avecCarte;
 
+  // Parties bonus et entraînement : pas de partage (chacun a un personnage différent), un bouton pour enchaîner
+  const surLaPartieDuJour = (partie.mode === "jour");
+  document.getElementById("fin-partager").hidden = !surLaPartieDuJour;
+  const suite = document.getElementById("fin-suite");
+  suite.hidden = surLaPartieDuJour;
+  suite.textContent = libelleDeLaPartieSuivante();
+
   document.getElementById("fin-message").textContent = "";
   document.getElementById("fenetre-fin").className = "fenetre-fond " + (gagne ? "victoire" : "defaite");
   document.getElementById("fenetre-fin").hidden = false;
   document.getElementById("fin-fermer").focus();
-  demarrerCompteARebours();
+  if (surLaPartieDuJour) {
+    demarrerCompteARebours();
+  } else {
+    arreterCompteARebours();
+    document.getElementById("fin-compte-a-rebours").textContent = partie.mode === "bonus"
+      ? "Parties bonus lancées aujourd'hui : " + partiesBonusFaites() + " sur " + MAX_BONUS
+      : "Entraînement libre : pas de carte à gagner.";
+  }
 }
 
 // Montre la carte gagnée dans la fenêtre de fin. Si elle vient d'être gagnée, elle commence face cachée
@@ -439,6 +562,7 @@ function afficherLEtatDeLaPartie() {
   champSaisie.placeholder = termine ? "Partie terminée" : "Tape un nom de personnage…";
   document.getElementById("bouton-resultat").hidden = !termine;
   afficherIndices();
+  afficherLeBonus();
 }
 
 // Gère les touches du clavier dans la case de saisie.
@@ -545,9 +669,10 @@ function fermerRegles() {
 
 // Démarrage : on branche tous les boutons et la case de saisie.
 function demarrerAffichage() {
-  document.getElementById("numero-du-jour").textContent = partie.numero;
-  document.getElementById("tampon-numero").setAttribute("aria-label", "Numéro " + partie.numero);
-  document.getElementById("date-du-jour").textContent = dateDuJourEnFrancais();
+  afficherEnTete();
+  document.getElementById("bonus-lancer").addEventListener("click", passerALaPartieSuivante);
+  document.getElementById("fin-suite").addEventListener("click", passerALaPartieSuivante);
+  document.getElementById("bonus-retour").addEventListener("click", retourALaPartieDuJour);
   document.getElementById("fin-fermer").addEventListener("click", fermerFenetreFin);
   document.getElementById("fin-partager").addEventListener("click", partagerLeResultat);
   document.getElementById("bouton-resultat").addEventListener("click", ouvrirFenetreFin);

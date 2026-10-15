@@ -27,9 +27,12 @@ function choisirMystere() {
   return { personnage: trouverPersonnage(window.CALENDRIER[position]), modeTest: false };
 }
 
-// L'état de la partie en cours.
+// L'état de la partie en cours (celle qu'on voit à l'écran : la partie du jour, une partie bonus ou un entraînement).
 const mystere = choisirMystere();
+const MYSTERE_DU_JOUR = mystere.personnage;   // le personnage du jour, même quand on joue une partie bonus
 const partie = {
+  mode: "jour",                   // "jour" (la partie du jour), "bonus" (une carte à gagner) ou "entrainement" (sans carte)
+  numeroBonus: 0,                 // en mode bonus : « partie bonus n°… » du jour
   numero: numeroDuJour(),         // « Héros du Jour n°… »
   mystere: mystere.personnage,    // le personnage à deviner
   modeTest: mystere.modeTest,     // vrai si on a utilisé ?perso=... dans l'adresse
@@ -42,6 +45,21 @@ const partie = {
   ancienneRarete: null,           // la rareté qu'avait la carte avant d'être améliorée
   carteRevelee: false             // vrai quand l'animation de retournement a déjà été montrée
 };
+
+// Remet la partie à zéro pour un nouveau personnage mystère (partie bonus, entraînement) ou pour revenir à la partie du jour.
+function reglerLaPartie(personnage, mode, numeroBonus) {
+  partie.mode = mode;
+  partie.numeroBonus = numeroBonus || 0;
+  partie.mystere = personnage;
+  partie.essais = [];
+  partie.offert = null;
+  partie.statut = "en cours";
+  partie.carte = null;
+  partie.carteNouvelle = false;
+  partie.carteAmelioree = false;
+  partie.ancienneRarete = null;
+  partie.carteRevelee = false;
+}
 
 // Combien d'essais ratés jusqu'ici (tous les essais, sauf le bon).
 function nombreEchecs() {
@@ -194,7 +212,9 @@ function choisirEssaiOffert(mystereDuJour, numero, exclus) {
 function preparerEssaiOffert(idSauvegarde) {
   const garde = idSauvegarde && idSauvegarde !== partie.mystere.id && !partie.essais.includes(idSauvegarde)
     && trouverPersonnage(idSauvegarde);
-  partie.offert = garde ? idSauvegarde : choisirEssaiOffert(partie.mystere, partie.numero, partie.essais);
+  // En partie bonus ou entraînement, le « tirage » dépend aussi du numéro de la partie bonus (le mystère change)
+  const graine = partie.mode === "jour" ? partie.numero : "bonus" + partie.numeroBonus + "-" + partie.numero;
+  partie.offert = garde ? idSauvegarde : choisirEssaiOffert(partie.mystere, graine, partie.essais);
 }
 
 // Note un essai : on ajoute le personnage à la liste (sauf s'il y est déjà ou si la partie est finie),
@@ -207,7 +227,7 @@ function ajouterEssai(id) {
   partie.essais.push(id);
   mettreAJourStatut();
   sauvegarderPartie();
-  if (partie.statut === "gagne") gagnerLaCarte();
+  if (partie.statut === "gagne" && partie.mode !== "entrainement") gagnerLaCarte();   // l'entraînement ne donne pas de carte
   noterLaJournee();   // partie finie : le résultat entre dans les statistiques
   return true;
 }
@@ -226,7 +246,11 @@ function mettreAJourStatut() {
 // Range la partie du jour dans la sauvegarde du navigateur.
 // En mode test (?perso=...), on ne touche JAMAIS à la sauvegarde.
 function sauvegarderPartie() {
-  if (partie.modeTest) return;
+  if (partie.modeTest || partie.mode === "entrainement") return;
+  if (partie.mode === "bonus") {
+    sauvegarderLaPartieBonus();
+    return;
+  }
   ecrireSauvegarde({
     version: 1,
     numero: partie.numero,
@@ -237,8 +261,9 @@ function sauvegarderPartie() {
 }
 
 // Au chargement de la page : on retrouve la partie du jour (les essais) puis on prépare l'essai offert.
-function restaurerPartie() {
-  const sauvegarde = restaurerLesEssais();
+// premierChargement : vrai au chargement de la page (c'est alors que ?recommencer a le droit d'effacer la partie).
+function restaurerPartie(premierChargement) {
+  const sauvegarde = restaurerLesEssais(premierChargement);
   preparerEssaiOffert(sauvegarde ? sauvegarde.offert : null);
   noterLaJournee();   // une partie déjà finie (par exemple avant l'arrivée des statistiques) est notée au chargement
 }
@@ -246,11 +271,11 @@ function restaurerPartie() {
 // Retrouve la partie du jour si le joueur l'avait commencée. Renvoie la sauvegarde utilisée, ou null.
 // On ne la reprend que si elle date d'aujourd'hui (même numéro de jour, même personnage mystère)
 // et si elle est valide ; sinon on repart d'une partie vierge. Pas de sauvegarde en mode test.
-function restaurerLesEssais() {
+function restaurerLesEssais(premierChargement) {
   // Outil de test réservé à Luca : ajouter ?recommencer à l'adresse
   //  - en jeu normal : efface la partie du jour sauvegardée ;
   //  - en mode test (?perso=...) : efface la collection de TEST (jamais la vraie partie ni les vraies cartes).
-  const veutRecommencer = new URLSearchParams(window.location.search).has("recommencer");
+  const veutRecommencer = Boolean(premierChargement) && new URLSearchParams(window.location.search).has("recommencer");
   if (partie.modeTest) {
     if (veutRecommencer) effacerCollectionDeTest();
     return null;
@@ -321,5 +346,11 @@ function chercherPersonnages(texteTape) {
   return resultats;
 }
 
+// Revient à la partie du jour (par exemple après une partie bonus) : on la retrouve telle qu'elle était.
+function revenirALaPartieDuJour() {
+  reglerLaPartie(MYSTERE_DU_JOUR, "jour", 0);
+  restaurerPartie(false);
+}
+
 // Dernière chose au chargement : on retrouve la partie du jour sauvegardée, s'il y en a une.
-restaurerPartie();
+restaurerPartie(true);

@@ -56,6 +56,21 @@
       <button type="button" id="bouton-theme" aria-label="Changer de mode"></button>
     </div>
 
+    <!-- Les parties bonus (jusqu'à 5 par jour, avec une carte à gagner), puis l'entraînement libre -->
+    <div id="zone-bonus" class="zone-bonus" hidden>
+      <p id="bonus-etat" class="bonus-etat" hidden></p>
+      <div class="bonus-boutons">
+        <button type="button" id="bonus-lancer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+          <span id="bonus-lancer-texte"></span> <span id="bonus-lancer-compte" class="compte"></span>
+        </button>
+        <button type="button" id="bonus-retour" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>
+          Retour à la partie du jour
+        </button>
+      </div>
+    </div>
+
     <!-- La case de saisie et sa liste de suggestions -->
     <div class="zone-saisie">
       <label for="saisie">Nom du personnage</label>
@@ -268,6 +283,8 @@
       <div id="regles-exemple" class="regles-exemple"></div>
       <p id="regles-explication" class="regles-explication"></p>
 
+      <p class="regles-bonus">Une fois la partie du jour jouée, tu peux jouer jusqu'à <strong>5 parties bonus par jour</strong> : un personnage différent à chaque fois, avec <strong>une carte à gagner</strong> comme pour la partie du jour. Après les 5, un <strong>entraînement libre</strong> reste possible, sans limite mais sans carte. Les parties bonus ne comptent pas dans tes statistiques ni dans ta série.</p>
+
       <p class="regles-fin">Dès 3 essais ratés, des <strong>indices</strong> apparaissent, de plus en plus précis. Un nouveau héros t'attend chaque jour à minuit.</p>
       <button type="button" id="regles-fermer" class="bouton">C'est parti !</button>
     </div>
@@ -285,6 +302,7 @@
       <p id="fin-fiche" class="fin-fiche"></p>
       <p id="fin-compte-a-rebours" class="fin-compte-a-rebours"></p>
       <div class="fin-boutons">
+        <button type="button" id="fin-suite" class="bouton" hidden></button>
         <button type="button" id="fin-partager" class="bouton">Partager</button>
         <button type="button" id="fin-fermer" class="bouton bouton-discret">Fermer</button>
       </div>
@@ -299,6 +317,7 @@
   <script src="js/stockage.js"></script>
   <script src="js/collection.js"></script>
   <script src="js/statistiques.js"></script>
+  <script src="js/bonus.js"></script>
   <script src="js/carte.js"></script>
   <script src="js/bibliotheque.js"></script>
   <script src="js/profil.js"></script>

@@ -115,21 +115,25 @@ async function synchroniserLesCartes() {
     const fusion = fusionnerCartes(surAppareil, enLigne);
     const statsFusion = {
       jours: fusionnerJours(statsAppareil.jours, statsEnLigne.jours),
-      favori: fusionnerFavoris(statsAppareil.favori, statsEnLigne.favori)
+      favori: fusionnerFavoris(statsAppareil.favori, statsEnLigne.favori),
+      bonus: fusionnerBonus(statsAppareil.bonus, statsEnLigne.bonus)
     };
 
     if (!memesCartes(fusion, surAppareil)) ecrireCollection({ cartes: fusion });
-    if (!memesJours(statsFusion.jours, statsAppareil.jours) || !memesFavoris(statsFusion.favori, statsAppareil.favori)) {
+    if (!memesJours(statsFusion.jours, statsAppareil.jours) || !memesFavoris(statsFusion.favori, statsAppareil.favori)
+      || !memesBonus(statsFusion.bonus, statsAppareil.bonus)) {
       ecrireStats(statsFusion);
     }
     const aJour = memesCartes(fusion, enLigne)
-      && memesJours(statsFusion.jours, statsEnLigne.jours) && memesFavoris(statsFusion.favori, statsEnLigne.favori);
+      && memesJours(statsFusion.jours, statsEnLigne.jours) && memesFavoris(statsFusion.favori, statsEnLigne.favori)
+      && memesBonus(statsFusion.bonus, statsEnLigne.bonus);
     if (!aJour) {
       await reference.set({
         version: 1,
         cartes: fusion,
         jours: statsFusion.jours,
         favori: statsFusion.favori,
+        bonus: statsFusion.bonus,
         maj: firebase.firestore.FieldValue.serverTimestamp()
       });
     }

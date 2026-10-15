@@ -39,9 +39,15 @@ function favoriValide(favori) {
     && Number.isFinite(favori.maj);
 }
 
-// Lit les données du profil. Renvoie { jours: {...}, favori: {id, maj} ou null }.
+// Vérifie le compteur de parties bonus : { date, faites } (combien de parties bonus ont été lancées ce jour-là).
+function bonusValide(bonus) {
+  return Boolean(bonus) && /^\d{4}-\d{2}-\d{2}$/.test(bonus.date)
+    && Number.isInteger(bonus.faites) && bonus.faites >= 0 && bonus.faites <= MAX_BONUS;
+}
+
+// Lit les données du profil. Renvoie { jours: {...}, favori: {id, maj} ou null, bonus: {date, faites} ou null }.
 function lireStats() {
-  const stats = { jours: {}, favori: null };
+  const stats = { jours: {}, favori: null, bonus: null };
   try {
     const texte = localStorage.getItem(CLE_STATS);
     if (!texte) return stats;
@@ -49,6 +55,7 @@ function lireStats() {
     if (donnees && donnees.version === 1) {
       stats.jours = nettoyerLesJours(donnees.jours);
       if (favoriValide(donnees.favori)) stats.favori = { id: donnees.favori.id, maj: donnees.favori.maj };
+      if (bonusValide(donnees.bonus)) stats.bonus = { date: donnees.bonus.date, faites: donnees.bonus.faites };
     }
   } catch (erreur) {
     // données illisibles : on repart de zéro
@@ -58,7 +65,7 @@ function lireStats() {
 
 function ecrireStats(stats) {
   try {
-    localStorage.setItem(CLE_STATS, JSON.stringify({ version: 1, jours: stats.jours, favori: stats.favori }));
+    localStorage.setItem(CLE_STATS, JSON.stringify({ version: 1, jours: stats.jours, favori: stats.favori, bonus: stats.bonus }));
   } catch (erreur) {
     // pas grave : les statistiques ne seront pas retrouvées au prochain chargement
   }
@@ -69,7 +76,7 @@ function ecrireStats(stats) {
 // Quand la partie du jour est finie (gagnée ou perdue), on note le résultat de la journée.
 // On peut l'appeler plusieurs fois sans risque (au chargement de la page aussi) : un jour n'est noté qu'une fois.
 function noterLaJournee() {
-  if (partie.modeTest || partie.statut === "en cours") return;
+  if (partie.modeTest || partie.mode !== "jour" || partie.statut === "en cours") return;   // seules les parties du jour comptent
   const stats = lireStats();
   const date = texteDeLaDate(dateDepuisTexte(window.DATE_LANCEMENT, partie.numero - 1));   // la date de CETTE partie
   const jour = { gagne: partie.statut === "gagne", essais: partie.essais.length };
@@ -113,12 +120,27 @@ function memesFavoris(a, b) {
   return a.id === b.id && a.maj === b.maj;
 }
 
-// Lit les jours et le favori reçus du compte en ligne (on ne fait jamais confiance aux données reçues).
+// Entre deux compteurs de parties bonus : le plus récent jour l'emporte ; le même jour, le plus grand nombre
+// (jouer sur deux appareils ne donne pas 5 parties bonus de plus).
+function fusionnerBonus(a, b) {
+  if (!a) return b;
+  if (!b) return a;
+  if (a.date !== b.date) return a.date > b.date ? a : b;
+  return a.faites >= b.faites ? a : b;
+}
+
+function memesBonus(a, b) {
+  if (!a || !b) return a === b;
+  return a.date === b.date && a.faites === b.faites;
+}
+
+// Lit les jours, le favori et le compteur bonus reçus du compte en ligne (on ne fait jamais confiance aux données reçues).
 function statsDuCompte(donnees) {
-  const stats = { jours: {}, favori: null };
+  const stats = { jours: {}, favori: null, bonus: null };
   if (donnees) {
     stats.jours = nettoyerLesJours(donnees.jours);
     if (favoriValide(donnees.favori)) stats.favori = { id: donnees.favori.id, maj: donnees.favori.maj };
+    if (bonusValide(donnees.bonus)) stats.bonus = { date: donnees.bonus.date, faites: donnees.bonus.faites };
   }
   return stats;
 }
