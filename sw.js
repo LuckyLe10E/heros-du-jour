@@ -29,8 +29,9 @@ async function garder(requete, reponse) {
 // D'abord le réseau (avec une limite d'attente), sinon ce qui a été gardé.
 async function reseauPuisCache(requete) {
   try {
+    // « no-cache » : le navigateur vérifie toujours auprès du site avant de reprendre sa propre copie (jamais de mélange d'anciens et de nouveaux fichiers)
     const reponse = await Promise.race([
-      fetch(requete),
+      fetch(requete.url, { cache: "no-cache", credentials: "same-origin" }),
       new Promise((resolve, reject) => setTimeout(() => reject(new Error("trop long")), ATTENTE_RESEAU))
     ]);
     return await garder(requete, reponse);
