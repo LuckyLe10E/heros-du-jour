@@ -31,4 +31,4 @@ Jeu web gratuit (téléphone + ordinateur) : chaque jour, tout le monde devine l
 
 ## Interdit
 
-Images, logos ou textes officiels des œuvres · images générées par IA · autres comptes que la connexion Google facultative · serveur à nous · pub, paiements, traçage · collecte de données au-delà de l'e-mail + identifiant Google + cartes/statistiques · frameworks · fonctionnalités non demandées · plusieurs étapes d'un coup.
+logos ou textes officiels des œuvres · images générées par IA · images officielles autres que celles de personnages choisies et fournies par Luca (décision de Luca du 16 octobre 2026 : images de personnages trouvées sur Internet, projet gratuit et sans revenus, droits restant à leurs ayants droit ; Claude ne télécharge jamais d'images lui-même, Luca les ajoute ; chaque image est créditée et la page « Mentions légales » donne une adresse pour demander son retrait) · autres comptes que la connexion Google facultative · serveur à nous · pub, paiements, traçage · collecte de données au-delà de l'e-mail + identifiant Google + cartes/statistiques · frameworks · fonctionnalités non demandées · plusieurs étapes d'un coup.
