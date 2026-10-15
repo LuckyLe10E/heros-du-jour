@@ -17,6 +17,8 @@
   <link rel="stylesheet" href="css/jeu.css">
   <link rel="stylesheet" href="css/cartes.css">
   <link rel="stylesheet" href="css/fenetres.css">
+  <link rel="stylesheet" href="css/fiches.css">
+  <link rel="stylesheet" href="css/profil.css">
   <script src="js/theme.js"></script>
 </head>
 <body>
@@ -47,7 +49,7 @@
       <button type="button" id="bouton-aide" aria-label="Comment jouer ?" title="Comment jouer ?">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.2c-.8.5-1.2 1-1.2 1.9"/><circle cx="12" cy="16.8" r=".6"/></svg>
       </button>
-      <button type="button" id="bouton-compte" aria-label="Mon compte" title="Mon compte">
+      <button type="button" id="bouton-compte" aria-label="Mon profil" title="Mon profil">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.5c.6-4 3.7-6.2 7.5-6.2s6.9 2.2 7.5 6.2"/></svg>
       </button>
       <button type="button" id="bouton-theme" aria-label="Changer de mode"></button>
@@ -117,41 +119,120 @@
     </div>
   </div>
 
-  <!-- La fenêtre « Mon compte » : connexion Google facultative, sauvegarde des cartes en ligne -->
-  <div id="fenetre-compte" class="fenetre-fond" hidden>
-    <div class="fenetre fenetre-compte" role="dialog" aria-modal="true" aria-labelledby="compte-titre">
-      <h2 id="compte-titre" class="fenetre-titre">Mon compte</h2>
-
-      <p id="compte-indisponible" class="compte-texte" hidden></p>
-      <p id="compte-chargement" class="compte-texte" hidden>Un instant…</p>
-      <p id="compte-test" class="compte-texte compte-note" hidden>Mode test : la connexion ne touche pas à tes vraies cartes.</p>
-
-      <!-- Pas connecté -->
-      <div id="compte-deconnecte" hidden>
-        <p class="compte-texte">Connecte-toi avec Google pour garder tes cartes en ligne et les retrouver sur tous tes appareils. C'est facultatif : sans compte, tes cartes restent sur cet appareil.</p>
-        <button type="button" id="compte-connexion" class="bouton">Se connecter avec Google</button>
-      </div>
-
-      <!-- Connecté -->
-      <div id="compte-connecte" hidden>
-        <p class="compte-texte">Connecté avec <strong id="compte-email"></strong></p>
-        <p id="compte-etat" class="compte-texte compte-note" role="status"></p>
-        <div class="fin-boutons">
-          <button type="button" id="compte-deconnexion" class="bouton bouton-discret">Se déconnecter</button>
-          <button type="button" id="compte-supprimer" class="bouton bouton-danger">Supprimer mon compte</button>
+  <!-- L'écran « Mon profil » : vitrine, statistiques, collection, compte (par-dessus le jeu, sur la table) -->
+  <div id="ecran-profil" class="ecran-plein" role="dialog" aria-modal="true" aria-labelledby="profil-titre" hidden>
+    <div class="page">
+      <header class="bandeau">
+        <div class="marque">
+          <h1 id="profil-titre">Héros du Jour</h1>
+          <p class="date-du-jour">Mon profil</p>
         </div>
-        <div id="compte-suppression" class="compte-suppression" hidden>
-          <p class="compte-texte">Cela efface tes cartes en ligne et ton compte. Tes cartes resteront sur cet appareil. C'est définitif.</p>
-          <div class="fin-boutons">
-            <button type="button" id="compte-confirmer" class="bouton bouton-danger">Oui, tout supprimer</button>
-            <button type="button" id="compte-annuler" class="bouton bouton-discret">Annuler</button>
+        <div class="bandeau-actions">
+          <button type="button" id="profil-fermer">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>
+            Retour au jeu
+          </button>
+        </div>
+      </header>
+
+      <!-- Choisir sa carte favorite -->
+      <section id="profil-choix" hidden>
+        <div class="rubrique">
+          <h2>Ma carte favorite</h2>
+          <div class="fiche-texte">
+            <p>Touche une carte pour la mettre en vitrine sur ton profil.</p>
+            <ul id="profil-choix-grille" class="choix-grille"></ul>
+            <p class="profil-actions"><button type="button" id="profil-choix-annuler" class="bouton bouton-discret">Annuler</button></p>
           </div>
         </div>
-      </div>
+      </section>
 
-      <p id="compte-message" class="compte-texte compte-message" role="status"></p>
-      <p class="compte-texte compte-note"><a href="confidentialite.html">Confidentialité : ce qui est gardé en ligne</a></p>
-      <button type="button" id="compte-fermer" class="bouton bouton-discret compte-fermer">Fermer</button>
+      <div id="profil-vue">
+        <section class="rubrique">
+          <h2>Ma vitrine</h2>
+          <div class="fiche-texte">
+            <div class="vitrine">
+              <div id="profil-vitrine"></div>
+              <div class="vitrine-texte">
+                <span id="profil-vitrine-label" class="petit"></span>
+                <strong id="profil-vitrine-nom"></strong>
+                <span id="profil-vitrine-aide" class="petit texte-vide" hidden>Gagne ta première carte pour l'exposer ici.</span>
+                <button type="button" id="profil-changer" class="bouton bouton-discret">Changer de carte</button>
+              </div>
+            </div>
+            <p id="compte-etat" class="lien-compte" role="status"></p>
+          </div>
+        </section>
+
+        <section class="rubrique">
+          <h2>Statistiques</h2>
+          <div class="fiche-texte">
+            <div class="chiffres">
+              <div class="chiffre"><b id="stat-parties"></b><span>parties jouées</span></div>
+              <div class="chiffre"><b id="stat-victoires"></b><span>de victoires</span></div>
+            </div>
+
+            <div class="serie">
+              <div class="tampon" role="img" id="stat-serie-tampon"><div><small>SÉRIE</small><span id="stat-serie"></span></div></div>
+              <p><b id="stat-serie-texte"></b><small id="stat-serie-detail"></small></p>
+            </div>
+
+            <h3 class="sous-titre">Les 14 derniers jours</h3>
+            <ul id="stat-jours" class="jours" aria-label="Les 14 derniers jours"></ul>
+            <p class="jours-legende"><span><i class="gagne"></i>gagné</span><span><i class="perdu"></i>perdu</span><span><i class="vide"></i>pas joué</span></p>
+
+            <h3 class="sous-titre">En combien d'essais ?</h3>
+            <ul id="stat-repartition" class="repartition"></ul>
+            <p class="legende-barres">Les couleurs sont celles des cartes : or jusqu'à 3 essais, argent de 4 à 6, bronze de 7 à 10. L'essai offert ne compte pas.</p>
+          </div>
+        </section>
+
+        <section class="rubrique">
+          <h2>Ma collection</h2>
+          <div class="fiche-texte">
+            <div class="album-compte profil-compte"><b id="profil-cartes"></b><span id="profil-cartes-sur"></span></div>
+            <div id="profil-progres" class="progres" role="img"><i id="profil-progres-barre"></i></div>
+            <div id="profil-raretes" class="raretes"></div>
+            <h3 class="sous-titre">Par univers</h3>
+            <ul id="profil-univers" class="par-univers"></ul>
+            <p class="profil-actions"><button type="button" id="profil-voir-collection" class="bouton bouton-discret">Voir toute ma collection</button></p>
+          </div>
+        </section>
+
+        <section class="rubrique">
+          <h2>Mon compte</h2>
+          <div class="fiche-texte">
+            <p id="compte-indisponible" class="compte-ligne" hidden></p>
+            <p id="compte-chargement" class="compte-ligne" hidden>Un instant…</p>
+            <p id="compte-test" class="compte-ligne compte-note" hidden>Mode test : la connexion ne touche pas à tes vraies données.</p>
+
+            <!-- Pas connecté -->
+            <div id="compte-deconnecte" hidden>
+              <p class="compte-ligne">Connecte-toi avec Google pour garder tes cartes et tes statistiques en ligne et les retrouver sur tous tes appareils. C'est facultatif : sans compte, tout reste sur cet appareil.</p>
+              <button type="button" id="compte-connexion" class="bouton">Se connecter avec Google</button>
+            </div>
+
+            <!-- Connecté -->
+            <div id="compte-connecte" hidden>
+              <p class="compte-ligne">Connecté avec <strong id="compte-email"></strong></p>
+              <div class="fin-boutons">
+                <button type="button" id="compte-deconnexion" class="bouton bouton-discret">Se déconnecter</button>
+                <button type="button" id="compte-supprimer" class="bouton bouton-danger">Supprimer mon compte</button>
+              </div>
+              <div id="compte-suppression" class="compte-suppression" hidden>
+                <p class="compte-ligne">Cela efface tes cartes et tes statistiques en ligne, et ton compte. Elles resteront sur cet appareil. C'est définitif.</p>
+                <div class="fin-boutons">
+                  <button type="button" id="compte-confirmer" class="bouton bouton-danger">Oui, tout supprimer</button>
+                  <button type="button" id="compte-annuler" class="bouton bouton-discret">Annuler</button>
+                </div>
+              </div>
+            </div>
+
+            <p id="compte-message" class="compte-ligne compte-message" role="status"></p>
+            <p class="compte-note"><a href="confidentialite.html">Confidentialité : ce qui est gardé en ligne</a></p>
+          </div>
+        </section>
+      </div>
     </div>
   </div>
 
@@ -216,8 +297,10 @@
   <script src="js/outils.js"></script>
   <script src="js/stockage.js"></script>
   <script src="js/collection.js"></script>
+  <script src="js/statistiques.js"></script>
   <script src="js/carte.js"></script>
   <script src="js/bibliotheque.js"></script>
+  <script src="js/profil.js"></script>
   <script src="js/compte.js"></script>
   <script src="js/jeu.js"></script>
   <script src="js/affichage.js"></script>

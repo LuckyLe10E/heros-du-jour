@@ -208,6 +208,7 @@ function ajouterEssai(id) {
   mettreAJourStatut();
   sauvegarderPartie();
   if (partie.statut === "gagne") gagnerLaCarte();
+  noterLaJournee();   // partie finie : le résultat entre dans les statistiques
   return true;
 }
 
@@ -239,6 +240,7 @@ function sauvegarderPartie() {
 function restaurerPartie() {
   const sauvegarde = restaurerLesEssais();
   preparerEssaiOffert(sauvegarde ? sauvegarde.offert : null);
+  noterLaJournee();   // une partie déjà finie (par exemple avant l'arrivée des statistiques) est notée au chargement
 }
 
 // Retrouve la partie du jour si le joueur l'avait commencée. Renvoie la sauvegarde utilisée, ou null.

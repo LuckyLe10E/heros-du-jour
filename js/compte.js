@@ -1,7 +1,8 @@
-// La connexion Google (facultative) et la sauvegarde des cartes en ligne, avec Firebase.
+// La connexion Google (facultative) et la sauvegarde en ligne (cartes, résultats des parties, carte favorite), avec Firebase.
 // Le jeu marche toujours sans compte : si Firebase ne se charge pas (pas d'Internet, page ouverte par double-clic…),
 // tout reste comme avant, les cartes restent dans le navigateur.
-// Ce qui est gardé en ligne : l'identifiant et l'e-mail Google (gérés par Firebase) et la liste des cartes. Rien d'autre.
+// Ce qui est gardé en ligne : l'identifiant et l'e-mail Google (gérés par Firebase), la liste des cartes, le résultat de chaque
+// jour joué et la carte favorite. Rien d'autre.
 
 // Ces codes sont publics : ils disent seulement à quel projet Firebase le site doit parler.
 // Les règles de sécurité de Firestore décident qui peut lire ou écrire (chacun seulement ses propres cartes).
@@ -68,16 +69,17 @@ function afficherCompte() {
   document.getElementById("compte-connecte").hidden = !connecte;
   document.getElementById("compte-test").hidden = !(enTest && compte.disponible);
 
+  // La petite phrase sous la vitrine : où sont gardées les données
+  let etat = "Tu n'es pas connecté : tes cartes et tes statistiques restent sur cet appareil.";
   if (connecte) {
     document.getElementById("compte-email").textContent = compte.utilisateur.email || "ton compte Google";
-    const nombre = Object.keys(lireCollection().cartes).length;
-    let etat = "";
-    if (enTest) etat = "Mode test : tes vraies cartes ne sont pas synchronisées.";
+    if (enTest) etat = "Mode test : tes vraies données ne sont pas synchronisées.";
     else if (compte.etat === "synchro") etat = "Synchronisation en cours…";
-    else if (compte.etat === "ok") etat = nombre + (nombre > 1 ? " cartes sont sauvegardées" : " carte est sauvegardée") + " en ligne.";
+    else if (compte.etat === "ok") etat = "Connecté : tes cartes et tes statistiques sont sauvegardées en ligne.";
     else if (compte.etat === "erreur") etat = compte.erreur;
-    document.getElementById("compte-etat").textContent = etat;
+    else etat = "Connecté.";
   }
+  document.getElementById("compte-etat").textContent = etat;
 }
 
 // Affiche un message dans la fenêtre (erreur de connexion, suppression réussie…).
@@ -85,22 +87,10 @@ function afficherMessageCompte(texte) {
   document.getElementById("compte-message").textContent = texte;
 }
 
-function ouvrirCompte() {
-  afficherMessageCompte("");
-  document.getElementById("compte-suppression").hidden = true;
-  afficherCompte();
-  document.getElementById("fenetre-compte").hidden = false;
-  document.getElementById("compte-fermer").focus({ preventScroll: true });
-}
-
-function fermerCompte() {
-  document.getElementById("fenetre-compte").hidden = true;
-  document.getElementById("bouton-compte").focus();
-}
-
 // ---------- La synchronisation des cartes ----------
 
-// Met les cartes de cet appareil et celles du compte en commun : chaque côté reçoit toutes les cartes.
+// Met en commun ce qui est sur cet appareil et ce qui est dans le compte (cartes, résultats des parties, favori) :
+// chaque côté reçoit tout, sans jamais rien perdre.
 // Appelée à la connexion, à chaque chargement de la page quand on est connecté, et après chaque carte gagnée.
 async function synchroniserLesCartes() {
   if (!compte.disponible || !compte.utilisateur || partie.modeTest) return;
@@ -115,13 +105,33 @@ async function synchroniserLesCartes() {
   try {
     const reference = compte.base.collection("joueurs").doc(compte.utilisateur.uid);
     const instantane = await reference.get();
-    const enLigne = cartesDuCompte(instantane.exists ? instantane.data() : null);
-    const surAppareil = lireCollection().cartes;   // lu juste avant d'écrire : une carte gagnée entre-temps n'est pas perdue
+    const donneesEnLigne = instantane.exists ? instantane.data() : null;
+    const enLigne = cartesDuCompte(donneesEnLigne);
+    const statsEnLigne = statsDuCompte(donneesEnLigne);
+
+    // Tout est relu juste avant d'écrire : une carte gagnée ou un jour noté entre-temps n'est pas perdu
+    const surAppareil = lireCollection().cartes;
+    const statsAppareil = lireStats();
     const fusion = fusionnerCartes(surAppareil, enLigne);
+    const statsFusion = {
+      jours: fusionnerJours(statsAppareil.jours, statsEnLigne.jours),
+      favori: fusionnerFavoris(statsAppareil.favori, statsEnLigne.favori)
+    };
 
     if (!memesCartes(fusion, surAppareil)) ecrireCollection({ cartes: fusion });
-    if (!memesCartes(fusion, enLigne)) {
-      await reference.set({ version: 1, cartes: fusion, maj: firebase.firestore.FieldValue.serverTimestamp() });
+    if (!memesJours(statsFusion.jours, statsAppareil.jours) || !memesFavoris(statsFusion.favori, statsAppareil.favori)) {
+      ecrireStats(statsFusion);
+    }
+    const aJour = memesCartes(fusion, enLigne)
+      && memesJours(statsFusion.jours, statsEnLigne.jours) && memesFavoris(statsFusion.favori, statsEnLigne.favori);
+    if (!aJour) {
+      await reference.set({
+        version: 1,
+        cartes: fusion,
+        jours: statsFusion.jours,
+        favori: statsFusion.favori,
+        maj: firebase.firestore.FieldValue.serverTimestamp()
+      });
     }
     compte.etat = "ok";
   } catch (erreur) {
@@ -132,6 +142,7 @@ async function synchroniserLesCartes() {
   compte.synchroEnCours = false;
   afficherBoutonCollection();
   if (!document.getElementById("fenetre-collection").hidden) dessinerBibliotheque();
+  if (!document.getElementById("ecran-profil").hidden) afficherProfil();
   afficherCompte();
 
   if (compte.synchroDemandee) {
@@ -180,7 +191,7 @@ async function supprimerMonCompte() {
       await utilisateur.delete();
     }
     compte.etat = "";
-    afficherMessageCompte("Ton compte et tes données en ligne ont été supprimés. Tes cartes restent sur cet appareil.");
+    afficherMessageCompte("Ton compte et tes données en ligne ont été supprimés. Tes cartes et tes statistiques restent sur cet appareil.");
   } catch (erreur) {
     if (erreur && erreur.code === "auth/popup-closed-by-user") {
       afficherMessageCompte("Suppression annulée : tes données en ligne sont effacées, mais le compte existe encore. Recommence pour le supprimer.");
@@ -194,8 +205,6 @@ async function supprimerMonCompte() {
 
 // Branche les boutons de la fenêtre, puis charge Firebase en arrière-plan.
 async function demarrerCompte() {
-  document.getElementById("bouton-compte").addEventListener("click", ouvrirCompte);
-  document.getElementById("compte-fermer").addEventListener("click", fermerCompte);
   document.getElementById("compte-connexion").addEventListener("click", seConnecter);
   document.getElementById("compte-deconnexion").addEventListener("click", seDeconnecter);
   document.getElementById("compte-supprimer").addEventListener("click", () => {
@@ -205,9 +214,6 @@ async function demarrerCompte() {
     document.getElementById("compte-suppression").hidden = true;
   });
   document.getElementById("compte-confirmer").addEventListener("click", supprimerMonCompte);
-  document.getElementById("fenetre-compte").addEventListener("mousedown", evenement => {
-    if (evenement.target.id === "fenetre-compte") fermerCompte();
-  });
   afficherCompte();
 
   // La connexion Google ne marche pas quand la page est ouverte par double-clic (adresse « file: »)

@@ -1,0 +1,374 @@
+/* Héros du Jour : l'écran « Mon profil » (vitrine, statistiques, collection, compte).
+   Il se pose par-dessus le jeu, sur la table. Les fiches et les onglets viennent de fiches.css. */
+
+.ecran-plein {
+  position: fixed;
+  inset: 0;
+  z-index: 40;                /* sous les fenêtres (50) : la collection et la carte en grand s'ouvrent par-dessus */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--bureau);
+  color: var(--sur-bureau);
+}
+
+.ecran-plein[hidden] {
+  display: none;
+}
+
+.profil-actions {
+  margin-top: 14px;
+}
+
+/* ---------- La vitrine : la carte favorite ---------- */
+
+.vitrine {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.vitrine .vignette,
+.vitrine .emplacement {
+  flex: none;
+  width: 96px;
+}
+
+.vitrine-texte {
+  min-width: 0;
+}
+
+.vitrine-texte .petit {
+  font-size: 0.85rem;
+  color: var(--encre-douce);
+}
+
+.vitrine-texte strong {
+  display: block;
+  margin: 2px 0 10px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.vitrine-texte .texte-vide {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.vitrine-texte .texte-vide[hidden] {
+  display: none;
+}
+
+.lien-compte {
+  margin-top: 14px;
+  padding-top: 12px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: var(--encre-douce);
+  border-top: 1px solid var(--trait);
+}
+
+/* ---------- Les chiffres clés ---------- */
+
+.chiffres {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 18px;
+}
+
+.chiffre b {
+  display: block;
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.chiffre span {
+  font-size: 0.9rem;
+  color: var(--encre-douce);
+}
+
+.serie {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--trait);
+}
+
+.serie .tampon {
+  flex: none;
+  width: 84px;
+  height: 84px;
+}
+
+.serie .tampon span {
+  font-size: 2rem;
+}
+
+.serie p {
+  line-height: 1.35;
+}
+
+.serie p b {
+  font-weight: 800;
+}
+
+.serie p small {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.88rem;
+  color: var(--encre-douce);
+}
+
+.sous-titre {
+  margin: 22px 0 8px;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+/* ---------- Les 14 derniers jours : un carnet de présence ---------- */
+
+.jours {
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.jours li {
+  aspect-ratio: 1;
+  border: 1.5px dashed var(--trait);
+  border-radius: 2px;
+}
+
+.jours li.gagne { background: var(--ok); border: 0; }
+.jours li.perdu { background: var(--non); border: 0; }
+.jours li.aujourdhui { outline: 2px solid var(--encre); outline-offset: 1px; }
+
+.jours-legende {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--encre-douce);
+}
+
+.jours-legende i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+  vertical-align: -1px;
+  border-radius: 2px;
+}
+
+.jours-legende .gagne { background: var(--ok); }
+.jours-legende .perdu { background: var(--non); }
+.jours-legende .vide { border: 1.5px dashed var(--trait); }
+
+/* ---------- La répartition des essais : des barres, colorées comme les raretés ---------- */
+
+.repartition {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.repartition li {
+  display: grid;
+  grid-template-columns: 22px 1fr 24px;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.repartition .num {
+  font-weight: 700;
+  text-align: right;
+}
+
+.repartition .piste {
+  height: 16px;
+}
+
+.repartition .barre {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  background: var(--bronze-2);
+  border-radius: 0 3px 3px 0;
+}
+
+.repartition .legendaire .barre { background: var(--or-2); }
+.repartition .rare .barre { background: var(--argent-2); }
+.repartition .perdu .barre { background: var(--non); }
+
+.repartition .nb {
+  color: var(--encre-douce);
+}
+
+.legende-barres {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--encre-douce);
+}
+
+/* ---------- Le résumé de la collection ---------- */
+
+.profil-compte {
+  margin-top: 0;
+}
+
+.profil-compte b {
+  font-size: 2.4rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.profil-compte span {
+  color: var(--encre-douce);
+}
+
+.raretes {
+  display: grid;
+  gap: 10px;
+}
+
+.rarete-ligne {
+  display: grid;
+  grid-template-columns: 92px 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.rarete-ligne .nom {
+  font-weight: 700;
+}
+
+.rarete-ligne .bande {
+  height: 8px;
+  border-radius: 2px;
+}
+
+.rarete-ligne .bande.legendaire { background: linear-gradient(100deg, var(--or-2), var(--or-3) 45%, var(--or-2)); }
+.rarete-ligne .bande.rare { background: linear-gradient(100deg, var(--argent-2), var(--argent-3) 45%, var(--argent-2)); }
+.rarete-ligne .bande.commune { background: linear-gradient(100deg, var(--bronze-2), var(--bronze-1)); }
+
+.rarete-ligne .n {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.par-univers {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.par-univers li {
+  display: grid;
+  grid-template-columns: 62px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+
+.par-univers .nom {
+  font-weight: 700;
+}
+
+.par-univers .piste {
+  height: 8px;
+  overflow: hidden;
+  background: var(--papier-2);
+  border-radius: 2px;
+}
+
+.par-univers .piste i {
+  display: block;
+  height: 100%;
+  background: var(--c, var(--encre));
+}
+
+.par-univers .n {
+  color: var(--encre-douce);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Le compte ---------- */
+
+.compte-ligne {
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.compte-note {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: var(--encre-douce);
+}
+
+.compte-message {
+  min-height: 1.4em;
+  margin-bottom: 0;
+  font-weight: 700;
+}
+
+.compte-suppression {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--trait);
+}
+
+.fiche-texte .fin-boutons {
+  justify-content: flex-start;
+}
+
+/* Le bouton qui supprime : rouge, pour qu'on ne le touche pas par erreur */
+.bouton-danger {
+  color: #ffffff;
+  background: var(--non);
+}
+
+/* ---------- Choisir la carte favorite ---------- */
+
+.choix-grille {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 480px) {
+  .choix-grille { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+.vignette.choisie {
+  outline: 3px solid var(--encre);
+  outline-offset: 2px;
+}
+
+/* Les listes de ce profil n'ont pas le retrait des listes à puces des fiches de texte */
+.fiche-texte .repartition,
+.fiche-texte .par-univers,
+.fiche-texte .jours,
+.fiche-texte .choix-grille {
+  padding-left: 0;
+}
