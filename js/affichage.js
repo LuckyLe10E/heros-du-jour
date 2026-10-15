@@ -630,7 +630,7 @@ function preparerExempleDesRegles() {
   const comparaisons = comparerPersonnages(essai, cible);
 
   const intro = document.getElementById("regles-intro-exemple");
-  intro.textContent = "Exemple : le mystère est ";
+  intro.textContent = "Le mystère est ";
   const nomCible = document.createElement("strong");
   nomCible.textContent = cible.nom;
   const nomEssai = document.createElement("strong");
@@ -661,6 +661,7 @@ function preparerExempleDesRegles() {
 // Ouvre la fenêtre « Comment jouer » (et retient que le joueur l'a vue).
 function ouvrirRegles() {
   document.getElementById("fenetre-regles").hidden = false;
+  document.getElementById("fenetre-regles").scrollTop = 0;
   document.getElementById("regles-fermer").focus();
   noterReglesVues();
 }
@@ -685,6 +686,7 @@ function demarrerAffichage() {
   document.getElementById("bouton-resultat").addEventListener("click", ouvrirFenetreFin);
   document.getElementById("bouton-aide").addEventListener("click", ouvrirRegles);
   document.getElementById("regles-fermer").addEventListener("click", fermerRegles);
+  document.getElementById("regles-commencer").addEventListener("click", fermerRegles);
   document.getElementById("bouton-collection").addEventListener("click", ouvrirBibliotheque);
   document.getElementById("collection-fermer").addEventListener("click", fermerBibliotheque);
   document.getElementById("carte-grand-fermer").addEventListener("click", fermerCarteEnGrand);

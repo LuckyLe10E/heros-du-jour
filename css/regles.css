@@ -1,0 +1,76 @@
+/* Héros du Jour : l'écran « Comment jouer » (le « ? »). Même présentation que la page Confidentialité et que le profil :
+   la table bleu nuit, des rubriques avec leur onglet, des fiches de papier. Les fiches et onglets viennent de fiches.css,
+   le plein écran de profil.css. */
+
+.regles-liste,
+.legende {
+  margin: 0;
+  padding-left: 22px;
+  line-height: 1.4;
+}
+
+.regles-liste li,
+.legende li {
+  margin-bottom: 6px;
+}
+
+.legende {
+  list-style: none;
+  margin-top: 10px;
+  padding-left: 4px;
+}
+
+/* Chaque ligne de la légende : la pastille à gauche, le texte à droite */
+.legende li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.legende-texte {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Les petites pastilles de couleur de la légende */
+.pastille {
+  flex: none;
+  width: 1.7em;
+  font-weight: 700;
+  line-height: 1.6em;
+  text-align: center;
+  color: #ffffff;
+  border-radius: 3px;
+}
+
+.pastille.vert   { background: var(--ok); }
+.pastille.orange { background: var(--partiel); color: #231a05; }
+.pastille.rouge  { background: var(--non); }
+
+.pastille-fleche {
+  flex: none;
+  width: 1.7em;
+  font-weight: 700;
+  line-height: 1.6em;
+  text-align: center;
+}
+
+.regles-intro-exemple {
+  margin: 0 0 8px;
+}
+
+/* La ligne d'exemple est un peu plus petite que dans le jeu, pour tenir dans la fiche */
+.regles-exemple .entetes { padding: 0; margin-bottom: 0; }
+.regles-exemple .entete-critere { font-size: 0.6rem; padding: 6px 0 5px; }
+.regles-exemple .case { font-size: 0.6rem; min-height: 48px; }
+.regles-exemple .case-symbole { font-size: 0.56rem; }
+
+.regles-explication {
+  margin-top: 10px;
+  font-size: 0.92rem;
+}
+
+.regles-pied {
+  margin-top: 8px;
+  text-align: center;
+}

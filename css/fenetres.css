@@ -107,108 +107,8 @@
   font-weight: 700;
 }
 
-/* ---------- La fenêtre « Comment jouer » ---------- */
+/* ---------- Le lien « Signale-la » et le message sous une carte en grand ---------- */
 
-.fenetre-regles {
-  max-width: 560px;
-  padding: 20px 14px;
-  text-align: left;
-}
-
-.fenetre-regles .fenetre-titre {
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-.regles-liste,
-.legende {
-  margin: 0 0 10px;
-  padding-left: 22px;
-  font-size: 0.92rem;
-  line-height: 1.35;
-}
-
-.regles-liste li,
-.legende li {
-  margin-bottom: 4px;
-}
-
-.legende {
-  list-style: none;
-  padding-left: 4px;
-}
-
-/* Chaque ligne de la légende : la pastille à gauche, le texte à droite */
-.legende li {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.legende-texte {
-  flex: 1;
-  min-width: 0;
-}
-
-/* Les petites pastilles de couleur de la légende */
-.pastille {
-  flex: none;
-  width: 1.7em;
-  font-weight: 700;
-  line-height: 1.6em;
-  text-align: center;
-  color: #ffffff;
-  border-radius: 3px;
-}
-
-.pastille.vert   { background: var(--ok); }
-.pastille.orange { background: var(--partiel); color: #231a05; }
-.pastille.rouge  { background: var(--non); }
-
-.pastille-fleche {
-  flex: none;
-  width: 1.7em;
-  font-weight: 700;
-  line-height: 1.6em;
-  text-align: center;
-}
-
-.regles-intro-exemple {
-  margin: 14px 0 8px;
-  font-size: 0.95rem;
-}
-
-/* La ligne d'exemple est un peu plus petite que dans le jeu, pour tenir dans la fenêtre */
-.regles-exemple .entetes { padding: 0; margin-bottom: 0; }
-.regles-exemple .entete-critere { font-size: 0.6rem; padding: 6px 0 5px; }
-.regles-exemple .case { font-size: 0.6rem; min-height: 48px; }
-.regles-exemple .case-symbole { font-size: 0.56rem; }
-
-.regles-explication {
-  margin: 10px 0 12px;
-  font-size: 0.88rem;
-  line-height: 1.4;
-}
-
-.regles-theme {
-  margin: 12px 0 0;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-.regles-installer {
-  margin-bottom: 12px;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-.regles-signaler {
-  margin-bottom: 12px;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-/* Le lien « Signale-la » : discret, sous les boutons d'une fenêtre */
 .signaler {
   margin-top: 10px;
   font-size: 0.82rem;
@@ -227,47 +127,12 @@
   opacity: 0.85;
 }
 
-.regles-partage-carte {
-  margin-bottom: 12px;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
 .carte-message {
   min-height: 1.4em;
   margin-top: 8px;
   font-size: 0.9rem;
   text-align: center;
   color: var(--sur-bureau);
-}
-
-.regles-succes {
-  margin-bottom: 12px;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-.regles-partage {
-  margin-bottom: 12px;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-.regles-bonus {
-  margin-bottom: 12px;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-.regles-fin {
-  margin-bottom: 16px;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-.fenetre-regles .bouton {
-  display: block;
-  margin: 0 auto;
 }
 
 /* ---------- L'album : « Ma collection » ---------- */
