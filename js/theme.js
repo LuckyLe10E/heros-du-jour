@@ -1,13 +1,8 @@
 // Le choix entre mode clair et mode sombre.
-// Par défaut, on suit le mode du téléphone ; si le joueur appuie sur le bouton soleil / lune, on retient son choix.
+// Par défaut, le jeu est en mode sombre ; si le joueur appuie sur le bouton soleil / lune, on retient son choix.
 
 const CLE_THEME = "heros-du-jour-theme";   // le nom sous lequel on range le choix dans le navigateur
-
-// Le mode du téléphone ou de l'ordinateur : "sombre" ou "clair".
-function themeDuSysteme() {
-  const sombre = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  return sombre ? "sombre" : "clair";
-}
+const THEME_PAR_DEFAUT = "sombre";
 
 // Le choix du joueur, s'il en a fait un ("clair", "sombre"), sinon null.
 function themeSauvegarde() {
@@ -54,7 +49,7 @@ function basculerTheme() {
 
 // Dès le chargement (script placé dans l'en-tête de la page) : on applique le thème tout de suite,
 // pour éviter un flash de la mauvaise couleur.
-appliquerTheme(themeSauvegarde() || themeDuSysteme());
+appliquerTheme(themeSauvegarde() || THEME_PAR_DEFAUT);
 
 // Quand la page est prête : on branche le bouton.
 document.addEventListener("DOMContentLoaded", () => {
