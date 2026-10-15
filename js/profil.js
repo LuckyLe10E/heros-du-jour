@@ -134,6 +134,7 @@ function afficherProfil() {
   afficherLaVitrine();
   afficherLesStatistiques();
   afficherLeResumeDeLaCollection();
+  afficherLesSucces();
   afficherCompte();
 }
 

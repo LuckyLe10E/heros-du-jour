@@ -45,9 +45,23 @@ function bonusValide(bonus) {
     && Number.isInteger(bonus.faites) && bonus.faites >= 0 && bonus.faites <= MAX_BONUS;
 }
 
-// Lit les données du profil. Renvoie { jours: {...}, favori: {id, maj} ou null, bonus: {date, faites} ou null }.
+// Les succès débloqués : { "premiere-carte": "2026-10-16", ... } (l'identifiant du succès et la date du déblocage).
+// Les identifiants qui commencent par « _ » sont des repères internes (par exemple « _matin »), jamais affichés.
+function nettoyerLesSucces(succes) {
+  const propres = {};
+  if (succes && typeof succes === "object") {
+    Object.keys(succes).forEach(id => {
+      if (/^_?[a-z0-9-]{1,40}$/.test(id) && typeof succes[id] === "string" && /^\d{4}-\d{2}-\d{2}$/.test(succes[id])) {
+        propres[id] = succes[id];
+      }
+    });
+  }
+  return propres;
+}
+
+// Lit les données du profil. Renvoie { jours, favori, bonus, succes, totalBonus }.
 function lireStats() {
-  const stats = { jours: {}, favori: null, bonus: null };
+  const stats = { jours: {}, favori: null, bonus: null, succes: {}, totalBonus: 0 };
   try {
     const texte = localStorage.getItem(CLE_STATS);
     if (!texte) return stats;
@@ -56,6 +70,8 @@ function lireStats() {
       stats.jours = nettoyerLesJours(donnees.jours);
       if (favoriValide(donnees.favori)) stats.favori = { id: donnees.favori.id, maj: donnees.favori.maj };
       if (bonusValide(donnees.bonus)) stats.bonus = { date: donnees.bonus.date, faites: donnees.bonus.faites };
+      stats.succes = nettoyerLesSucces(donnees.succes);
+      if (Number.isInteger(donnees.totalBonus) && donnees.totalBonus >= 0) stats.totalBonus = Math.min(donnees.totalBonus, 100000);
     }
   } catch (erreur) {
     // données illisibles : on repart de zéro
@@ -65,7 +81,7 @@ function lireStats() {
 
 function ecrireStats(stats) {
   try {
-    localStorage.setItem(CLE_STATS, JSON.stringify({ version: 1, jours: stats.jours, favori: stats.favori, bonus: stats.bonus }));
+    localStorage.setItem(CLE_STATS, JSON.stringify({ version: 1, jours: stats.jours, favori: stats.favori, bonus: stats.bonus, succes: stats.succes, totalBonus: stats.totalBonus }));
   } catch (erreur) {
     // pas grave : les statistiques ne seront pas retrouvées au prochain chargement
   }
@@ -134,10 +150,26 @@ function memesBonus(a, b) {
   return a.date === b.date && a.faites === b.faites;
 }
 
+// Entre deux listes de succès : tous les succès des deux, avec la date la plus ancienne.
+function fusionnerSucces(a, b) {
+  const fusion = {};
+  new Set(Object.keys(a).concat(Object.keys(b))).forEach(id => {
+    fusion[id] = a[id] && b[id] ? (a[id] <= b[id] ? a[id] : b[id]) : (a[id] || b[id]);
+  });
+  return fusion;
+}
+
+function memesSucces(a, b) {
+  const ids = Object.keys(a);
+  return ids.length === Object.keys(b).length && ids.every(id => a[id] === b[id]);
+}
+
 // Lit les jours, le favori et le compteur bonus reçus du compte en ligne (on ne fait jamais confiance aux données reçues).
 function statsDuCompte(donnees) {
-  const stats = { jours: {}, favori: null, bonus: null };
+  const stats = { jours: {}, favori: null, bonus: null, succes: {}, totalBonus: 0 };
   if (donnees) {
+    stats.succes = nettoyerLesSucces(donnees.succes);
+    if (Number.isInteger(donnees.totalBonus) && donnees.totalBonus >= 0) stats.totalBonus = Math.min(donnees.totalBonus, 100000);
     stats.jours = nettoyerLesJours(donnees.jours);
     if (favoriValide(donnees.favori)) stats.favori = { id: donnees.favori.id, maj: donnees.favori.maj };
     if (bonusValide(donnees.bonus)) stats.bonus = { date: donnees.bonus.date, faites: donnees.bonus.faites };

@@ -56,6 +56,7 @@ function partiesBonusRestantes() {
 function noterUnePartieBonus() {
   const stats = lireStats();
   stats.bonus = { date: texteDeLaDate(new Date()), faites: Math.min(MAX_BONUS, partiesBonusFaites() + 1) };
+  stats.totalBonus = Math.min(100000, (stats.totalBonus || 0) + 1);   // pour le succès « 25 parties bonus »
   ecrireStats(stats);
 }
 

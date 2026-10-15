@@ -116,17 +116,21 @@ async function synchroniserLesCartes() {
     const statsFusion = {
       jours: fusionnerJours(statsAppareil.jours, statsEnLigne.jours),
       favori: fusionnerFavoris(statsAppareil.favori, statsEnLigne.favori),
-      bonus: fusionnerBonus(statsAppareil.bonus, statsEnLigne.bonus)
+      bonus: fusionnerBonus(statsAppareil.bonus, statsEnLigne.bonus),
+      succes: fusionnerSucces(statsAppareil.succes, statsEnLigne.succes),
+      totalBonus: Math.max(statsAppareil.totalBonus, statsEnLigne.totalBonus)
     };
 
     if (!memesCartes(fusion, surAppareil)) ecrireCollection({ cartes: fusion });
     if (!memesJours(statsFusion.jours, statsAppareil.jours) || !memesFavoris(statsFusion.favori, statsAppareil.favori)
-      || !memesBonus(statsFusion.bonus, statsAppareil.bonus)) {
+      || !memesBonus(statsFusion.bonus, statsAppareil.bonus) || !memesSucces(statsFusion.succes, statsAppareil.succes)
+      || statsFusion.totalBonus !== statsAppareil.totalBonus) {
       ecrireStats(statsFusion);
     }
     const aJour = memesCartes(fusion, enLigne)
       && memesJours(statsFusion.jours, statsEnLigne.jours) && memesFavoris(statsFusion.favori, statsEnLigne.favori)
-      && memesBonus(statsFusion.bonus, statsEnLigne.bonus);
+      && memesBonus(statsFusion.bonus, statsEnLigne.bonus) && memesSucces(statsFusion.succes, statsEnLigne.succes)
+      && statsFusion.totalBonus === statsEnLigne.totalBonus;
     if (!aJour) {
       await reference.set({
         version: 1,
@@ -134,6 +138,8 @@ async function synchroniserLesCartes() {
         jours: statsFusion.jours,
         favori: statsFusion.favori,
         bonus: statsFusion.bonus,
+        succes: statsFusion.succes,
+        totalBonus: statsFusion.totalBonus,
         maj: firebase.firestore.FieldValue.serverTimestamp()
       });
     }
@@ -148,6 +154,7 @@ async function synchroniserLesCartes() {
   if (!document.getElementById("fenetre-collection").hidden) dessinerBibliotheque();
   if (!document.getElementById("ecran-profil").hidden) afficherProfil();
   afficherCompte();
+  verifierLesSucces({});   // les données reçues du compte peuvent débloquer des succès
 
   if (compte.synchroDemandee) {
     compte.synchroDemandee = false;

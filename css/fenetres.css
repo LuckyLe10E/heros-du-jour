@@ -227,6 +227,12 @@
   opacity: 0.85;
 }
 
+.regles-succes {
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
 .regles-partage {
   margin-bottom: 12px;
   font-size: 0.95rem;

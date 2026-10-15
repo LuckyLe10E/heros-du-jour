@@ -372,3 +372,145 @@
 .fiche-texte .choix-grille {
   padding-left: 0;
 }
+
+/* ---------- Les succès : des médailles (des petits tampons) ---------- */
+
+.succes-groupe {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fiche-texte .succes-groupe {
+  padding-left: 0;
+}
+
+.succes-ligne {
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.succes-ligne:not(.obtenu) .succes-textes strong {
+  color: var(--encre-douce);
+}
+
+.succes-textes {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.succes-textes strong {
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.succes-description {
+  font-size: 0.85rem;
+  line-height: 1.3;
+  color: var(--encre-douce);
+}
+
+.succes-detail {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--encre-douce);
+}
+
+.succes-ligne.obtenu .succes-detail {
+  color: var(--ok);
+}
+
+/* La médaille : un petit tampon rond. Grisée tant que le succès n'est pas débloqué. */
+.medaille {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--trait);
+  background: transparent;
+  border: 2px dashed var(--trait);
+  border-radius: 50%;
+}
+
+.medaille.debloque {
+  color: var(--m, var(--tampon));
+  background: var(--papier);
+  border: 2.5px solid currentColor;
+  outline: 1.5px solid currentColor;
+  outline-offset: 2px;
+  transform: rotate(-8deg);
+}
+
+/* Une couleur par groupe de succès (les thèmes complets prennent la couleur de leur thème) */
+.medaille.g-pas { --m: var(--tampon); }
+.medaille.g-maitrise { --m: #b8860b; }
+.medaille.g-serie { --m: var(--u-manga); }
+.medaille.g-collection { --m: var(--u-dc); }
+.medaille.g-themes { --m: var(--c, var(--u-inde)); }
+.medaille.g-bonus { --m: var(--u-inde); }
+.medaille.g-fun { --m: var(--u-films); }
+
+/* ---------- La notification « Succès débloqué » ---------- */
+
+.notification-succes {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  z-index: 80;                /* au-dessus de tout, même des confettis et des fenêtres */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(360px, calc(100% - 24px));
+  padding: 10px 14px;
+  color: var(--encre);
+  background: var(--papier);
+  border-radius: 3px;
+  box-shadow: 0 14px 28px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--trait);
+  transform: translateX(-50%);
+  animation: entree-notification 0.35s ease-out;
+}
+
+.notification-succes[hidden] {
+  display: none;
+}
+
+.notification-succes.sortie {
+  opacity: 0;
+  transform: translate(-50%, -14px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.notification-textes {
+  display: grid;
+  min-width: 0;
+}
+
+.notification-textes small {
+  font-size: 0.78rem;
+  color: var(--encre-douce);
+}
+
+.notification-textes strong {
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+@keyframes entree-notification {
+  from { opacity: 0; transform: translate(-50%, -18px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notification-succes { animation: none; }
+  .notification-succes.sortie { transition: none; }
+}

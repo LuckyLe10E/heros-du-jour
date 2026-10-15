@@ -113,6 +113,7 @@ function choisirPersonnage(id) {
       if (partie.statut === "gagne") lancerConfettis(partie.carte ? partie.carte.rarete : "commune");
     }
     afficherBoutonCollection();   // le compteur de cartes a peut-être changé
+    if (partie.statut !== "en cours") verifierLesSucces({ finDePartie: true });   // la partie vient de finir : des succès à débloquer ?
   }, animer ? DUREE_REVELATION : 0);
   if (partie.statut !== "en cours") synchroniserLesCartes();   // si le joueur est connecté, la carte et le résultat partent en ligne
 }
@@ -240,6 +241,7 @@ function afficherLaPartie() {
 function passerALaPartieSuivante() {
   lancerUnePartieSupplementaire();
   afficherLaPartie();
+  verifierLesSucces({});   // une partie bonus de plus a été lancée
 }
 
 function retourALaPartieDuJour() {
@@ -723,6 +725,8 @@ function demarrerAffichage() {
 
   // À la toute première visite, les règles s'ouvrent toutes seules
   if (!reglesDejaVues()) ouvrirRegles();
+
+  verifierLesSucces({});   // des succès déjà mérités sans avoir été débloqués (par exemple avant leur arrivée) ?
 }
 
 demarrerAffichage();
