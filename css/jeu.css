@@ -341,18 +341,6 @@
   list-style: none;
 }
 
-/* Tant qu'il n'y a aucun essai : une fiche vide qui montre où ils viendront */
-.liste-essais:empty::before {
-  content: "Tes propositions apparaîtront ici.";
-  display: block;
-  padding: 18px 12px;
-  text-align: center;
-  color: var(--encre-douce);
-  background: var(--papier);
-  border-radius: 0 0 3px 3px;
-  box-shadow: var(--ombre-papier);
-}
-
 .essai {
   margin-bottom: 12px;
   padding: 12px 10px 10px;
@@ -405,6 +393,16 @@
   flex: none;
   font-size: 0.82rem;
   color: var(--encre-douce);
+}
+
+/* L'essai offert : son étiquette est un petit tampon rouge, pour le distinguer des essais du joueur */
+.essai-offert .essai-numero {
+  padding: 2px 7px 1px;
+  font-weight: 700;
+  color: var(--tampon);
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+  transform: rotate(-3deg);
 }
 
 .case {

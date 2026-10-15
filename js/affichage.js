@@ -357,34 +357,39 @@ function afficherPastilles(termine) {
   }
 }
 
-// Dessine la liste des essais déjà faits : une ligne de 7 cases par essai, le dernier en haut.
+// Fabrique la fiche d'un essai : la photo, le nom, l'étiquette (« essai 3 » ou « essai offert ») et les 7 cases.
+function creerFicheEssai(personnage, etiquette, offert) {
+  const comparaisons = comparerAvecMystere(personnage);
+
+  const essai = document.createElement("li");
+  essai.className = "essai" + (offert ? " essai-offert" : "");
+
+  // La tête de la fiche : la photo (une silhouette pour l'instant), le nom et l'étiquette
+  const tete = document.createElement("div");
+  tete.className = "essai-tete";
+  const photo = document.createElement("div");
+  photo.className = "photo";
+  photo.appendChild(creerSilhouette());
+  tete.appendChild(photo);
+  tete.appendChild(creerElement("strong", "essai-nom", personnage.nom));
+  tete.appendChild(creerElement("span", "essai-numero", etiquette));
+  essai.appendChild(tete);
+
+  const cases = document.createElement("div");
+  cases.className = "cases";
+  CRITERES_JEU.forEach((critere, i) => cases.appendChild(creerCase(critere, personnage, comparaisons[i])));
+  essai.appendChild(cases);
+  return essai;
+}
+
+// Dessine la liste des essais : une fiche de 7 cases par essai, le dernier en haut.
+// Tout en bas, l'essai offert (le jeu l'a joué pour aider à démarrer ; il ne compte pas dans les essais).
 function afficherEssais() {
   listeEssais.innerHTML = "";
   partie.essais.slice().reverse().forEach(id => {
-    const personnage = trouverPersonnage(id);
-    const comparaisons = comparerAvecMystere(personnage);
-
-    const essai = document.createElement("li");
-    essai.className = "essai";
-
-    // La tête de la fiche : la photo (une silhouette pour l'instant), le nom et le numéro de l'essai
-    const tete = document.createElement("div");
-    tete.className = "essai-tete";
-    const photo = document.createElement("div");
-    photo.className = "photo";
-    photo.appendChild(creerSilhouette());
-    tete.appendChild(photo);
-    tete.appendChild(creerElement("strong", "essai-nom", personnage.nom));
-    tete.appendChild(creerElement("span", "essai-numero", "essai " + (partie.essais.indexOf(id) + 1)));
-    essai.appendChild(tete);
-
-    const cases = document.createElement("div");
-    cases.className = "cases";
-    CRITERES_JEU.forEach((critere, i) => cases.appendChild(creerCase(critere, personnage, comparaisons[i])));
-    essai.appendChild(cases);
-
-    listeEssais.appendChild(essai);
+    listeEssais.appendChild(creerFicheEssai(trouverPersonnage(id), "essai " + (partie.essais.indexOf(id) + 1), false));
   });
+  listeEssais.appendChild(creerFicheEssai(trouverPersonnage(partie.offert), "essai offert", true));
 
   // Le compteur, la case de saisie et le bouton « Revoir le résultat » selon l'état de la partie
   const termine = (partie.statut !== "en cours");

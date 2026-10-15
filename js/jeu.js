@@ -34,6 +34,7 @@ const partie = {
   mystere: mystere.personnage,    // le personnage à deviner
   modeTest: mystere.modeTest,     // vrai si on a utilisé ?perso=... dans l'adresse
   essais: [],                     // les "id" des personnages déjà proposés, du plus ancien au plus récent
+  offert: null,                   // l'"id" du personnage de l'essai offert (comparé d'office au mystère, ne compte pas dans les essais)
   statut: "en cours",             // "en cours", "gagne" ou "perdu"
   carte: null,                    // la carte gagnée (quand la partie est gagnée)
   carteNouvelle: false,           // vrai si la carte vient d'être gagnée (elle se retourne avec une animation)
@@ -138,9 +139,62 @@ function comparerAvecMystere(personnage) {
   return comparerPersonnages(personnage, partie.mystere);
 }
 
-// Dit si ce personnage a déjà été proposé dans la partie.
+// Dit si ce personnage a déjà été proposé dans la partie (l'essai offert compte : on ne le propose pas une 2e fois).
 function dejaPropose(id) {
-  return partie.essais.includes(id);
+  return partie.essais.includes(id) || id === partie.offert;
+}
+
+// L'ESSAI OFFERT : au début de chaque partie, le jeu compare d'office un personnage au mystère, pour que le joueur
+// ne parte pas de rien. Il ne compte pas dans les 10 essais ni dans la rareté de la carte.
+//
+// Le choix est le même pour tous les joueurs d'un même jour, et il est pensé pour rester juste quand on ajoute
+// des personnages (nouveaux univers, films, séries…) :
+//  - on cherche des personnages qui ont 2 ou 3 cases vertes avec le mystère (sur les 6 critères sans l'année) ;
+//    s'il n'y en a pas, on élargit petit à petit (1 à 4 vertes, puis au moins 1, puis n'importe lequel) ;
+//  - parmi eux, on prend celui dont le « numéro de tirage » (calculé avec le numéro du jour et son identifiant) est
+//    le plus petit. Ce tirage ne dépend ni de l'ordre ni du nombre de personnages : ajouter des personnages ne
+//    change le choix d'un jour que s'ils sont tirés eux-mêmes (environ 1 jour sur 6 quand on ajoute 40 personnages
+//    à 127). Et un joueur qui a déjà commencé sa partie garde son essai offert (il est dans sa sauvegarde).
+
+// Un petit nombre « au hasard » mais toujours le même pour un texte donné (méthode FNV-1a).
+function nombreDuTirage(texte) {
+  let nombre = 2166136261;
+  for (let i = 0; i < texte.length; i++) {
+    nombre = Math.imul(nombre ^ texte.charCodeAt(i), 16777619) >>> 0;
+  }
+  return nombre;
+}
+
+// Choisit l'essai offert pour un mystère et un numéro de jour donnés. Renvoie l'identifiant du personnage.
+// "exclus" : les identifiants qu'on ne peut pas choisir (les essais déjà joués, en plus du mystère).
+function choisirEssaiOffert(mystereDuJour, numero, exclus) {
+  const candidats = window.PERSONNAGES.filter(p => p.id !== mystereDuJour.id && !exclus.includes(p.id));
+
+  // Combien de cases vertes (année exclue) ce personnage a-t-il avec le mystère ?
+  const verts = new Map(candidats.map(p => [p.id, comparerPersonnages(p, mystereDuJour)
+    .filter((resultat, i) => CRITERES_JEU[i].genre !== "annee" && resultat.etat === "vert").length]));
+
+  // De plus en plus large jusqu'à trouver au moins un personnage
+  const fourchettes = [[2, 3], [1, 4], [1, 99], [0, 99]];
+  let liste = [];
+  for (const [min, max] of fourchettes) {
+    liste = candidats.filter(p => verts.get(p.id) >= min && verts.get(p.id) <= max);
+    if (liste.length > 0) break;
+  }
+
+  let choisi = liste[0];
+  liste.forEach(p => {
+    if (nombreDuTirage(numero + ":" + p.id) < nombreDuTirage(numero + ":" + choisi.id)) choisi = p;
+  });
+  return choisi.id;
+}
+
+// L'essai offert de la partie en cours. Si la partie sauvegardée en avait déjà un valable, on le garde :
+// il ne change pas en cours de journée, même si on ajoute des personnages entre-temps.
+function preparerEssaiOffert(idSauvegarde) {
+  const garde = idSauvegarde && idSauvegarde !== partie.mystere.id && !partie.essais.includes(idSauvegarde)
+    && trouverPersonnage(idSauvegarde);
+  partie.offert = garde ? idSauvegarde : choisirEssaiOffert(partie.mystere, partie.numero, partie.essais);
 }
 
 // Note un essai : on ajoute le personnage à la liste (sauf s'il y est déjà ou si la partie est finie),
@@ -176,40 +230,48 @@ function sauvegarderPartie() {
     version: 1,
     numero: partie.numero,
     mystere: partie.mystere.id,
-    essais: partie.essais
+    essais: partie.essais,
+    offert: partie.offert
   });
 }
 
-// Au chargement de la page : on retrouve la partie du jour si le joueur l'avait commencée.
+// Au chargement de la page : on retrouve la partie du jour (les essais) puis on prépare l'essai offert.
+function restaurerPartie() {
+  const sauvegarde = restaurerLesEssais();
+  preparerEssaiOffert(sauvegarde ? sauvegarde.offert : null);
+}
+
+// Retrouve la partie du jour si le joueur l'avait commencée. Renvoie la sauvegarde utilisée, ou null.
 // On ne la reprend que si elle date d'aujourd'hui (même numéro de jour, même personnage mystère)
 // et si elle est valide ; sinon on repart d'une partie vierge. Pas de sauvegarde en mode test.
-function restaurerPartie() {
+function restaurerLesEssais() {
   // Outil de test réservé à Luca : ajouter ?recommencer à l'adresse
   //  - en jeu normal : efface la partie du jour sauvegardée ;
   //  - en mode test (?perso=...) : efface la collection de TEST (jamais la vraie partie ni les vraies cartes).
   const veutRecommencer = new URLSearchParams(window.location.search).has("recommencer");
   if (partie.modeTest) {
     if (veutRecommencer) effacerCollectionDeTest();
-    return;
+    return null;
   }
   if (veutRecommencer) effacerSauvegarde();
 
   const sauvegarde = lireSauvegarde();
-  if (!sauvegarde) return;
-  if (sauvegarde.numero !== partie.numero || sauvegarde.mystere !== partie.mystere.id) return;
+  if (!sauvegarde) return null;
+  if (sauvegarde.numero !== partie.numero || sauvegarde.mystere !== partie.mystere.id) return null;
 
   // On vérifie que chaque essai est un vrai personnage, sans doublon, et pas plus de 10 essais
   const ids = sauvegarde.essais;
   const valide = ids.length <= MAX_ESSAIS
     && ids.every(id => typeof id === "string" && trouverPersonnage(id))
     && new Set(ids).size === ids.length;
-  if (!valide) return;
+  if (!valide) return null;
 
   // Si le bon personnage est dans la liste, la partie s'arrête à lui (on ignore ce qui viendrait après)
   const positionDuBon = ids.indexOf(partie.mystere.id);
   partie.essais = positionDuBon === -1 ? ids.slice() : ids.slice(0, positionDuBon + 1);
   mettreAJourStatut();
   if (partie.statut === "gagne") retrouverLaCarte();
+  return sauvegarde;
 }
 
 // Calcule à quel point un texte « ressemble » au début de la saisie du joueur.
