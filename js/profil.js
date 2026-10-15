@@ -177,6 +177,7 @@ function ouvrirProfil() {
   document.getElementById("profil-choix").hidden = true;
   document.getElementById("profil-vue").hidden = false;
   afficherProfil();
+  afficherInstallation();   // la rubrique « Installer le jeu » n'apparaît que si c'est possible
   document.getElementById("ecran-profil").hidden = false;
   document.getElementById("ecran-profil").scrollTop = 0;
   document.getElementById("profil-fermer").focus({ preventScroll: true });

@@ -282,7 +282,7 @@
 
 .par-univers li {
   display: grid;
-  grid-template-columns: 62px 1fr auto;
+  grid-template-columns: 80px 1fr auto;
   align-items: center;
   gap: 10px;
   font-size: 0.9rem;

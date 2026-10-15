@@ -24,6 +24,13 @@
   <meta name="twitter:description" content="Un personnage de fiction à deviner chaque jour, en 10 essais. Collectionne les cartes !">
   <meta name="twitter:image" content="https://heros-du-jour.vercel.app/images/apercu.jpg">
 
+  <!-- L'application installable : icône, plein écran, fonctionnement sans réseau (voir js/installer.js et sw.js) -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="images/icone-180.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Héros du Jour">
+
   <!-- Icône de l'onglet : un tampon rond sur fond bleu nuit, dessiné directement dans l'adresse, sans fichier à part -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%232d4a78'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='%23fdfdfb' stroke-width='7'/%3E%3Cpath d='M38 36v28M62 36v28M38 50h24' stroke='%23fdfdfb' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -231,6 +238,15 @@
           </div>
         </section>
 
+        <!-- Visible seulement quand l'installation est possible (voir js/installer.js) -->
+        <section id="profil-installation" class="rubrique" hidden>
+          <h2>Installer le jeu</h2>
+          <div class="fiche-texte">
+            <p id="installer-texte" class="compte-ligne"></p>
+            <button type="button" id="installer-bouton" class="bouton" hidden>Installer Héros du Jour</button>
+          </div>
+        </section>
+
         <section class="rubrique">
           <h2>Mon compte</h2>
           <div class="fiche-texte">
@@ -305,6 +321,8 @@
 
       <p class="regles-partage">À la fin de la partie du jour, le bouton <strong>Partager</strong> envoie ton résultat sous forme de petits carrés de couleur, <strong>sans jamais révéler le personnage</strong> : tes amis peuvent comparer sans être spoilés. Pense à ne pas leur donner le nom !</p>
 
+      <p class="regles-installer">Tu peux <strong>installer le jeu sur l'écran d'accueil</strong> de ton téléphone (depuis « Mon profil », rubrique « Installer le jeu ») : il s'ouvre en plein écran avec sa propre icône et marche même sans connexion Internet. Seule la connexion Google a besoin d'Internet.</p>
+
       <p class="regles-fin">Dès 3 essais ratés, des <strong>indices</strong> apparaissent, de plus en plus précis. Un nouveau héros t'attend chaque jour à minuit.</p>
       <button type="button" id="regles-fermer" class="bouton">C'est parti !</button>
     </div>
@@ -343,6 +361,7 @@
   <script src="js/profil.js"></script>
   <script src="js/compte.js"></script>
   <script src="js/effets.js"></script>
+  <script src="js/installer.js"></script>
   <script src="js/jeu.js"></script>
   <script src="js/affichage.js"></script>
 </body>
