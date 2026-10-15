@@ -130,7 +130,9 @@ function afficherCalendrier() {
     if (i + 1 === numeroAujourdhui) tr.className = "aujourdhui";
     tr.appendChild(creerCellule(i + 1));
     tr.appendChild(creerCellule(dateCourteEnFrancais(dateDepuisTexte(window.DATE_LANCEMENT, i))));
-    tr.appendChild(creerCellule(p ? p.nom : "⚠ inconnu : " + id));
+    const dansLApercu = window.PERSONNAGES_APERCU.includes(id);
+    if (dansLApercu) tr.className = (tr.className ? tr.className + " " : "") + "a-verifier";
+    tr.appendChild(creerCellule(p ? p.nom + (dansLApercu ? " ⚠ visible dans l'aperçu du lien : changer l'image avant ce jour" : "") : "⚠ inconnu : " + id));
     tr.appendChild(creerCellule(p ? p.univers : ""));
     corps.appendChild(tr);
   });

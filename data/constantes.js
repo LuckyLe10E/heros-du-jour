@@ -50,6 +50,11 @@ window.CRITERES = {
   ]
 };
 
+// Les personnages dont les cartes figurent dans l'image d'aperçu du lien partagé (images/apercu.jpg, fabriquée avec
+// maquettes/apercu.html). Le jour où l'un d'eux est le personnage du jour, l'aperçu le montrerait : la page de vérification
+// du calendrier signale ces jours, et il faut alors remplacer l'image par une autre paire de cartes (voir BRIEF.md, étape 20).
+window.PERSONNAGES_APERCU = ["gandalf", "yoda"];
+
 // La grande icône de chaque carte, selon l'espèce du personnage (de simples émojis, aucune image officielle).
 window.ICONES_ESPECES = {
   "Humain": "👤",
