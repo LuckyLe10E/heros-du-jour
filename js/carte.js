@@ -23,6 +23,16 @@ function creerSilhouette() {
   return dessin;
 }
 
+// Le lien « Signaler une erreur » : ouvre l'application e-mail du joueur avec un message déjà rédigé (le nom et l'identifiant
+// du personnage, l'adresse du site). Rien n'est envoyé par le site : c'est le joueur qui envoie son e-mail, ou pas.
+function lienDeSignalement(personnage) {
+  const sujet = "Erreur sur la fiche de " + personnage.nom;
+  const message = "Bonjour,\n\nJe pense qu'il y a une erreur sur la fiche de " + personnage.nom
+    + " (identifiant : " + personnage.id + ", thème : " + personnage.univers + ").\n\n"
+    + "Ce qui est faux ou à corriger :\n\n\n\nMerci !\n\n(Message écrit depuis " + window.location.origin + ")";
+  return "mailto:" + window.ADRESSE_CONTACT + "?subject=" + encodeURIComponent(sujet) + "&body=" + encodeURIComponent(message);
+}
+
 // Le numéro d'une carte dans l'album : sa place dans la liste des personnages, sur 3 chiffres (« N° 007 »).
 function numeroDeCarte(id) {
   const position = window.PERSONNAGES.findIndex(p => p.id === id);

@@ -279,6 +279,7 @@ function ouvrirFenetreFin() {
   suite.hidden = surLaPartieDuJour;
   suite.textContent = libelleDeLaPartieSuivante();
 
+  document.getElementById("fin-signaler").href = lienDeSignalement(p);
   document.getElementById("fin-message").textContent = "";
   document.getElementById("fenetre-fin").className = "fenetre-fond " + (gagne ? "victoire" : "defaite");
   document.getElementById("fenetre-fin").hidden = false;

@@ -156,6 +156,7 @@ function ouvrirCarteEnGrand(carte) {
   const zone = document.getElementById("carte-grand-zone");
   zone.innerHTML = "";
   zone.appendChild(creerCarteDom(carte, { retournee: true }));
+  document.getElementById("carte-signaler").href = lienDeSignalement(trouverPersonnage(carte.id));
   document.getElementById("fenetre-carte-grand").hidden = false;
   document.getElementById("carte-grand-fermer").focus({ preventScroll: true });
 }
