@@ -1,0 +1,55 @@
+/* Héros du Jour : les petits effets (cases qui se retournent, secousse, confettis).
+   Tout est coupé par « moins d'animations » (voir aussi js/effets.js). */
+
+/* Une case qui se retourne : face cachée (papier, texte invisible), puis elle pivote et dévoile sa couleur.
+   Entre 49 % et 50 % elle est de profil (invisible) : c'est là que la couleur change. */
+.case.revelee {
+  animation: retournement 0.5s ease-in-out backwards;
+  animation-delay: var(--delai, 0s);
+}
+
+@keyframes retournement {
+  0%   { transform: perspective(300px) rotateX(0);     background: var(--papier-2); color: transparent; }
+  49%  { transform: perspective(300px) rotateX(90deg); background: var(--papier-2); color: transparent; }
+  50%  { transform: perspective(300px) rotateX(90deg); }
+  100% { transform: perspective(300px) rotateX(0); }
+}
+
+/* La secousse de la case de saisie */
+.saisie.secousse {
+  animation: secousse 0.4s ease-in-out;
+}
+
+@keyframes secousse {
+  0%, 100% { transform: translateX(0); }
+  20%  { transform: translateX(-9px); }
+  40%  { transform: translateX(8px); }
+  60%  { transform: translateX(-6px); }
+  80%  { transform: translateX(4px); }
+}
+
+/* Les confettis : une pluie par-dessus tout, qui ne gêne aucun clic */
+.confettis {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.confettis i {
+  position: absolute;
+  top: -20px;
+  border-radius: 2px;
+  animation: chute linear forwards;
+}
+
+@keyframes chute {
+  0%   { transform: translate(0, 0) rotate(0); opacity: 1; }
+  85%  { opacity: 1; }
+  100% { transform: translate(var(--derive, 0), 105vh) rotate(var(--tours, 540deg)); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case.revelee, .saisie.secousse, .confettis i { animation: none; }
+}

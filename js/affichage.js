@@ -45,9 +45,13 @@ function afficherSuggestions() {
   suggestionChoisie = -1;
 
   if (suggestionsAffichees.length === 0) {
+    // Si le nom tapé est celui d'un personnage déjà proposé (ou offert), on le dit au lieu de « introuvable »
+    const saisie = simplifier(texteTape);
+    const dejaJoue = window.PERSONNAGES.some(p => dejaPropose(p.id)
+      && [p.nom, ...p.autresNoms].some(nom => noteDeCorrespondance(nom, saisie) !== -1));
     const ligne = document.createElement("li");
     ligne.className = "aucune-suggestion";
-    ligne.textContent = "Aucun personnage trouvé";
+    ligne.textContent = dejaJoue ? "Déjà proposé : essaie un autre personnage" : "Aucun personnage trouvé";
     listeSuggestions.appendChild(ligne);
   }
 
@@ -99,9 +103,17 @@ function choisirPersonnage(id) {
   if (!ajouterEssai(id)) return;
   champSaisie.value = "";
   fermerSuggestions();
-  afficherEssais();
-  if (partie.statut !== "en cours") ouvrirFenetreFin();
-  afficherBoutonCollection();   // le compteur de cartes a peut-être changé
+  const animer = !animationsReduites();
+  afficherEssais(animer ? id : null);   // la nouvelle fiche dévoile ses cases une par une
+
+  // Tout ce qui pourrait révéler le résultat attend la fin du retournement des cases
+  setTimeout(() => {
+    if (partie.statut !== "en cours") {
+      ouvrirFenetreFin();
+      if (partie.statut === "gagne") lancerConfettis(partie.carte ? partie.carte.rarete : "commune");
+    }
+    afficherBoutonCollection();   // le compteur de cartes a peut-être changé
+  }, animer ? DUREE_REVELATION : 0);
   if (partie.statut !== "en cours") synchroniserLesCartes();   // si le joueur est connecté, la carte et le résultat partent en ligne
 }
 
@@ -164,8 +176,7 @@ function afficherLaCarteGagnee() {
   const zone = document.getElementById("fin-carte");
   zone.innerHTML = "";
 
-  const reduireLesAnimations = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const animer = (partie.carteNouvelle || partie.carteAmelioree) && !partie.carteRevelee && !reduireLesAnimations;
+  const animer = (partie.carteNouvelle || partie.carteAmelioree) && !partie.carteRevelee && !animationsReduites();
 
   const scene = creerCarteDom(partie.carte, { retournee: !animer });
   zone.appendChild(scene);
@@ -357,8 +368,12 @@ function afficherPastilles(termine) {
   }
 }
 
+// Le rythme du retournement des cases : une case toutes les 280 ms, chacune met 500 ms à se retourner.
+const PAS_REVELATION = 280;
+const DUREE_REVELATION = (CRITERES_JEU.length - 1) * PAS_REVELATION + 500 + 150;   // jusqu'à la fin, avec une petite marge
+
 // Fabrique la fiche d'un essai : la photo, le nom, l'étiquette (« essai 3 » ou « essai offert ») et les 7 cases.
-function creerFicheEssai(personnage, etiquette, offert) {
+function creerFicheEssai(personnage, etiquette, offert, animer) {
   const comparaisons = comparerAvecMystere(personnage);
 
   const essai = document.createElement("li");
@@ -377,21 +392,40 @@ function creerFicheEssai(personnage, etiquette, offert) {
 
   const cases = document.createElement("div");
   cases.className = "cases";
-  CRITERES_JEU.forEach((critere, i) => cases.appendChild(creerCase(critere, personnage, comparaisons[i])));
+  CRITERES_JEU.forEach((critere, i) => {
+    const uneCase = creerCase(critere, personnage, comparaisons[i]);
+    if (animer) {
+      // Les cases se retournent l'une après l'autre, de gauche à droite
+      uneCase.classList.add("revelee");
+      uneCase.style.setProperty("--delai", (i * PAS_REVELATION) + "ms");
+    }
+    cases.appendChild(uneCase);
+  });
   essai.appendChild(cases);
   return essai;
 }
 
 // Dessine la liste des essais : une fiche de 7 cases par essai, le dernier en haut.
 // Tout en bas, l'essai offert (le jeu l'a joué pour aider à démarrer ; il ne compte pas dans les essais).
-function afficherEssais() {
+// idNouveau : l'essai qui vient d'être joué (ses cases se retournent une par une), ou null.
+function afficherEssais(idNouveau) {
   listeEssais.innerHTML = "";
   partie.essais.slice().reverse().forEach(id => {
-    listeEssais.appendChild(creerFicheEssai(trouverPersonnage(id), "essai " + (partie.essais.indexOf(id) + 1), false));
+    listeEssais.appendChild(creerFicheEssai(trouverPersonnage(id), "essai " + (partie.essais.indexOf(id) + 1), false, id === idNouveau));
   });
-  listeEssais.appendChild(creerFicheEssai(trouverPersonnage(partie.offert), "essai offert", true));
+  listeEssais.appendChild(creerFicheEssai(trouverPersonnage(partie.offert), "essai offert", true, false));
 
-  // Le compteur, la case de saisie et le bouton « Revoir le résultat » selon l'état de la partie
+  // Pendant le retournement des cases, le reste (compteur, indices…) attend : on ne dévoile rien avant la fin
+  if (idNouveau) {
+    champSaisie.disabled = (partie.statut !== "en cours");
+    setTimeout(afficherLEtatDeLaPartie, DUREE_REVELATION);
+  } else {
+    afficherLEtatDeLaPartie();
+  }
+}
+
+// Met à jour le compteur, les pastilles, la case de saisie, le bouton « Revoir le résultat » et les indices.
+function afficherLEtatDeLaPartie() {
   const termine = (partie.statut !== "en cours");
   if (partie.statut === "gagne") {
     compteurEssais.textContent = "Trouvé en " + texteNombreEssais(partie.essais.length) + " !";
@@ -418,6 +452,7 @@ function gererClavier(evenement) {
   } else if (evenement.key === "Enter") {
     evenement.preventDefault();
     if (suggestionChoisie >= 0) choisirPersonnage(suggestionsAffichees[suggestionChoisie].personnage.id);
+    else if (champSaisie.value.trim() !== "") secouerLaSaisie();   // rien de valable à choisir : la case secoue la tête
   } else if (evenement.key === "Escape") {
     fermerSuggestions();
   }
