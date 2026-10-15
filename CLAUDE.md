@@ -15,7 +15,7 @@ Jeu web gratuit (téléphone + ordinateur) : chaque jour, tout le monde devine l
 
 - HTML + CSS + JavaScript simples, sans framework ni étape de construction, scripts classiques (pas de modules) : `index.html` doit marcher en double-clic.
 - Données dans `data/personnages.js` et `data/calendrier.js`. Sauvegarde des joueurs dans `localStorage` (toujours avec `try/catch`).
-- Mise en ligne avec Vercel (https://heros-du-jour.vercel.app/, branché sur le dépôt GitHub `LuckyLe10E/heros-du-jour` : chaque envoi sur `main` met le site à jour). Identité git du projet : `LuckyLe10E`. Aucune dépendance externe (sauf une police Google Fonts).
+- Mise en ligne avec Vercel (https://heros-du-jour.vercel.app/, branché sur le dépôt GitHub `LuckyLe10E/heros-du-jour` : chaque envoi sur `main` met le site à jour). Identité git du projet : `LuckyLe10E`. Aucune dépendance externe, sauf une police Google Fonts et **Firebase** (connexion Google facultative + sauvegarde des cartes en ligne ; offre gratuite Spark, sans carte bancaire ; décidé avec Luca le 16 octobre 2026). Le jeu doit toujours marcher sans compte.
 - **Ne jamais modifier un `id` de personnage, ni réordonner ou supprimer les entrées passées du calendrier.** Nouveaux personnages ajoutés à la fin.
 
 ## Règles de travail
@@ -31,4 +31,4 @@ Jeu web gratuit (téléphone + ordinateur) : chaque jour, tout le monde devine l
 
 ## Interdit
 
-Images, logos ou textes officiels des œuvres · images générées par IA · comptes joueurs, serveur, base de données · pub, paiements, traçage, données personnelles · frameworks · fonctionnalités non demandées · plusieurs étapes d'un coup.
+Images, logos ou textes officiels des œuvres · images générées par IA · autres comptes que la connexion Google facultative · serveur à nous · pub, paiements, traçage · collecte de données au-delà de l'e-mail + identifiant Google + cartes/statistiques · frameworks · fonctionnalités non demandées · plusieurs étapes d'un coup.

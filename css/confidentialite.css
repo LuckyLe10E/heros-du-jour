@@ -1,0 +1,40 @@
+/* La page « Confidentialité » : une feuille de papier posée sur la table, comme le reste du site */
+
+.feuille-texte {
+  margin-bottom: 16px;
+  padding: 20px 18px 22px;
+  color: var(--encre);
+  background: var(--papier);
+  border-radius: 3px;
+  box-shadow: var(--ombre-papier);
+}
+
+.feuille-texte h1 {
+  margin-bottom: 14px;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.feuille-texte h2 {
+  margin: 20px 0 6px;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.feuille-texte p,
+.feuille-texte li {
+  line-height: 1.5;
+}
+
+.feuille-texte ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+
+.retour-jeu {
+  display: inline-block;
+  margin-bottom: 14px;
+  color: var(--sur-bureau);
+}

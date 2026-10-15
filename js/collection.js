@@ -129,3 +129,51 @@ function retrouverLaCarte() {
   partie.carteNouvelle = false;
   partie.carteRevelee = true;
 }
+
+// ---------- Fusionner deux collections (appareil + compte en ligne) ----------
+// On ne perd jamais de carte, et une carte ne descend jamais en rareté.
+
+// Entre deux versions de la même carte, garde la meilleure : rareté la plus haute, puis le moins d'essais, puis la plus ancienne.
+function meilleureCarte(a, b) {
+  if (!a) return b;
+  if (!b) return a;
+  const ordreA = RARETES[a.rarete].ordre;
+  const ordreB = RARETES[b.rarete].ordre;
+  if (ordreA !== ordreB) return ordreA > ordreB ? a : b;
+  if (a.essais !== b.essais) return a.essais < b.essais ? a : b;
+  return a.date <= b.date ? a : b;
+}
+
+// Fusionne deux listes de cartes { id: carte } : toutes les cartes des deux, la meilleure version de chacune.
+function fusionnerCartes(cartesA, cartesB) {
+  const fusion = {};
+  new Set(Object.keys(cartesA).concat(Object.keys(cartesB))).forEach(id => {
+    fusion[id] = meilleureCarte(cartesA[id], cartesB[id]);
+  });
+  return fusion;
+}
+
+// Vrai si deux listes de cartes sont exactement les mêmes.
+function memesCartes(cartesA, cartesB) {
+  const idsA = Object.keys(cartesA);
+  if (idsA.length !== Object.keys(cartesB).length) return false;
+  return idsA.every(id => {
+    const a = cartesA[id];
+    const b = cartesB[id];
+    return Boolean(b) && a.rarete === b.rarete && a.essais === b.essais && a.date === b.date && a.numero === b.numero;
+  });
+}
+
+// Lit les cartes reçues du compte en ligne : on ne garde que les cartes valides (on ne fait jamais confiance aux données reçues).
+function cartesDuCompte(donnees) {
+  const cartes = {};
+  if (donnees && donnees.cartes && typeof donnees.cartes === "object") {
+    Object.keys(donnees.cartes).forEach(id => {
+      const carte = donnees.cartes[id];
+      if (carteValide(carte) && carte.id === id) {
+        cartes[id] = { id: carte.id, rarete: carte.rarete, essais: carte.essais, date: carte.date, numero: carte.numero };
+      }
+    });
+  }
+  return cartes;
+}

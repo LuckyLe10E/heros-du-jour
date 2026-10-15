@@ -102,6 +102,7 @@ function choisirPersonnage(id) {
   afficherEssais();
   if (partie.statut !== "en cours") ouvrirFenetreFin();
   afficherBoutonCollection();   // le compteur de cartes a peut-être changé
+  if (partie.statut === "gagne") synchroniserLesCartes();   // si le joueur est connecté, la nouvelle carte part en ligne
 }
 
 // Écrit « 1 essai » ou « 4 essais ».
@@ -532,6 +533,7 @@ function demarrerAffichage() {
     // Échap ferme la fenêtre qui est tout au-dessus
     if (!document.getElementById("fenetre-carte-grand").hidden) fermerCarteEnGrand();
     else if (!document.getElementById("fenetre-collection").hidden) fermerBibliotheque();
+    else if (!document.getElementById("fenetre-compte").hidden) fermerCompte();
     else if (!document.getElementById("fenetre-regles").hidden) fermerRegles();
     else if (!document.getElementById("fenetre-fin").hidden) fermerFenetreFin();
   });
@@ -547,6 +549,7 @@ function demarrerAffichage() {
   afficherEssais();
   afficherBoutonCollection();
   preparerLesListesDeLaBibliotheque();
+  demarrerCompte();   // charge la connexion Google en arrière-plan (facultative)
 
   // À la toute première visite, les règles s'ouvrent toutes seules
   if (!reglesDejaVues()) ouvrirRegles();

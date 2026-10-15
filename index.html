@@ -42,10 +42,13 @@
     <div class="outils">
       <button type="button" id="bouton-collection" class="plein">
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="9" rx="1"/><rect x="13.5" y="3.5" width="7" height="9" rx="1"/><rect x="3.5" y="15.5" width="7" height="5" rx="1"/><rect x="13.5" y="15.5" width="7" height="5" rx="1"/></svg>
-        Ma collection <span id="bouton-collection-compteur" class="compte"></span>
+        <span><span class="mot-ma">Ma </span>collection</span> <span id="bouton-collection-compteur" class="compte"></span>
       </button>
       <button type="button" id="bouton-aide" aria-label="Comment jouer ?" title="Comment jouer ?">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.2c-.8.5-1.2 1-1.2 1.9"/><circle cx="12" cy="16.8" r=".6"/></svg>
+      </button>
+      <button type="button" id="bouton-compte" aria-label="Mon compte" title="Mon compte">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.5c.6-4 3.7-6.2 7.5-6.2s6.9 2.2 7.5 6.2"/></svg>
       </button>
       <button type="button" id="bouton-theme" aria-label="Changer de mode"></button>
     </div>
@@ -114,6 +117,44 @@
     </div>
   </div>
 
+  <!-- La fenêtre « Mon compte » : connexion Google facultative, sauvegarde des cartes en ligne -->
+  <div id="fenetre-compte" class="fenetre-fond" hidden>
+    <div class="fenetre fenetre-compte" role="dialog" aria-modal="true" aria-labelledby="compte-titre">
+      <h2 id="compte-titre" class="fenetre-titre">Mon compte</h2>
+
+      <p id="compte-indisponible" class="compte-texte" hidden></p>
+      <p id="compte-chargement" class="compte-texte" hidden>Un instant…</p>
+      <p id="compte-test" class="compte-texte compte-note" hidden>Mode test : la connexion ne touche pas à tes vraies cartes.</p>
+
+      <!-- Pas connecté -->
+      <div id="compte-deconnecte" hidden>
+        <p class="compte-texte">Connecte-toi avec Google pour garder tes cartes en ligne et les retrouver sur tous tes appareils. C'est facultatif : sans compte, tes cartes restent sur cet appareil.</p>
+        <button type="button" id="compte-connexion" class="bouton">Se connecter avec Google</button>
+      </div>
+
+      <!-- Connecté -->
+      <div id="compte-connecte" hidden>
+        <p class="compte-texte">Connecté avec <strong id="compte-email"></strong></p>
+        <p id="compte-etat" class="compte-texte compte-note" role="status"></p>
+        <div class="fin-boutons">
+          <button type="button" id="compte-deconnexion" class="bouton bouton-discret">Se déconnecter</button>
+          <button type="button" id="compte-supprimer" class="bouton bouton-danger">Supprimer mon compte</button>
+        </div>
+        <div id="compte-suppression" class="compte-suppression" hidden>
+          <p class="compte-texte">Cela efface tes cartes en ligne et ton compte. Tes cartes resteront sur cet appareil. C'est définitif.</p>
+          <div class="fin-boutons">
+            <button type="button" id="compte-confirmer" class="bouton bouton-danger">Oui, tout supprimer</button>
+            <button type="button" id="compte-annuler" class="bouton bouton-discret">Annuler</button>
+          </div>
+        </div>
+      </div>
+
+      <p id="compte-message" class="compte-texte compte-message" role="status"></p>
+      <p class="compte-texte compte-note"><a href="confidentialite.html">Confidentialité : ce qui est gardé en ligne</a></p>
+      <button type="button" id="compte-fermer" class="bouton bouton-discret compte-fermer">Fermer</button>
+    </div>
+  </div>
+
   <!-- Une carte affichée en grand, par-dessus la bibliothèque -->
   <div id="fenetre-carte-grand" class="fenetre-fond" hidden>
     <div class="fenetre fenetre-carte-grand" role="dialog" aria-modal="true" aria-label="Carte en grand">
@@ -176,6 +217,7 @@
   <script src="js/collection.js"></script>
   <script src="js/carte.js"></script>
   <script src="js/bibliotheque.js"></script>
+  <script src="js/compte.js"></script>
   <script src="js/jeu.js"></script>
   <script src="js/affichage.js"></script>
 </body>

@@ -94,6 +94,23 @@
   flex: 1;
 }
 
+/* Un petit point sur le bouton « Mon compte » quand le joueur est connecté */
+.outils button {
+  position: relative;
+}
+
+.outils button.connecte::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background: var(--ok);
+  border: 1.5px solid var(--papier);
+  border-radius: 50%;
+}
+
 .outils .compte {
   margin-left: auto;
   font-weight: 700;
@@ -429,8 +446,16 @@
   opacity: 0.6;
 }
 
+/* Petits écrans : trois boutons d'icônes + « Ma collection » doivent tenir sur une ligne */
+@media (max-width: 400px) {
+  .outils { gap: 6px; }
+  .outils button { padding: 9px 10px; }
+  .outils .plein svg { display: none; }
+}
+
 /* Très petits écrans (environ 320 px de large) : on réduit les marges pour garder le plus de place aux cases */
 @media (max-width: 350px) {
+  .mot-ma { display: none; }
   .page { padding-left: 10px; padding-right: 10px; }
   .entetes, .cases { gap: 2px; }
   .entetes { padding: 0 6px; }

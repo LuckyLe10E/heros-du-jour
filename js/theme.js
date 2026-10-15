@@ -59,5 +59,6 @@ appliquerTheme(themeSauvegarde() || themeDuSysteme());
 // Quand la page est prête : on branche le bouton.
 document.addEventListener("DOMContentLoaded", () => {
   appliquerTheme(document.documentElement.getAttribute("data-theme"));
-  document.getElementById("bouton-theme").addEventListener("click", basculerTheme);
+  const bouton = document.getElementById("bouton-theme");   // absent des pages sans ce bouton (Confidentialité)
+  if (bouton) bouton.addEventListener("click", basculerTheme);
 });
