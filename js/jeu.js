@@ -82,7 +82,7 @@ function indicesDevoiles() {
 }
 
 // L'adresse du site, écrite dans le message de partage.
-const ADRESSE_DU_SITE = "https://heros-du-jour.vercel.app/";
+// (l'adresse est lue au moment du partage : voir adresseDuSiteMaintenant() dans outils.js)
 
 // Les petits carrés de couleur du message de partage.
 const CARRES = { vert: "🟩", orange: "🟧", rouge: "🟥" };
@@ -91,7 +91,7 @@ const CARRES = { vert: "🟩", orange: "🟧", rouge: "🟥" };
 //   Héros du Jour n°12 — 4/10
 //   🟥🟩🟥🟧🟥🟥⬆️
 //   🟩🟩🟩🟩🟩🟩🟩
-//   https://heros-du-jour.vercel.app/
+//   (l'adresse du site)
 // Une ligne par essai (du premier au dernier). Pour l'année : 🟩 si c'est la bonne, sinon la flèche seule.
 // Si la partie est perdue, on écrit X/10.
 function texteDePartage() {
@@ -109,7 +109,7 @@ function texteDePartage() {
     lignes.push(carres.join(""));
   });
 
-  lignes.push(ADRESSE_DU_SITE);
+  lignes.push(adresseDuSiteMaintenant().complete);
   return lignes.join("\n");
 }
 

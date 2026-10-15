@@ -18,6 +18,18 @@ function classeDuTheme(nom) {
   return "univers-" + simplifier(nom).replace(/ /g, "-");
 }
 
+// L'adresse du site AU MOMENT où on s'en sert (message de partage, image d'une carte partagée) : c'est celle que le joueur
+// a dans son navigateur. Si le site change de nom de domaine, elle suit toute seule.
+// Quand la page est ouverte autrement (en local pour les tests, ou par double-clic sur le fichier), on retombe sur
+// l'adresse officielle écrite dans data/constantes.js (window.SITE).
+// Renvoie { complete: "https://heros-du-jour.vercel.app/", courte: "heros-du-jour.vercel.app" }.
+function adresseDuSiteMaintenant() {
+  const enLigne = window.location.protocol.indexOf("http") === 0
+    && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1" && window.location.hostname !== "[::1]";
+  if (enLigne) return { complete: window.location.origin + "/", courte: window.location.host };
+  return { complete: window.SITE.adresse, courte: window.SITE.affichage };
+}
+
 // Combien de millisecondes avant le prochain minuit, heure locale ? (le moment où le héros change)
 function tempsAvantMinuit(maintenant) {
   const minuit = new Date(maintenant.getFullYear(), maintenant.getMonth(), maintenant.getDate() + 1, 0, 0, 0);

@@ -151,14 +151,27 @@ function fermerBibliotheque() {
   document.getElementById("bouton-collection").focus();
 }
 
+// La carte actuellement ouverte en grand (pour le bouton « Partager la carte »).
+let carteEnGrand = null;
+
 // Affiche une carte en grand, par-dessus la bibliothèque.
 function ouvrirCarteEnGrand(carte) {
   const zone = document.getElementById("carte-grand-zone");
   zone.innerHTML = "";
   zone.appendChild(creerCarteDom(carte, { retournee: true }));
   document.getElementById("carte-signaler").href = lienDeSignalement(trouverPersonnage(carte.id));
+  carteEnGrand = carte;
+  document.getElementById("carte-message").textContent = "";
+  preparerLeBoutonDePartageDeCarte(document.getElementById("carte-partager"), carte);
   document.getElementById("fenetre-carte-grand").hidden = false;
   document.getElementById("carte-grand-fermer").focus({ preventScroll: true });
+}
+
+// Branche le bouton « Partager la carte » de la carte en grand.
+function brancherLePartageDeLaCarteEnGrand() {
+  document.getElementById("carte-partager").addEventListener("click", () => {
+    if (carteEnGrand) partagerLaCarte(carteEnGrand, texte => { document.getElementById("carte-message").textContent = texte; });
+  });
 }
 
 // Ferme la carte en grand et revient à la bibliothèque.

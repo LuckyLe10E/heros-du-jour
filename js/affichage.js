@@ -277,6 +277,9 @@ function ouvrirFenetreFin() {
   // Parties bonus et entraînement : pas de partage (chacun a un personnage différent), un bouton pour enchaîner
   const surLaPartieDuJour = (partie.mode === "jour");
   document.getElementById("fin-partager").hidden = !surLaPartieDuJour;
+  const boutonCarte = document.getElementById("fin-partager-carte");
+  boutonCarte.hidden = !avecCarte;
+  if (avecCarte) preparerLeBoutonDePartageDeCarte(boutonCarte, partie.carte);
   const suite = document.getElementById("fin-suite");
   suite.hidden = surLaPartieDuJour;
   suite.textContent = libelleDeLaPartieSuivante();
@@ -678,6 +681,7 @@ function demarrerAffichage() {
   document.getElementById("bonus-retour").addEventListener("click", retourALaPartieDuJour);
   document.getElementById("fin-fermer").addEventListener("click", fermerFenetreFin);
   document.getElementById("fin-partager").addEventListener("click", partagerLeResultat);
+  document.getElementById("fin-partager-carte").addEventListener("click", () => partagerLaCarte(partie.carte, afficherMessage));
   document.getElementById("bouton-resultat").addEventListener("click", ouvrirFenetreFin);
   document.getElementById("bouton-aide").addEventListener("click", ouvrirRegles);
   document.getElementById("regles-fermer").addEventListener("click", fermerRegles);
@@ -720,6 +724,7 @@ function demarrerAffichage() {
   afficherEssais();
   afficherBoutonCollection();
   preparerLesListesDeLaBibliotheque();
+  brancherLePartageDeLaCarteEnGrand();
   demarrerProfil();
   demarrerCompte();   // charge la connexion Google en arrière-plan (facultative)
 

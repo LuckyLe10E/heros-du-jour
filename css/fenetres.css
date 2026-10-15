@@ -227,6 +227,20 @@
   opacity: 0.85;
 }
 
+.regles-partage-carte {
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.carte-message {
+  min-height: 1.4em;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--sur-bureau);
+}
+
 .regles-succes {
   margin-bottom: 12px;
   font-size: 0.95rem;

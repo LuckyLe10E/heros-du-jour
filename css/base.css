@@ -144,6 +144,11 @@ h1, h2, h3, p {
   transform: translateY(1px);
 }
 
+.bouton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 /* Bouton secondaire dans une fenêtre : juste un contour */
 .bouton-discret {
   color: var(--encre);

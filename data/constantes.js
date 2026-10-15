@@ -50,6 +50,15 @@ window.CRITERES = {
   ]
 };
 
+// L'ADRESSE OFFICIELLE DU SITE. Le message de partage et l'image des cartes partagées utilisent l'adresse que le joueur a
+// dans son navigateur AU MOMENT du partage (elles suivent donc tout seules un futur nom de domaine) ; cette adresse-ci ne sert
+// que de secours (page ouverte en local ou par double-clic). Les balises d'aperçu de lien dans index.html, elles, exigent une
+// adresse complète écrite à la main : voir la liste de contrôle dans BRIEF.md, « Changer l'adresse du site ».
+window.SITE = {
+  adresse: "https://heros-du-jour.vercel.app/",   // avec https:// et la barre finale
+  affichage: "heros-du-jour.vercel.app"           // la version courte, écrite sur les images
+};
+
 // L'adresse e-mail où les joueurs peuvent signaler une erreur sur la fiche d'un personnage (lien « Signaler une erreur »).
 window.ADRESSE_CONTACT = "jourduheros@gmail.com";
 
