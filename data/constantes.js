@@ -3,7 +3,10 @@
 // sinon les comparaisons du jeu ne marchent pas. Pas de variantes d'orthographe.
 
 window.CRITERES = {
-  univers: ["Marvel", "DC", "Manga", "Indé"],
+  // Le « thème » (colonne « Thème » du jeu) : d'où vient le personnage. Pour les comics : l'éditeur (Marvel, DC) ou « Indé » ;
+  // sinon, le support de sa toute première apparition (Manga, Films, Séries, Jeux vidéo, Livres).
+  // Le champ s'appelle toujours « univers » dans personnages.js.
+  univers: ["Marvel", "DC", "Manga", "Indé", "Films", "Séries", "Jeux vidéo", "Livres"],
 
   camps: ["Héros", "Méchant", "Anti-héros"],
 
@@ -34,6 +37,14 @@ window.CRITERES = {
     "Shinigami", "Hunters", "Fairy Tail", "Sailor Guerrières",
     // Indé
     "BPRD", "Gardiens du Globe", "Tortues Ninja", "Juges", "Les Sauveurs",
+    // Films
+    "Ordre Jedi", "Alliance rebelle", "Empire galactique", "Skynet", "Zion",
+    // Séries
+    "Starfleet",
+    // Jeux vidéo
+    "Confrérie des Assassins",
+    // Livres
+    "Ordre du Phénix", "Mangemorts", "Communauté de l'Anneau",
     // Aucun groupe
     "Aucun"
   ]
@@ -75,5 +86,12 @@ window.NOMS_COURTS = {
   "Les Sauveurs": "Sauveurs",
   "Association des Héros": "Assoc. Héros",
   "Gardiens du Globe": "Gardiens Globe",
-  "Sailor Guerrières": "Sailor"
+  "Sailor Guerrières": "Sailor",
+  "Alliance rebelle": "Rebelles",
+  "Empire galactique": "Empire",
+  "Ordre Jedi": "Jedi",
+  "Confrérie des Assassins": "Assassins",
+  "Ordre du Phénix": "Phénix",
+  "Mangemorts": "Mange-morts",
+  "Communauté de l'Anneau": "Anneau"
 };

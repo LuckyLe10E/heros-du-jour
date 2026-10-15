@@ -20,14 +20,16 @@
   --non: #c4423a;
   --accent: #ffd95a;          /* contour de focus sur la table */
 
-  /* Une couleur par univers. Pour ajouter un univers (Films, Séries…) : une ligne ici,
-     et une ligne « .univers-nom » plus bas. */
+  /* Une couleur par thème (Marvel, DC, Films…). Pour ajouter un thème : une ligne ici,
+     et une ligne « .univers-nom » plus bas (« jeux-video » pour « Jeux vidéo »). */
   --u-marvel: #c4352c;
   --u-dc: #2f5dba;
   --u-manga: #e08a1e;
   --u-inde: #7b4db5;
   --u-films: #1e8e8a;
   --u-series: #b5487a;
+  --u-jeux-video: #2a9bd6;
+  --u-livres: #8a6a3a;
 
   /* Les feuilles de rareté des cartes */
   --or-1: #f7e08a; --or-2: #d9a52a; --or-3: #fff1b8;
@@ -57,13 +59,15 @@
   color-scheme: dark;
 }
 
-/* La couleur de chaque univers, utilisée par les badges, les onglets et les cartes (variable --c) */
+/* La couleur de chaque thème, utilisée par les badges, les onglets et les cartes (variable --c) */
 .univers-marvel { --c: var(--u-marvel); }
 .univers-dc     { --c: var(--u-dc); }
 .univers-manga  { --c: var(--u-manga); }
 .univers-inde   { --c: var(--u-inde); }
 .univers-films  { --c: var(--u-films); }
 .univers-series { --c: var(--u-series); }
+.univers-jeux-video { --c: var(--u-jeux-video); }
+.univers-livres { --c: var(--u-livres); }
 
 * {
   box-sizing: border-box;

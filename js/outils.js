@@ -12,6 +12,12 @@ function simplifier(texte) {
     .trim();
 }
 
+// Le nom de la classe CSS d'un thème (Marvel, Jeux vidéo…) : « univers-marvel », « univers-jeux-video »…
+// (les couleurs de chaque thème sont dans base.css).
+function classeDuTheme(nom) {
+  return "univers-" + simplifier(nom).replace(/ /g, "-");
+}
+
 // Combien de millisecondes avant le prochain minuit, heure locale ? (le moment où le héros change)
 function tempsAvantMinuit(maintenant) {
   const minuit = new Date(maintenant.getFullYear(), maintenant.getMonth(), maintenant.getDate() + 1, 0, 0, 0);

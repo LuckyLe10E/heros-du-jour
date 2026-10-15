@@ -75,7 +75,7 @@ function afficherFiches() {
     }
     tr.appendChild(celluleNom);
 
-    tr.appendChild(creerCellule(p.univers, "univers-" + simplifier(p.univers)));
+    tr.appendChild(creerCellule(p.univers, classeDuTheme(p.univers)));
     tr.appendChild(creerCellule(p.camp));
     tr.appendChild(creerCellule(p.genre));
     tr.appendChild(creerCellule(p.espece));

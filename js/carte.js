@@ -53,7 +53,7 @@ function creerVignetteDom(carte, id, apresToucher) {
   const p = trouverPersonnage(carte.id);
   const rarete = RARETES[carte.rarete];
 
-  const bouton = creerElement("button", "vignette rarete-" + carte.rarete + " univers-" + simplifier(p.univers));
+  const bouton = creerElement("button", "vignette rarete-" + carte.rarete + " " + classeDuTheme(p.univers));
   bouton.type = "button";
   bouton.setAttribute("aria-label", p.nom + ", carte " + rarete.nom + ". Toucher pour la voir en grand.");
 
@@ -93,7 +93,7 @@ function creerCarteDom(carte, options) {
 
   // ----- Le devant : une feuille (selon la rareté) autour d'une fiche de papier (couleur d'univers pour le badge et l'illustration) -----
   const avant = creerElement("div", "carte-face carte-avant rarete-" + carte.rarete);
-  const interieur = creerElement("div", "carte-interieur univers-" + simplifier(p.univers));
+  const interieur = creerElement("div", "carte-interieur " + classeDuTheme(p.univers));
 
   const entete = creerElement("div", "carte-entete");
   entete.appendChild(creerElement("h3", "carte-nom", p.nom));

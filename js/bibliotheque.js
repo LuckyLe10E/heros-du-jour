@@ -15,7 +15,7 @@ function afficherBoutonCollection() {
 // Les choix du joueur pour trier et filtrer la grille (on s'en souvient tant que la page est ouverte).
 const reglagesBibliotheque = {
   tri: "defaut",     // "defaut" (ordre de la liste), "rarete" (les plus rares d'abord) ou "date" (les plus récentes d'abord)
-  univers: "",       // "" = tous, sinon « Marvel », « DC », « Manga » ou « Indé »
+  univers: "",       // "" = tous les thèmes, sinon un thème (« Marvel », « Films »…)
   rarete: ""         // "" = toutes, sinon « legendaire », « rare » ou « commune »
 };
 
@@ -88,7 +88,7 @@ function dessinerBibliotheque() {
     grille.appendChild(ligne);
   });
 
-  // Les onglets d'univers : celui du filtre actif est enfoncé
+  // Les onglets de thèmes : celui du filtre actif est enfoncé
   document.querySelectorAll("#collection-univers button").forEach(bouton => {
     bouton.setAttribute("aria-pressed", String(bouton.dataset.univers === reglagesBibliotheque.univers));
   });
@@ -113,11 +113,11 @@ function brancherLesReglagesDeLaBibliotheque() {
   });
 }
 
-// Fabrique les onglets d'univers (« Tous » puis un par univers du jeu) et la liste des raretés.
+// Fabrique les onglets de thèmes (« Tous » puis un par thème du jeu) et la liste des raretés.
 function preparerLesListesDeLaBibliotheque() {
   const onglets = document.getElementById("collection-univers");
   [""].concat(window.CRITERES.univers).forEach(nom => {
-    const bouton = creerElement("button", nom === "" ? "tous" : "univers-" + simplifier(nom), nom === "" ? "Tous" : nom);
+    const bouton = creerElement("button", nom === "" ? "tous" : classeDuTheme(nom), nom === "" ? "Tous" : nom);
     bouton.type = "button";
     bouton.dataset.univers = nom;
     bouton.addEventListener("click", () => {

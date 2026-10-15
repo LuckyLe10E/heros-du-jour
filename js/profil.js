@@ -92,7 +92,7 @@ function afficherLesStatistiques() {
   ajouterBarre("X", "perdu", stats.perdues);
 }
 
-// Dessine le résumé de la collection : le total, les cartes par rareté, les cartes par univers.
+// Dessine le résumé de la collection : le total, les cartes par rareté, les cartes par thème.
 function afficherLeResumeDeLaCollection() {
   const cartes = Object.values(lireCollection().cartes);
   const total = window.PERSONNAGES.length;
@@ -117,7 +117,7 @@ function afficherLeResumeDeLaCollection() {
   window.CRITERES.univers.forEach(nom => {
     const dansLUnivers = window.PERSONNAGES.filter(p => p.univers === nom).length;
     const possedees = cartes.filter(carte => trouverPersonnage(carte.id).univers === nom).length;
-    const ligne = creerElement("li", "univers-" + simplifier(nom));
+    const ligne = creerElement("li", classeDuTheme(nom));
     ligne.appendChild(creerElement("span", "nom", nom));
     const piste = creerElement("span", "piste");
     const remplissage = document.createElement("i");

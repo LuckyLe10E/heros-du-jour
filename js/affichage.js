@@ -78,9 +78,9 @@ function afficherSuggestions() {
       ligne.appendChild(autre);
     }
 
-    // L'univers, en petit badge à droite
+    // Le thème, en petit badge à droite
     const univers = document.createElement("span");
-    univers.className = "suggestion-univers univers-" + simplifier(p.univers);
+    univers.className = "suggestion-univers " + classeDuTheme(p.univers);
     univers.textContent = p.univers;
     ligne.appendChild(univers);
 
@@ -591,7 +591,7 @@ function listeEnFrancais(mots) {
 }
 
 // Écrit une phrase qui explique les couleurs de la ligne d'exemple (elle suit toujours les vraies données).
-// Exemple de résultat : « Ici : univers, camp et genre sont identiques (vert) ; espèce est différent (rouge)… »
+// Exemple de résultat : « Ici : thème, camp et genre sont identiques (vert) ; espèce est différent (rouge)… »
 function phraseExplicative(comparaisons) {
   const groupes = { vert: [], orange: [], rouge: [] };
   let fleche = null;

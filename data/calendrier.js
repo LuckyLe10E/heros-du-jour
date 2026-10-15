@@ -42,5 +42,17 @@ window.CALENDRIER = [
   "hit-girl", "batgirl", "wasp", "nico-robin",
   "sakura", "hela", "makima", "starfire",
   "ms-marvel", "black-canary", "cheetah", "invisible-woman",
-  "michonne", "android-18", "usagi-tsukino"
+  "michonne", "android-18", "usagi-tsukino",
+  "darth-vader", "luke-skywalker", "leia", "yoda",
+  "indiana-jones", "terminator", "ripley", "jack-sparrow",
+  "neo", "michael-myers", "elsa", "woody",
+  "walter-white", "eleven", "homer-simpson", "spongebob",
+  "rick-sanchez", "spock", "james-kirk", "daryl-dixon",
+  "grogu", "dana-scully", "tony-soprano", "dr-house",
+  "mario", "link", "sonic", "pikachu",
+  "lara-croft", "master-chief", "kratos", "samus-aran",
+  "solid-snake", "bowser", "ezio", "ellie",
+  "harry-potter", "hermione", "voldemort", "gandalf",
+  "frodo", "sherlock-holmes", "dracula", "katniss",
+  "geralt", "alice", "arsene-lupin", "james-bond"
 ];

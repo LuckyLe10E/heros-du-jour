@@ -116,7 +116,7 @@ function texteDePartage() {
 // Les 7 critères, dans l'ordre où ils s'affichent.
 // "genre" de comparaison : "simple" (identique ou pas), "liste" (plusieurs valeurs), "annee" (avec flèche).
 const CRITERES_JEU = [
-  { cle: "univers",  titre: "Univers",   genre: "simple" },
+  { cle: "univers",  titre: "Thème",     genre: "simple" },
   { cle: "camp",     titre: "Camp",      genre: "simple" },
   { cle: "genre",    titre: "Genre",     genre: "simple" },
   { cle: "espece",   titre: "Espèce",    genre: "simple" },
