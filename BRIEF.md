@@ -340,6 +340,13 @@ Même méthode qu'avant : une étape à la fois, test précis, validation de Luc
   2. **Pouvoir débloquer plusieurs personnages par jour**, car avec beaucoup de personnages la collection serait impossible à compléter. Pistes à discuter : des parties supplémentaires qui donnent des cartes (lien avec le mode entraînement de l'étape 18), un nombre de parties bonus par jour, etc.
   Ces deux idées sont liées : à décider ensemble, probablement après la connexion Google (étape 15) et les statistiques (étape 16).
 
+- **🗺️ Feuille de route après l'étape 18 (liste donnée par Luca le 16 octobre 2026, ordre pas encore décidé)** :
+  1. **Ajouter d'autres personnages, de tous types de fiction** (films, séries, jeux vidéo, livres…) : nouveaux univers + couleurs, vérification des fiches comme pour les 127 premiers (descriptions de 4 phrases, indice, années vérifiées), mise à jour du calendrier (nouveaux personnages ajoutés à la fin, jamais d'`id` modifié).
+  2. **Ajouter les images des personnages sur les cartes** (à la place des silhouettes). Règle du projet : ni images officielles, ni images générées par IA, donc uniquement des dessins originaux fournis par une personne qui en détient les droits. À clarifier : qui les crée, format et taille, nom des fichiers, comment les brancher (emplacement déjà prévu : « carte-illustration » et vignettes).
+  3. **Éventuellement d'autres modes de jeu** (à imaginer avec Luca).
+  4. **Classement en ligne** : demande un pseudo (donnée personnelle de plus : page Confidentialité, `CLAUDE.md`), des règles de sécurité contre la triche (les scores viennent du téléphone du joueur), et probablement un classement entre amis plutôt que public. À discuter avant de commencer.
+  5. **Sortie officielle** (étape 10 ci-dessus).
+
 - Mise en ligne, test sur téléphone, retours des amis.
 
 ---
