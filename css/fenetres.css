@@ -190,6 +190,12 @@
   line-height: 1.4;
 }
 
+.regles-theme {
+  margin: 12px 0 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
 .regles-bonus {
   margin-bottom: 12px;
   font-size: 0.95rem;
