@@ -126,7 +126,7 @@ window.IMAGES = {
   "cyclops": {
     "fichier": "images/personnages/cyclops.jpg",
     "credit": "https://marvel.fandom.com/wiki/Scott_Summers_%28Earth-616%29",
-    "cadrage": "50% 14%"
+    "cadrage": "50% 54%"
   },
   "jean-grey": {
     "fichier": "images/personnages/jean-grey.jpg",
