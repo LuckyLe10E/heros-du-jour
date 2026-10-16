@@ -229,9 +229,9 @@ let rappelEnAttente = false;   // vrai si une autre fenêtre était ouverte : on
 function lireRappel() {
   try {
     const donnees = JSON.parse(localStorage.getItem(CLE_RAPPEL) || "{}");
-    return { vu: typeof donnees.vu === "string" ? donnees.vu : "", jamais: donnees.jamais === true };
+    return { vu: typeof donnees.vu === "string" ? donnees.vu : "", jamais: donnees.jamais === true, premiere: donnees.premiere === true };
   } catch (erreur) {
-    return { vu: "", jamais: false };
+    return { vu: "", jamais: false, premiere: false };
   }
 }
 
@@ -256,6 +256,7 @@ function proposerLaConnexion() {
     return;
   }
   rappelEnAttente = false;
+  document.getElementById("rappel-titre").textContent = "Garde tes cartes !";
   const cartes = Object.keys(lireCollection().cartes).length;
   document.getElementById("rappel-texte").textContent = (cartes > 0
     ? "Tu as déjà " + cartes + (cartes > 1 ? " cartes" : " carte") + ", mais elles ne sont gardées que sur cet appareil. "
@@ -263,11 +264,36 @@ function proposerLaConnexion() {
     + "Si tu changes de téléphone ou vides ton navigateur, tu les perds. Connecte-toi avec Google (c'est facultatif) pour les retrouver partout.";
   document.getElementById("fenetre-rappel").hidden = false;
   document.getElementById("rappel-connexion").focus({ preventScroll: true });
-  ecrireRappel({ vu: dateDuJourEnTexte(), jamais: false });
+  ecrireRappel({ vu: dateDuJourEnTexte(), jamais: false, premiere: rappel.premiere });
 }
 
 function fermerLeRappel() {
   document.getElementById("fenetre-rappel").hidden = true;
+}
+
+// ---- Le rappel de la toute première carte ----
+// Quand un joueur non connecté gagne sa première carte, on lui rappelle (une seule fois dans sa vie, après avoir fermé la fenêtre de
+// fin de partie pour ne pas gâcher la découverte de la carte) qu'elle n'est gardée que sur cet appareil.
+let premiereCarteARappeler = false;
+
+function noterLaPremiereCarte() {
+  premiereCarteARappeler = true;
+}
+
+function proposerApresLaPremiereCarte() {
+  if (!premiereCarteARappeler || !compte.disponible || compte.utilisateur !== null || partie.modeTest) return;
+  const rappel = lireRappel();
+  if (rappel.jamais || rappel.premiere) {
+    premiereCarteARappeler = false;
+    return;
+  }
+  if (uneFenetreEstOuverte()) return;   // on réessaiera quand la fenêtre se fermera
+  premiereCarteARappeler = false;
+  document.getElementById("rappel-titre").textContent = "Ta première carte !";
+  document.getElementById("rappel-texte").textContent = "Bravo, tu viens de gagner ta première carte ! Elle n'est gardée que sur cet appareil : si tu changes de téléphone ou vides ton navigateur, tu la perds. Connecte-toi avec Google (c'est facultatif) pour la garder.";
+  document.getElementById("fenetre-rappel").hidden = false;
+  document.getElementById("rappel-connexion").focus({ preventScroll: true });
+  ecrireRappel({ vu: rappel.vu, jamais: false, premiere: true });
 }
 
 // Appelée quand une fenêtre se ferme : si le rappel attendait, c'est le moment.
@@ -294,7 +320,7 @@ async function demarrerCompte() {
   });
   document.getElementById("rappel-plus-tard").addEventListener("click", fermerLeRappel);
   document.getElementById("rappel-jamais").addEventListener("click", () => {
-    ecrireRappel({ vu: dateDuJourEnTexte(), jamais: true });
+    ecrireRappel({ vu: dateDuJourEnTexte(), jamais: true, premiere: true });
     fermerLeRappel();
   });
   document.getElementById("fenetre-rappel").addEventListener("mousedown", evenement => {

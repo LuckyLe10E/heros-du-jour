@@ -334,6 +334,7 @@ function afficherLaPartie() {
   afficherEnTete();
   afficherEssais(null);   // redessine aussi le compteur, les indices et les boutons bonus
   window.scrollTo(0, 0);
+  proposerApresLaPremiereCarte();   // (si la fenêtre de fin vient d'être quittée pour une autre partie)
 }
 
 function passerALaPartieSuivante() {
@@ -451,6 +452,7 @@ function fermerFenetreFin() {
   arreterCompteARebours();
   document.getElementById("bouton-resultat").focus();
   reessayerLeRappel();   // le rappel de connexion attendait peut-être la fin de cette fenêtre
+  proposerApresLaPremiereCarte();   // et si c'était la toute première carte du joueur, on lui rappelle de se connecter
 }
 
 // ---------- Le compte à rebours jusqu'au prochain héros (minuit, heure du téléphone) ----------

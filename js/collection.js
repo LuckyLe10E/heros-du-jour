@@ -134,8 +134,10 @@ function gagnerLaCarte() {
   partie.ancienneDifficulte = null;
 
   if (!existante) {
+    const premiereCarte = Object.keys(collection.cartes).length === 0;
     collection.cartes[gagnee.id] = gagnee;
     ecrireCollection(collection);
+    if (premiereCarte && !partie.modeTest) noterLaPremiereCarte();   // rappel de connexion à la fermeture de la fenêtre de fin
     partie.carte = gagnee;
     partie.carteNouvelle = true;
   } else if (valeurDeLaCarte(gagnee) > valeurDeLaCarte(existante)) {
