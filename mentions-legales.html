@@ -30,7 +30,7 @@
       </div>
     </header>
 
-    <p class="resume"><b>En bref</b>Héros du Jour est un jeu gratuit, sans revenus, fait par un passionné. Les personnages et les images appartiennent à leurs ayants droit : si tu es l'un d'eux et que tu veux qu'une image soit retirée, écris-nous, elle sera retirée rapidement.</p>
+    <p class="resume"><b>En bref</b>Héros du Jour est un jeu gratuit, sans revenus, fait par un passionné. Les images appartiennent à leurs ayants droit : si tu es l'un d'eux et que tu veux qu'une image soit retirée, écris-nous, elle sera retirée rapidement.</p>
 
     <section class="rubrique">
       <h2>Qui fait ce site</h2>
@@ -43,17 +43,10 @@
     <section class="rubrique">
       <h2>Les personnages et les images</h2>
       <div class="fiche-texte">
-        <p>Les noms et les personnages de fiction cités dans le jeu, ainsi que leurs images, <strong>appartiennent à leurs ayants droit</strong> (auteurs, studios, éditeurs). Ils sont utilisés ici dans un but de divertissement et de découverte, sans but lucratif, et ne remplacent en aucun cas les œuvres d'origine, que nous vous invitons à découvrir.</p>
-        <p>Les textes des fiches (descriptions, indices) sont écrits pour le jeu. Les dessins et le design du site sont originaux.</p>
+        <p class="phrase-droits"><strong>Les images appartiennent à leurs ayants droit.</strong></p>
+        <p>Les personnages de fiction cités dans le jeu appartiennent eux aussi à leurs ayants droit (auteurs, studios, éditeurs). Ils sont utilisés ici dans un but de divertissement et de découverte, sans but lucratif, et ne remplacent en aucun cas les œuvres d'origine, que nous vous invitons à découvrir.</p>
+        <p>Les textes des fiches (descriptions, indices) sont écrits pour le jeu. Le design du site est original.</p>
         <p><strong>Retrait d'une image :</strong> écris à <a href="mailto:jourduheros@gmail.com">jourduheros@gmail.com</a> en indiquant le personnage concerné. L'image est retirée du site rapidement (la carte garde alors sa silhouette).</p>
-      </div>
-    </section>
-
-    <section class="rubrique">
-      <h2>Crédits des images</h2>
-      <div class="fiche-texte">
-        <p id="credits-aucun">Aucune image de personnage pour l'instant : les cartes montrent une silhouette.</p>
-        <ul id="credits-liste" class="credits-liste"></ul>
       </div>
     </section>
 
@@ -65,24 +58,5 @@
     </section>
   </main>
 
-  <!-- La liste des crédits se fabrique toute seule à partir de data/images.js -->
-  <script src="data/constantes.js"></script>
-  <script src="data/personnages.js"></script>
-  <script src="data/images.js"></script>
-  <script>
-    (function () {
-      const liste = document.getElementById("credits-liste");
-      const lignes = window.PERSONNAGES.filter(p => window.IMAGES[p.id]);
-      document.getElementById("credits-aucun").hidden = lignes.length > 0;
-      lignes.forEach(p => {
-        const ligne = document.createElement("li");
-        const nom = document.createElement("strong");
-        nom.textContent = p.nom;
-        ligne.appendChild(nom);
-        ligne.appendChild(document.createTextNode(" : " + (window.IMAGES[p.id].credit || "droits réservés à leurs ayants droit")));
-        liste.appendChild(ligne);
-      });
-    })();
-  </script>
 </body>
 </html>
