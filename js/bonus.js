@@ -10,11 +10,12 @@
 const CLE_BONUS = "heros-du-jour-bonus";
 const MAX_BONUS = 5;   // le nombre de parties bonus (avec carte) par jour
 
-// Lit les parties bonus du jour : { date, dejaTires: [id...], enCours: {numeroBonus, mystere, essais, offert} ou null }.
+// Lit les parties bonus du jour : { date, dejaTires: [id...], ameliorations: nombre, enCours: {...} ou null }.
+// « ameliorations » = combien de fois, aujourd'hui, on a proposé un personnage dont le joueur avait déjà la carte (voir plus bas).
 // Si la sauvegarde date d'un autre jour, on repart de zéro.
 function lireBonus() {
   const aujourdhui = texteDeLaDate(new Date());
-  const vide = { date: aujourdhui, dejaTires: [], enCours: null };
+  const vide = { date: aujourdhui, dejaTires: [], ameliorations: 0, enCours: null };
   try {
     const texte = localStorage.getItem(CLE_BONUS);
     if (!texte) return vide;
@@ -29,7 +30,8 @@ function lireBonus() {
       enCours = { numeroBonus: c.numeroBonus, mystere: c.mystere, essais: c.essais, offert: typeof c.offert === "string" ? c.offert : null,
                   difficulte: window.DIFFICULTES[c.difficulte] ? c.difficulte : "normal" };
     }
-    return { date: aujourdhui, dejaTires, enCours };
+    const ameliorations = Number.isInteger(donnees.ameliorations) && donnees.ameliorations >= 0 ? Math.min(donnees.ameliorations, MAX_BONUS) : 0;
+    return { date: aujourdhui, dejaTires, ameliorations, enCours };
   } catch (erreur) {
     return vide;
   }
@@ -37,7 +39,7 @@ function lireBonus() {
 
 function ecrireBonus(bonus) {
   try {
-    localStorage.setItem(CLE_BONUS, JSON.stringify({ version: 1, date: bonus.date, dejaTires: bonus.dejaTires, enCours: bonus.enCours }));
+    localStorage.setItem(CLE_BONUS, JSON.stringify({ version: 1, date: bonus.date, dejaTires: bonus.dejaTires, ameliorations: bonus.ameliorations || 0, enCours: bonus.enCours }));
   } catch (erreur) {
     // pas grave : la partie bonus continuera, mais ne sera pas retrouvée après un rechargement
   }
@@ -62,23 +64,33 @@ function noterUnePartieBonus() {
 }
 
 // Le personnage d'une nouvelle partie. Jamais le personnage du jour, ni un personnage déjà tiré aujourd'hui.
-// Pour les parties bonus (avecCartes = vrai) : le plus souvent un personnage dont le joueur n'a pas encore la carte (pour l'aider à
-// compléter sa collection), mais environ 3 fois sur 10 un personnage dont il a déjà la carte, quand elle peut encore être améliorée
-// (rareté plus haute ou difficulté plus haute) : c'est l'occasion de l'améliorer. Si la collection est complète, on ne propose que ça.
-function choisirUnMystereSupplementaire(dejaTires, avecCartes) {
+// Pour les parties bonus (avecCartes = vrai), l'objectif est d'aider le joueur à COMPLÉTER sa collection :
+//  - on propose presque toujours un personnage dont il n'a pas encore la carte ;
+//  - de temps en temps (1 fois sur 10, et au plus UNE fois par jour), un personnage dont il a déjà la carte, pour qu'il puisse
+//    l'améliorer (rareté plus haute) ; jamais si sa carte est déjà Légendaire, la rareté maximale (la difficulté n'y change rien) ;
+//  - si sa collection est complète, on ne propose que des cartes à améliorer.
+// Renvoie { personnage, amelioration } (amelioration = vrai quand le joueur possède déjà la carte du personnage proposé).
+const CHANCE_D_AMELIORATION = 0.1;
+const AMELIORATIONS_MAX_PAR_JOUR = 1;
+
+function choisirUnMystereSupplementaire(dejaTires, avecCartes, ameliorationsDejaProposees) {
   const possedees = lireCollection().cartes;
   const tous = window.PERSONNAGES.filter(p => p.id !== MYSTERE_DU_JOUR.id && !dejaTires.includes(p.id));
   let candidats = tous;
+  let amelioration = false;
   if (avecCartes) {
-    const sommet = RARETES.legendaire.ordre * 10 + window.DIFFICULTES.expert.rang;   // une carte Légendaire Expert ne peut plus monter
     const nouvelles = tous.filter(p => !possedees[p.id]);
-    const ameliorables = tous.filter(p => possedees[p.id] && valeurDeLaCarte(possedees[p.id]) < sommet);
-    const veutAmeliorer = ameliorables.length > 0 && (nouvelles.length === 0 || Math.random() < 0.3);
-    if (veutAmeliorer) candidats = ameliorables;
-    else if (nouvelles.length > 0) candidats = nouvelles;
+    const ameliorables = tous.filter(p => possedees[p.id] && possedees[p.id].rarete !== "legendaire");
+    const permis = (ameliorationsDejaProposees || 0) < AMELIORATIONS_MAX_PAR_JOUR && Math.random() < CHANCE_D_AMELIORATION;
+    if (ameliorables.length > 0 && (nouvelles.length === 0 || permis)) {
+      candidats = ameliorables;
+      amelioration = true;
+    } else if (nouvelles.length > 0) {
+      candidats = nouvelles;
+    }
   }
   if (candidats.length === 0) candidats = window.PERSONNAGES.filter(p => p.id !== MYSTERE_DU_JOUR.id);
-  return candidats[Math.floor(Math.random() * candidats.length)];
+  return { personnage: candidats[Math.floor(Math.random() * candidats.length)], amelioration };
 }
 
 // La prochaine partie qu'on peut lancer : "bonus" (reprendre celle en cours, ou en commencer une), ou "entrainement".
@@ -102,7 +114,9 @@ function lancerUnePartieSupplementaire() {
   }
 
   if (partiesBonusRestantes() > 0) {
-    const personnage = choisirUnMystereSupplementaire(bonus.dejaTires, true);
+    const choix = choisirUnMystereSupplementaire(bonus.dejaTires, true, bonus.ameliorations);
+    const personnage = choix.personnage;
+    if (choix.amelioration) bonus.ameliorations = (bonus.ameliorations || 0) + 1;
     noterUnePartieBonus();
     reglerLaPartie(personnage, "bonus", partiesBonusFaites());
     preparerEssaiOffert(null);
@@ -113,7 +127,7 @@ function lancerUnePartieSupplementaire() {
   }
 
   // Plus de partie bonus aujourd'hui : entraînement libre (rien n'est gardé, pas de carte)
-  reglerLaPartie(choisirUnMystereSupplementaire([], false), "entrainement", 0);
+  reglerLaPartie(choisirUnMystereSupplementaire([], false).personnage, "entrainement", 0);
   preparerEssaiOffert(null);
 }
 
