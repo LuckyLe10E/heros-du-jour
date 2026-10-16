@@ -29,11 +29,43 @@
     <nav class="barre-liens">
       <a href="verification.html" target="_blank" rel="noopener">Page de vérification</a>
       <a href="index.html" target="_blank" rel="noopener">Voir le jeu</a>
+      <button type="button" id="bouton-cle" class="lien-bouton" hidden>Changer la clé GitHub</button>
+      <button type="button" id="bouton-deconnexion" class="lien-bouton" data-acces-deconnexion hidden>Se déconnecter</button>
       <button type="button" id="bouton-theme" aria-label="Changer de mode"></button>
     </nav>
   </header>
 
-  <main class="admin">
+  <!-- Version en ligne : rien d'autre n'est visible tant que la connexion Google n'a pas réussi (voir outils/admin-acces.js) -->
+  <section id="acces" class="acces" hidden>
+    <div id="acces-attente" class="boite-acces">
+      <h2>Vérification de l'accès…</h2>
+    </div>
+    <div id="acces-connexion" class="boite-acces" hidden>
+      <h2>Panneau admin</h2>
+      <p>Cette page est réservée à l'administrateur du site. Connecte-toi avec ton compte Google.</p>
+      <button type="button" id="acces-connexion-bouton" class="bouton bouton-principal">Se connecter avec Google</button>
+    </div>
+    <div id="acces-refuse" class="boite-acces" hidden>
+      <h2>Accès refusé</h2>
+      <p>Le compte <strong id="acces-compte"></strong> n'a pas accès à ce panneau.</p>
+      <p class="note">Si c'est bien ton compte administrateur, la règle de sécurité n'est pas encore ajoutée dans Firebase : demande à Claude de te guider.</p>
+      <button type="button" class="bouton" data-acces-deconnexion>Se déconnecter</button>
+    </div>
+    <div id="acces-cle" class="boite-acces" hidden>
+      <h2>Ta clé GitHub</h2>
+      <p id="acces-cle-texte">Colle ta clé GitHub ici. Elle sera rangée dans ton compte, et le panneau la retrouvera tout seul sur tous tes appareils.</p>
+      <input type="password" id="acces-cle-champ" placeholder="github_pat_…" autocomplete="off" spellcheck="false">
+      <button type="button" id="acces-cle-bouton" class="bouton bouton-principal">Enregistrer la clé</button>
+      <button type="button" class="bouton" data-acces-deconnexion>Se déconnecter</button>
+    </div>
+    <div id="acces-erreur" class="boite-acces" hidden>
+      <h2>Un problème est survenu</h2>
+      <p id="acces-erreur-texte"></p>
+      <button type="button" class="bouton" onclick="location.reload()">Réessayer</button>
+    </div>
+  </section>
+
+  <main class="admin" id="principal" hidden>
     <aside class="panneau-liste" aria-label="Liste des personnages">
       <div class="outils-liste">
         <button type="button" id="bouton-nouveau" class="bouton bouton-principal">＋ Nouveau personnage</button>
@@ -70,6 +102,8 @@
     const MAX_ESSAIS = 10;
   </script>
   <script src="js/carte.js"></script>
+  <script src="outils/admin-depot.js"></script>
+  <script src="outils/admin-acces.js"></script>
   <script src="outils/admin.js"></script>
 </body>
 </html>

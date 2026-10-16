@@ -494,3 +494,49 @@ input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-
   .editeur-corps { grid-template-columns: 1fr; }
   .colonne-apercu { position: static; }
 }
+
+/* ---------- L'accès à la version en ligne ---------- */
+
+.admin[hidden], .acces [hidden], .acces[hidden] {
+  display: none !important;
+}
+
+.acces {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: var(--bureau);
+}
+
+.boite-acces {
+  display: grid;
+  gap: 12px;
+  width: min(460px, 100%);
+  padding: 24px;
+  border-radius: 4px;
+  background: var(--papier);
+  color: var(--encre);
+  box-shadow: var(--ombre-papier);
+}
+
+.boite-acces h2 {
+  margin: 0;
+}
+
+.boite-acces p {
+  margin: 0;
+}
+
+.lien-bouton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  cursor: pointer;
+}

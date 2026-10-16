@@ -3,7 +3,7 @@
 // Rien ici n'est utilisé par le vrai jeu : ce fichier ne sert que sur l'ordinateur de Luca.
 
 (function () {
-  const CRIT = window.CRITERES;
+  let CRIT = window.CRITERES;   // (remplacé par les données de GitHub dans la version en ligne)
   const RARETES_APERCU = [["commune", "Commune"], ["rare", "Rare"], ["legendaire", "Légendaire"]];
   const CADRAGE_PAR_DEFAUT = "50% 20%";
 
@@ -88,6 +88,69 @@
     if (!reponse.ok) throw new Error(donnees.erreur || "Erreur " + reponse.status);
     return donnees;
   }
+
+  // ---------------------------------------------------------------------------------------------------------------
+  // Deux façons d'enregistrer :
+  //  - le panneau lancé sur l'ordinateur (« Lancer-admin.bat ») parle au petit serveur local (outils/serveur-admin.py) ;
+  //  - le panneau en ligne parle directement à GitHub (outils/admin-depot.js), après connexion Google (outils/admin-acces.js).
+  // ---------------------------------------------------------------------------------------------------------------
+
+  const parametres = new URLSearchParams(location.search);
+  const enLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  const surServeurLocal = enLocal && location.port === "8125";
+  const adresseDeTest = enLocal ? parametres.get("depot-test") : null;   // pour les essais automatiques avec un faux GitHub
+  const modeGithub = !surServeurLocal;
+
+  const moteurLocal = {
+    async enregistrer(o) {
+      await appeler("/api/personnage", { personnage: o.fiche, nouveau: o.nouveau });
+      if (o.imageNouvelle) {
+        await appeler("/api/image", o.imageNouvelle.blob, "?id=" + encodeURIComponent(o.fiche.id) + "&cadrage=" + encodeURIComponent(o.cadrage)
+          + "&source=" + encodeURIComponent(o.imageNouvelle.source), "image/jpeg");
+      } else if (o.imageRetiree) {
+        await appeler("/api/retirer-image", {}, "?id=" + encodeURIComponent(o.fiche.id));
+      } else if (o.cadrage !== o.cadrageOriginal && window.IMAGES[o.fiche.id]) {
+        await appeler("/api/cadrage", {}, "?id=" + encodeURIComponent(o.fiche.id) + "&cadrage=" + encodeURIComponent(o.cadrage));
+      }
+    },
+    async supprimer(id) { await appeler("/api/supprimer", { id }); },
+    async groupe(nom) { await appeler("/api/groupe", { nom }); },
+    async recupererImage(adresse) {
+      const reponse = await fetch("/api/recuperer?url=" + encodeURIComponent(adresse), { headers: { "X-Admin": "1" } });
+      if (!reponse.ok) {
+        let message = "Impossible de récupérer cette image.";
+        try { message = (await reponse.json()).erreur || message; } catch (erreur) { /* pas de détail */ }
+        throw new Error(message);
+      }
+      return reponse.blob();
+    },
+    suiteEnregistrement: ""
+  };
+
+  const moteurGithub = {
+    async enregistrer(o) {
+      const octets = o.imageNouvelle ? new Uint8Array(await o.imageNouvelle.blob.arrayBuffer()) : null;
+      await window.DEPOT_GITHUB.enregistrer({
+        fiche: o.fiche, nouveau: o.nouveau, retirerImage: o.imageRetiree, cadrage: o.cadrage,
+        image: octets ? { octets, source: o.imageNouvelle.source } : null
+      });
+    },
+    async supprimer(id) { await window.DEPOT_GITHUB.supprimer(id); },
+    async groupe(nom) { await window.DEPOT_GITHUB.ajouterGroupe(nom); },
+    async recupererImage(adresse) {
+      let reponse;
+      try {
+        reponse = await fetch(adresse);
+      } catch (erreur) {
+        throw new Error("Ce site ne laisse pas récupérer son image depuis ici. Copie l'image (clic droit → Copier l'image) puis colle-la avec Ctrl+V, ou enregistre-la et choisis le fichier.");
+      }
+      if (!reponse.ok) throw new Error("Impossible de récupérer cette image.");
+      return reponse.blob();
+    },
+    suiteEnregistrement: " Le site sera à jour dans environ une minute."
+  };
+
+  const moteur = modeGithub ? moteurGithub : moteurLocal;
 
   // ---------------------------------------------------------------------------------------------------------------
   // La liste à gauche
@@ -362,7 +425,7 @@
       const nom = nettoyerTexte(nouveauGroupe.value);
       if (!nom) return;
       try {
-        await appeler("/api/groupe", { nom });
+        await moteur.groupe(nom);
         CRIT.groupes.splice(CRIT.groupes.length - 1, 0, nom);   // comme le serveur : avant « Aucun »
         etat.brouillon.groupes = etat.brouillon.groupes.filter(g => g !== "Aucun").concat(nom);
         dire("Groupe « " + nom + " » ajouté à la liste.", "reussi");
@@ -653,13 +716,7 @@
   async function utiliserAdresse(adresse) {
     if (!/^https?:\/\//i.test(adresse)) { dire("L'adresse doit commencer par https://", "erreur"); return; }
     try {
-      const reponse = await fetch("/api/recuperer?url=" + encodeURIComponent(adresse), { headers: { "X-Admin": "1" } });
-      if (!reponse.ok) {
-        let message = "Impossible de récupérer cette image.";
-        try { message = (await reponse.json()).erreur || message; } catch (e) { /* pas de détail */ }
-        throw new Error(message);
-      }
-      await utiliserImage(await reponse.blob(), adresse);
+      await utiliserImage(await moteur.recupererImage(adresse), adresse);
     } catch (erreur) {
       dire(erreur.message, "erreur");
     }
@@ -713,20 +770,15 @@
     bouton.disabled = true;
     const fiche = fichePropre();
     try {
-      await appeler("/api/personnage", { personnage: fiche, nouveau: etat.nouveau });
-      if (etat.imageNouvelle) {
-        await appeler("/api/image", etat.imageNouvelle.blob, "?id=" + encodeURIComponent(fiche.id) + "&cadrage=" + encodeURIComponent(etat.cadrage)
-          + "&source=" + encodeURIComponent(etat.imageNouvelle.source), "image/jpeg");
-      } else if (etat.imageRetiree) {
-        await appeler("/api/retirer-image", {}, "?id=" + encodeURIComponent(fiche.id));
-      } else if (etat.cadrage !== etat.cadrageOriginal && window.IMAGES[fiche.id]) {
-        await appeler("/api/cadrage", {}, "?id=" + encodeURIComponent(fiche.id) + "&cadrage=" + encodeURIComponent(etat.cadrage));
-      }
+      await moteur.enregistrer({
+        fiche, nouveau: etat.nouveau, imageNouvelle: etat.imageNouvelle, imageRetiree: etat.imageRetiree,
+        cadrage: etat.cadrage, cadrageOriginal: etat.cadrageOriginal
+      });
       etat.original = JSON.stringify(etat.brouillon);   // plus rien à abandonner : on recharge la page avec les fichiers à jour
       etat.imageNouvelle = null;
       etat.imageRetiree = false;
       etat.cadrageOriginal = etat.cadrage;
-      sessionStorage.setItem("admin-message", etat.nouveau ? "« " + fiche.nom + " » a été ajouté (à la fin du calendrier)." : "« " + fiche.nom + " » est enregistré.");
+      sessionStorage.setItem("admin-message", (etat.nouveau ? "« " + fiche.nom + " » a été ajouté (à la fin du calendrier)." : "« " + fiche.nom + " » est enregistré.") + moteur.suiteEnregistrement);
       location.hash = "#" + encodeURIComponent(fiche.id);
       location.reload();
     } catch (erreur) {
@@ -746,10 +798,10 @@
       + "Avant le lancement officiel c'est sans gros risque ; après, il vaut mieux modifier un personnage que le supprimer.";
     if (!window.confirm(texte)) return;
     try {
-      await appeler("/api/supprimer", { id: etat.idOriginal });
+      await moteur.supprimer(etat.idOriginal);
       etat.original = JSON.stringify(etat.brouillon);
       etat.imageNouvelle = null; etat.imageRetiree = false; etat.cadrageOriginal = etat.cadrage;
-      sessionStorage.setItem("admin-message", "« " + nom + " » est supprimé.");
+      sessionStorage.setItem("admin-message", "« " + nom + " » est supprimé." + moteur.suiteEnregistrement);
       history.replaceState(null, "", location.pathname);
       location.reload();
     } catch (erreur) {
@@ -765,29 +817,59 @@
     if (aDesChangements()) { e.preventDefault(); e.returnValue = ""; }
   });
 
-  remplirFiltreTheme();
-  $("recherche").addEventListener("input", afficherListe);
-  $("filtre-theme").addEventListener("change", afficherListe);
-  $("filtre-sans-image").addEventListener("change", afficherListe);
-  $("bouton-nouveau").addEventListener("click", nouveauPersonnage);
-  afficherListe();
-
-  const idDansLAdresse = decodeURIComponent(location.hash.slice(1));
-  if (idDansLAdresse && window.PERSONNAGES.some(p => p.id === idDansLAdresse)) {
-    ouvrirEtat(window.PERSONNAGES.find(p => p.id === idDansLAdresse), false);
-    construireEditeur();
+  function lancerInterface() {
+    CRIT = window.CRITERES;
+    $("principal").hidden = false;
+    if (modeGithub) {
+      $("bouton-cle").hidden = false;
+      $("bouton-deconnexion").hidden = false;
+    }
+    remplirFiltreTheme();
+    $("recherche").addEventListener("input", afficherListe);
+    $("filtre-theme").addEventListener("change", afficherListe);
+    $("filtre-sans-image").addEventListener("change", afficherListe);
+    $("bouton-nouveau").addEventListener("click", nouveauPersonnage);
     afficherListe();
-    const courant = document.querySelector('.ligne-perso[aria-current="true"]');
-    if (courant) courant.scrollIntoView({ block: "center" });
+
+    const idDansLAdresse = decodeURIComponent(location.hash.slice(1));
+    if (idDansLAdresse && window.PERSONNAGES.some(p => p.id === idDansLAdresse)) {
+      ouvrirEtat(window.PERSONNAGES.find(p => p.id === idDansLAdresse), false);
+      construireEditeur();
+      afficherListe();
+      const courant = document.querySelector('.ligne-perso[aria-current="true"]');
+      if (courant) courant.scrollIntoView({ block: "center" });
+    }
+
+    window.addEventListener("hashchange", () => {
+      const id = decodeURIComponent(location.hash.slice(1));
+      if (id && (!etat || etat.idOriginal !== id) && window.PERSONNAGES.some(p => p.id === id)) choisir(id);
+    });
+
+    try {
+      const message = sessionStorage.getItem("admin-message");
+      if (message) { sessionStorage.removeItem("admin-message"); dire(message, "reussi"); }
+    } catch (erreur) { /* pas grave */ }
   }
 
-  window.addEventListener("hashchange", () => {
-    const id = decodeURIComponent(location.hash.slice(1));
-    if (id && (!etat || etat.idOriginal !== id) && window.PERSONNAGES.some(p => p.id === id)) choisir(id);
-  });
+  async function demarrer() {
+    if (!modeGithub) { lancerInterface(); return; }
+    $("bouton-cle").addEventListener("click", () => window.ACCES_ADMIN.changerLaCle());
+    const apresAcces = async () => {
+      try {
+        await window.DEPOT_GITHUB.charger();
+        lancerInterface();
+      } catch (erreur) {
+        window.ACCES_ADMIN.erreur("Impossible de lire les fiches sur GitHub : " + erreur.message);
+      }
+    };
+    if (adresseDeTest) {   // essai en local avec un faux GitHub : pas de connexion Google
+      window.DEPOT_GITHUB._changerAdresse(adresseDeTest);
+      window.DEPOT_GITHUB.definirJeton("test");
+      await apresAcces();
+      return;
+    }
+    window.ACCES_ADMIN.demarrer(apresAcces);
+  }
 
-  try {
-    const message = sessionStorage.getItem("admin-message");
-    if (message) { sessionStorage.removeItem("admin-message"); dire(message, "reussi"); }
-  } catch (erreur) { /* pas grave */ }
+  demarrer();
 })();
