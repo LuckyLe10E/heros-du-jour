@@ -120,6 +120,8 @@ function creerCarteDeLaPartie() {
 //    (partie.carteAmelioree = vrai, partie.ancienneRarete = l'ancienne rareté, partie.ancienneDifficulte = l'ancienne difficulté).
 //    « Fait mieux » = rareté plus haute, ou, à rareté égale, difficulté plus haute (Expert > Normal > Facile).
 //  - Carte déjà possédée et le joueur n'a pas fait mieux : on garde l'ancienne. Une carte ne descend JAMAIS en rareté.
+//    Si cette carte est déjà Légendaire (rien à améliorer) et qu'il s'agit de la partie du jour, une partie bonus en plus est offerte
+//    pour la journée (voir accorderUnePartieBonusEnPlus dans bonus.js).
 // Résultat dans partie.carte : la carte à montrer.
 function gagnerLaCarte() {
   const collection = lireCollection();
@@ -145,6 +147,7 @@ function gagnerLaCarte() {
     partie.ancienneDifficulte = difficulteDeLaCarte(existante);
   } else {
     partie.carte = existante;
+    if (existante.rarete === "legendaire" && partie.mode === "jour" && !partie.modeTest) accorderUnePartieBonusEnPlus();
   }
 }
 

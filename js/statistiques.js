@@ -43,10 +43,17 @@ function favoriValide(favori) {
     && Number.isFinite(favori.maj);
 }
 
-// Vérifie le compteur de parties bonus : { date, faites } (combien de parties bonus ont été lancées ce jour-là).
+// Vérifie le compteur de parties bonus : { date, faites, extra } (combien de parties bonus ont été lancées ce jour-là, et si la
+// partie bonus en cadeau a été offerte ce jour-là : extra = 1).
 function bonusValide(bonus) {
   return Boolean(bonus) && /^\d{4}-\d{2}-\d{2}$/.test(bonus.date)
-    && Number.isInteger(bonus.faites) && bonus.faites >= 0 && bonus.faites <= MAX_BONUS;
+    && (bonus.extra === undefined || bonus.extra === 0 || bonus.extra === 1)
+    && Number.isInteger(bonus.faites) && bonus.faites >= 0 && bonus.faites <= MAX_BONUS + (bonus.extra || 0);
+}
+
+// Recopie un compteur valide (sans rien garder d'autre).
+function copierBonus(bonus) {
+  return { date: bonus.date, faites: bonus.faites, extra: bonus.extra || 0 };
 }
 
 // Les succès débloqués : { "premiere-carte": "2026-10-16", ... } (l'identifiant du succès et la date du déblocage).
@@ -83,7 +90,7 @@ function lireStats() {
       stats.rattrapages = nettoyerLesJours(donnees.rattrapages);
       if (rattrapageJourValide(donnees.rattrapageJour)) stats.rattrapageJour = { date: donnees.rattrapageJour.date, faites: donnees.rattrapageJour.faites };
       if (favoriValide(donnees.favori)) stats.favori = { id: donnees.favori.id, maj: donnees.favori.maj };
-      if (bonusValide(donnees.bonus)) stats.bonus = { date: donnees.bonus.date, faites: donnees.bonus.faites };
+      if (bonusValide(donnees.bonus)) stats.bonus = copierBonus(donnees.bonus);
       stats.succes = nettoyerLesSucces(donnees.succes);
       if (Number.isInteger(donnees.totalBonus) && donnees.totalBonus >= 0) stats.totalBonus = Math.min(donnees.totalBonus, 100000);
     }
@@ -170,12 +177,13 @@ function fusionnerBonus(a, b) {
   if (!a) return b;
   if (!b) return a;
   if (a.date !== b.date) return a.date > b.date ? a : b;
-  return a.faites >= b.faites ? a : b;
+  // le même jour : on garde le plus grand nombre de parties lancées ET le cadeau s'il a été offert sur l'un des deux appareils
+  return { date: a.date, faites: Math.max(a.faites, b.faites), extra: Math.max(a.extra || 0, b.extra || 0) };
 }
 
 function memesBonus(a, b) {
   if (!a || !b) return a === b;
-  return a.date === b.date && a.faites === b.faites;
+  return a.date === b.date && a.faites === b.faites && (a.extra || 0) === (b.extra || 0);
 }
 
 // Entre deux listes de succès : tous les succès des deux, avec la date la plus ancienne.
@@ -202,7 +210,7 @@ function statsDuCompte(donnees) {
     if (Number.isInteger(donnees.totalBonus) && donnees.totalBonus >= 0) stats.totalBonus = Math.min(donnees.totalBonus, 100000);
     stats.jours = nettoyerLesJours(donnees.jours);
     if (favoriValide(donnees.favori)) stats.favori = { id: donnees.favori.id, maj: donnees.favori.maj };
-    if (bonusValide(donnees.bonus)) stats.bonus = { date: donnees.bonus.date, faites: donnees.bonus.faites };
+    if (bonusValide(donnees.bonus)) stats.bonus = copierBonus(donnees.bonus);
   }
   return stats;
 }

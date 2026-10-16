@@ -163,7 +163,7 @@ function afficherEnTete() {
     etiquette.textContent = "BONUS";
     nombre.textContent = partie.numeroBonus;
     tampon.setAttribute("aria-label", "Partie bonus " + partie.numeroBonus);
-    date.textContent = "Partie bonus " + partie.numeroBonus + " sur " + MAX_BONUS;
+    date.textContent = "Partie bonus " + partie.numeroBonus + " sur " + maxBonusAujourdhui();
   } else {
     etiquette.textContent = "LIBRE";
     nombre.textContent = "∞";
@@ -243,7 +243,7 @@ function afficherLeBonus() {
   etat.hidden = false;
   retour.hidden = false;
   if (partie.mode === "bonus") {
-    etat.textContent = "Partie bonus " + partie.numeroBonus + " sur " + MAX_BONUS + " : un personnage rien que pour toi, avec une carte à gagner.";
+    etat.textContent = "Partie bonus " + partie.numeroBonus + " sur " + maxBonusAujourdhui() + " : un personnage rien que pour toi, avec une carte à gagner.";
   } else if (partie.mode === "rattrapage") {
     etat.textContent = "Jour rattrapé : une carte à gagner, mais jamais Légendaire, et sans effet sur ta série de jours.";
   } else {
@@ -397,7 +397,7 @@ function ouvrirFenetreFin() {
   } else {
     arreterCompteARebours();
     document.getElementById("fin-compte-a-rebours").textContent = partie.mode === "bonus"
-      ? "Parties bonus lancées aujourd'hui : " + partiesBonusFaites() + " sur " + MAX_BONUS
+      ? "Parties bonus lancées aujourd'hui : " + partiesBonusFaites() + " sur " + maxBonusAujourdhui()
       : partie.mode === "rattrapage"
         ? "Jours rattrapés aujourd'hui : " + rattrapagesFaits() + " sur " + MAX_RATTRAPAGES
         : "Entraînement libre : pas de carte à gagner.";
@@ -437,6 +437,10 @@ function afficherLaCarteGagnee() {
       : "Carte améliorée : elle passe de la version " + window.DIFFICULTES[partie.ancienneDifficulte].nom + " à la version " + window.DIFFICULTES[difficulteDeLaCarte(carte)].nom + " !";
   } else if (gagneeDansCettePartie) {
     message = "Carte gagnée aujourd'hui, rangée dans ta collection.";
+  }
+  // Carte Légendaire déjà possédée, retrouvée dans la partie du jour : une partie bonus en plus est offerte pour aujourd'hui
+  if (partie.mode === "jour" && carte.rarete === "legendaire" && partiesBonusEnPlus() > 0 && !partie.carteNouvelle && !partie.carteAmelioree) {
+    message += " Cadeau : une partie bonus en plus aujourd'hui !";
   }
   document.getElementById("fin-carte-message").textContent = message;
 }

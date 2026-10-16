@@ -9,6 +9,7 @@
 
 const CLE_BONUS = "heros-du-jour-bonus";
 const MAX_BONUS = 5;   // le nombre de parties bonus (avec carte) par jour
+const MAX_BONUS_EN_PLUS = 1;   // une partie bonus de plus, offerte une fois par jour au plus (voir accorderUnePartieBonusEnPlus)
 
 // Lit les parties bonus du jour : { date, dejaTires: [id...], ameliorations: nombre, enCours: {...} ou null }.
 // « ameliorations » = combien de fois, aujourd'hui, on a proposé un personnage dont le joueur avait déjà la carte (voir plus bas).
@@ -51,14 +52,35 @@ function partiesBonusFaites() {
   return bonus && bonus.date === texteDeLaDate(new Date()) ? bonus.faites : 0;
 }
 
+// Le cadeau du jour : une partie bonus en plus (0 ou 1). Il est offert quand on trouve le personnage du jour alors qu'on en
+// possède déjà la carte Légendaire (la carte ne peut plus monter, donc on offre une autre chance de gagner une carte).
+function partiesBonusEnPlus() {
+  const bonus = lireStats().bonus;
+  return bonus && bonus.date === texteDeLaDate(new Date()) ? (bonus.extra || 0) : 0;
+}
+
+// Le nombre de parties bonus possibles aujourd'hui : 5, ou 6 si le cadeau a été offert.
+function maxBonusAujourdhui() {
+  return MAX_BONUS + partiesBonusEnPlus();
+}
+
 function partiesBonusRestantes() {
-  return Math.max(0, MAX_BONUS - partiesBonusFaites());
+  return Math.max(0, maxBonusAujourdhui() - partiesBonusFaites());
+}
+
+// Offre la partie bonus en plus pour aujourd'hui (une seule fois par jour, même si on l'appelle plusieurs fois).
+function accorderUnePartieBonusEnPlus() {
+  const stats = lireStats();
+  const aujourdhui = texteDeLaDate(new Date());
+  const faites = stats.bonus && stats.bonus.date === aujourdhui ? stats.bonus.faites : 0;
+  stats.bonus = { date: aujourdhui, faites, extra: MAX_BONUS_EN_PLUS };
+  ecrireStats(stats);
 }
 
 // Note qu'une partie bonus vient d'être lancée.
 function noterUnePartieBonus() {
   const stats = lireStats();
-  stats.bonus = { date: texteDeLaDate(new Date()), faites: Math.min(MAX_BONUS, partiesBonusFaites() + 1) };
+  stats.bonus = { date: texteDeLaDate(new Date()), faites: Math.min(maxBonusAujourdhui(), partiesBonusFaites() + 1), extra: partiesBonusEnPlus() };
   stats.totalBonus = Math.min(100000, (stats.totalBonus || 0) + 1);   // pour le succès « 25 parties bonus »
   ecrireStats(stats);
 }
