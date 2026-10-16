@@ -131,7 +131,7 @@ window.IMAGES = {
   "jean-grey": {
     "fichier": "images/personnages/jean-grey.jpg",
     "credit": "https://marvel.fandom.com/wiki/Jean_Grey_%28Earth-616%29",
-    "cadrage": "50% 14%"
+    "cadrage": "50% 38%"
   },
   "deadpool": {
     "fichier": "images/personnages/deadpool.jpg",
