@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Repartir de zéro · Héros du Jour</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#2d4a78">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/jeu.css">
+  <link rel="stylesheet" href="css/fiches.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+  <main class="page">
+    <header class="bandeau">
+      <div class="marque">
+        <h1>Héros du Jour</h1>
+        <p class="date-du-jour">Repartir de zéro</p>
+      </div>
+      <div class="bandeau-actions">
+        <a href="index.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>
+          Retour au jeu
+        </a>
+        <button type="button" id="bouton-theme" aria-label="Changer de mode"></button>
+      </div>
+    </header>
+
+    <p class="resume"><b>En bref</b>Cette page efface tout ce que le jeu a gardé sur CET appareil : parties, cartes, statistiques, succès et connexion. Elle ne touche pas aux données gardées en ligne dans ton compte.</p>
+
+    <section class="rubrique">
+      <h2>Avant d'effacer</h2>
+      <div class="fiche-texte">
+        <p>Si tu étais connecté avec Google, tes cartes sont aussi gardées en ligne et reviendraient à ta prochaine connexion. Pour repartir vraiment de zéro, commence par <strong>supprimer ton compte</strong> : dans le jeu, touche l'icône de ton compte, puis « Supprimer mon compte » et confirme avec « Oui, tout supprimer ».</p>
+      </div>
+    </section>
+
+    <section class="rubrique">
+      <h2>Effacer cet appareil</h2>
+      <div class="fiche-texte">
+        <p>Quand tu touches le bouton, le jeu oublie tout ce qu'il savait sur cet appareil. Il n'y a pas de retour en arrière.</p>
+        <p><button type="button" id="effacer" class="bouton-effacer">Effacer toutes mes données sur cet appareil</button></p>
+        <p id="resultat" role="status"></p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Efface tout ce que le jeu garde dans ce navigateur (clés « heros-du-jour… »), la connexion Google et les copies de secours hors ligne.
+    document.getElementById("effacer").addEventListener("click", async () => {
+      if (!window.confirm("Effacer toutes tes données du jeu sur cet appareil ? Il n'y a pas de retour en arrière.")) return;
+      const resultat = document.getElementById("resultat");
+      try {
+        Object.keys(localStorage).filter(cle => cle.indexOf("heros-du-jour") === 0).forEach(cle => localStorage.removeItem(cle));
+        sessionStorage.clear();
+      } catch (erreur) { /* le navigateur refuse l'accès : on continue avec le reste */ }
+      try {
+        if (window.indexedDB) indexedDB.deleteDatabase("firebaseLocalStorageDb");   // la connexion Google
+        if (window.caches) (await caches.keys()).forEach(nom => caches.delete(nom));   // les copies pour jouer hors ligne
+        if (navigator.serviceWorker) (await navigator.serviceWorker.getRegistrations()).forEach(r => r.unregister());
+      } catch (erreur) { /* pas grave */ }
+      resultat.textContent = "C'est fait : cet appareil est remis à zéro. Retourne au jeu pour repartir de zéro.";
+    });
+  </script>
+  <style>
+    .bouton-effacer {
+      padding: 10px 16px; border: 2px solid var(--tampon); border-radius: 3px; background: var(--papier);
+      color: var(--tampon); font: inherit; font-weight: 700; cursor: pointer;
+    }
+    .bouton-effacer:hover { background: var(--papier-2); }
+    #resultat { font-weight: 700; }
+  </style>
+</body>
+</html>
