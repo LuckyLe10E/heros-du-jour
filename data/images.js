@@ -136,7 +136,7 @@ window.IMAGES = {
   "deadpool": {
     "fichier": "images/personnages/deadpool.jpg",
     "credit": "https://marvel.fandom.com/wiki/Wade_Wilson_%28Earth-616%29",
-    "cadrage": "50% 14%"
+    "cadrage": "50% 38%"
   },
   "thanos": {
     "fichier": "images/personnages/thanos.jpg",
