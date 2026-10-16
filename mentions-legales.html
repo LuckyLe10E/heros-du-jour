@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mentions légales · Héros du Jour</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#2d4a78">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/jeu.css">
+  <link rel="stylesheet" href="css/fiches.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+  <main class="page">
+    <header class="bandeau">
+      <div class="marque">
+        <h1>Héros du Jour</h1>
+        <p class="date-du-jour">Mentions légales</p>
+      </div>
+      <div class="bandeau-actions">
+        <a href="index.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>
+          Retour au jeu
+        </a>
+        <button type="button" id="bouton-theme" aria-label="Changer de mode"></button>
+      </div>
+    </header>
+
+    <p class="resume"><b>En bref</b>Héros du Jour est un jeu gratuit, sans revenus, fait par un passionné. Les personnages et les images appartiennent à leurs ayants droit : si tu es l'un d'eux et que tu veux qu'une image soit retirée, écris-nous, elle sera retirée rapidement.</p>
+
+    <section class="rubrique">
+      <h2>Qui fait ce site</h2>
+      <div class="fiche-texte">
+        <p>Héros du Jour est un projet personnel, gratuit, sans publicité et sans aucun revenu. On peut écrire à son créateur à l'adresse <a href="mailto:jourduheros@gmail.com">jourduheros@gmail.com</a>.</p>
+        <p>Le site est hébergé par Vercel Inc. (Covina, États-Unis). La connexion Google facultative et la sauvegarde en ligne utilisent Firebase (Google).</p>
+      </div>
+    </section>
+
+    <section class="rubrique">
+      <h2>Les personnages et les images</h2>
+      <div class="fiche-texte">
+        <p>Les noms et les personnages de fiction cités dans le jeu, ainsi que leurs images, <strong>appartiennent à leurs ayants droit</strong> (auteurs, studios, éditeurs). Ils sont utilisés ici dans un but de divertissement et de découverte, sans but lucratif, et ne remplacent en aucun cas les œuvres d'origine, que nous vous invitons à découvrir.</p>
+        <p>Les textes des fiches (descriptions, indices) sont écrits pour le jeu. Les dessins et le design du site sont originaux.</p>
+        <p><strong>Retrait d'une image :</strong> écris à <a href="mailto:jourduheros@gmail.com">jourduheros@gmail.com</a> en indiquant le personnage concerné. L'image est retirée du site rapidement (la carte garde alors sa silhouette).</p>
+      </div>
+    </section>
+
+    <section class="rubrique">
+      <h2>Crédits des images</h2>
+      <div class="fiche-texte">
+        <p id="credits-aucun">Aucune image de personnage pour l'instant : les cartes montrent une silhouette.</p>
+        <ul id="credits-liste" class="credits-liste"></ul>
+      </div>
+    </section>
+
+    <section class="rubrique">
+      <h2>Données personnelles</h2>
+      <div class="fiche-texte">
+        <p>Ce qui est gardé, où et pendant combien de temps : voir la page <a href="confidentialite.html">Confidentialité</a>.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- La liste des crédits se fabrique toute seule à partir de data/images.js -->
+  <script src="data/constantes.js"></script>
+  <script src="data/personnages.js"></script>
+  <script src="data/images.js"></script>
+  <script>
+    (function () {
+      const liste = document.getElementById("credits-liste");
+      const lignes = window.PERSONNAGES.filter(p => window.IMAGES[p.id]);
+      document.getElementById("credits-aucun").hidden = lignes.length > 0;
+      lignes.forEach(p => {
+        const ligne = document.createElement("li");
+        const nom = document.createElement("strong");
+        nom.textContent = p.nom;
+        ligne.appendChild(nom);
+        ligne.appendChild(document.createTextNode(" : " + (window.IMAGES[p.id].credit || "droits réservés à leurs ayants droit")));
+        liste.appendChild(ligne);
+      });
+    })();
+  </script>
+</body>
+</html>

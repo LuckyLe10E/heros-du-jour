@@ -33,6 +33,29 @@ function lienDeSignalement(personnage) {
   return "mailto:" + window.ADRESSE_CONTACT + "?subject=" + encodeURIComponent(sujet) + "&body=" + encodeURIComponent(message);
 }
 
+// L'image d'un personnage (voir data/images.js), ou null s'il n'en a pas.
+function imageDuPersonnage(id) {
+  const image = window.IMAGES && window.IMAGES[id];
+  return image && image.fichier ? image : null;
+}
+
+// Fabrique l'élément <img> d'un personnage, à poser PAR-DESSUS sa silhouette (qui reste dessous : si le fichier est introuvable,
+// l'image disparaît toute seule et la silhouette réapparaît). Renvoie null si le personnage n'a pas d'image.
+function creerImageDuPersonnage(id) {
+  const info = imageDuPersonnage(id);
+  if (!info) return null;
+  const img = document.createElement("img");
+  img.className = "illustration-image";
+  img.src = info.fichier;
+  img.alt = "";                    // le nom du personnage est écrit à côté : l'image est décorative
+  img.loading = "lazy";            // dans l'album, seules les images visibles sont chargées
+  img.decoding = "async";
+  img.draggable = false;
+  img.style.objectPosition = info.cadrage || "50% 20%";
+  img.addEventListener("error", () => img.remove());
+  return img;
+}
+
 // Le numéro d'une carte dans l'album : sa place dans la liste des personnages, sur 3 chiffres (« N° 007 »).
 function numeroDeCarte(id) {
   const position = window.PERSONNAGES.findIndex(p => p.id === id);
@@ -72,6 +95,8 @@ function creerVignetteDom(carte, id, apresToucher) {
   corps.appendChild(creerElement("span", "numero-carte", numeroDeCarte(carte.id)));
   const art = creerElement("span", "art");
   art.appendChild(creerSilhouette());
+  const imageVignette = creerImageDuPersonnage(carte.id);
+  if (imageVignette) art.appendChild(imageVignette);
   corps.appendChild(art);
   if (difficulteDeLaCarte(carte) !== "normal") {   // la petite marque du mode, en haut à droite de la vignette
     corps.appendChild(creerElement("span", "marque-mode marque-" + difficulteDeLaCarte(carte), difficulteDeLaCarte(carte) === "expert" ? "E" : "F"));
@@ -117,6 +142,8 @@ function creerCarteDom(carte, options) {
   // La grande illustration : pour l'instant, une silhouette
   const illustration = creerElement("div", "carte-illustration");
   illustration.appendChild(creerSilhouette());
+  const imageCarte = creerImageDuPersonnage(carte.id);
+  if (imageCarte) illustration.appendChild(imageCarte);
   illustration.appendChild(creerElement("span", "carte-tampon", rarete.nom.toUpperCase()));
   if (difficulteDeLaCarte(carte) !== "normal") {   // le sceau du mode, en haut à gauche de l'illustration
     illustration.appendChild(creerElement("span", "carte-sceau sceau-" + difficulteDeLaCarte(carte), window.DIFFICULTES[difficulteDeLaCarte(carte)].nom));

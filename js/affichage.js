@@ -623,6 +623,8 @@ function creerFicheEssai(personnage, etiquette, offert, animer) {
   const photo = document.createElement("div");
   photo.className = "photo";
   photo.appendChild(creerSilhouette());
+  const imageEssai = creerImageDuPersonnage(personnage.id);
+  if (imageEssai) photo.appendChild(imageEssai);
   tete.appendChild(photo);
   tete.appendChild(creerElement("strong", "essai-nom", personnage.nom));
   tete.appendChild(creerElement("span", "essai-numero", etiquette));

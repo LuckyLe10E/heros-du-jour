@@ -3,7 +3,8 @@
 // Les colonnes du tableau des fiches : titre affiché, et comment on lit la valeur pour trier.
 const COLONNES = [
   { titre: "Nom",         valeur: p => p.nom },
-  { titre: "Univers",     valeur: p => p.univers },
+  { titre: "Thème",       valeur: p => p.univers },
+  { titre: "Image",       valeur: p => (window.IMAGES && window.IMAGES[p.id] ? "oui" : "pas d'image") },
   { titre: "Camp",        valeur: p => p.camp },
   { titre: "Genre",       valeur: p => p.genre },
   { titre: "Espèce",      valeur: p => p.espece },

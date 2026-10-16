@@ -92,6 +92,26 @@ function preparerLeBoutonDePartageDeCarte(bouton, carte) {
   bouton.title = possible ? "" : "La carte du personnage du jour se partage à partir de demain, pour ne pas donner la réponse à tes amis.";
 }
 
+// Charge une image pour le canevas. Renvoie l'image, ou null si elle est introuvable ou trop longue à charger.
+function chargerUneImage(adresse) {
+  return new Promise(resolve => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => resolve(null);
+    image.src = adresse;
+    setTimeout(() => resolve(null), 8000);
+  });
+}
+
+// Dessine une image pour qu'elle REMPLISSE une zone (elle est recadrée, jamais déformée). cadrage = « 50% 20% » : la partie gardée.
+function dessinerEnRemplissant(g, image, x, y, l, h, cadrage) {
+  const [px, py] = (cadrage || "50% 20%").split(" ").map(valeur => parseFloat(valeur) / 100);
+  const echelle = Math.max(l / image.width, h / image.height);
+  const largeur = image.width * echelle;
+  const hauteur = image.height * echelle;
+  g.drawImage(image, x - (largeur - l) * (Number.isNaN(px) ? 0.5 : px), y - (hauteur - h) * (Number.isNaN(py) ? 0.2 : py), largeur, hauteur);
+}
+
 // Fabrique l'image d'une carte. Renvoie le canevas (le dessin terminé).
 async function fabriquerLeCanevasDeLaCarte(carte) {
   const p = trouverPersonnage(carte.id);
@@ -104,6 +124,10 @@ async function fabriquerLeCanevasDeLaCarte(carte) {
     // pas grave : on dessine avec une police de secours
   }
   const police = "Jost, system-ui, sans-serif";
+
+  // L'image du personnage, s'il en a une (sinon on dessine la silhouette)
+  const infoImage = imageDuPersonnage(carte.id);
+  const imagePerso = infoImage ? await chargerUneImage(infoImage.fichier) : null;
 
   const canevas = document.createElement("canvas");
   canevas.width = LARGEUR_IMAGE;
@@ -222,14 +246,18 @@ async function fabriquerLeCanevasDeLaCarte(carte) {
   degradeArt.addColorStop(1, couleurTheme);
   g.fillStyle = degradeArt;
   g.fillRect(ax, y, aw, hauteurArt);
-  const echelle = Math.min(0.7 * aw / 100, hauteurArt / 120);
-  g.translate(ax + aw / 2 - 50 * echelle, y + hauteurArt - 120 * echelle);
-  g.scale(echelle, echelle);
-  g.fillStyle = "rgba(255,255,255,0.38)";
-  g.beginPath();
-  g.arc(50, 38, 22, 0, Math.PI * 2);
-  g.fill();
-  g.fill(new Path2D("M6 120c0-30 20-46 44-46s44 16 44 46z"));
+  if (imagePerso) {
+    dessinerEnRemplissant(g, imagePerso, ax, y, aw, hauteurArt, infoImage.cadrage);   // l'image du personnage remplit la zone
+  } else {
+    const echelle = Math.min(0.7 * aw / 100, hauteurArt / 120);
+    g.translate(ax + aw / 2 - 50 * echelle, y + hauteurArt - 120 * echelle);
+    g.scale(echelle, echelle);
+    g.fillStyle = "rgba(255,255,255,0.38)";
+    g.beginPath();
+    g.arc(50, 38, 22, 0, Math.PI * 2);
+    g.fill();
+    g.fill(new Path2D("M6 120c0-30 20-46 44-46s44 16 44 46z"));
+  }
   g.restore();
 
   // Le tampon de la rareté, posé de travers sur l'illustration
@@ -316,6 +344,16 @@ async function fabriquerLeCanevasDeLaCarte(carte) {
   g.fillStyle = "rgba(243,246,251,0.8)";
   g.font = "500 34px " + police;
   g.fillText(adresseDuSiteMaintenant().courte, LARGEUR_IMAGE / 2, Y + H + 128);
+
+  // Le crédit de l'image du personnage, en petit tout en bas
+  if (imagePerso && infoImage.credit) {
+    g.fillStyle = "rgba(243,246,251,0.6)";
+    g.font = "400 22px " + police;
+    const credit = "Image : " + infoImage.credit;
+    let texteCredit = credit;
+    while (g.measureText(texteCredit).width > LARGEUR_IMAGE - 80 && texteCredit.length > 10) texteCredit = texteCredit.slice(0, -2);
+    g.fillText(texteCredit === credit ? credit : texteCredit + "…", LARGEUR_IMAGE / 2, HAUTEUR_IMAGE - 26);
+  }
 
   return canevas;
 }
