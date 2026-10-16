@@ -44,6 +44,7 @@
   <link rel="stylesheet" href="css/profil.css">
   <link rel="stylesheet" href="css/regles.css">
   <link rel="stylesheet" href="css/effets.css">
+  <link rel="stylesheet" href="css/son.css">
   <script src="js/theme.js"></script>
 </head>
 <body>
@@ -80,7 +81,16 @@
       <button type="button" id="bouton-compte" aria-label="Mon profil" title="Mon profil">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.5c.6-4 3.7-6.2 7.5-6.2s6.9 2.2 7.5 6.2"/></svg>
       </button>
+      <button type="button" id="bouton-son" aria-label="Son : régler le son" title="Son" aria-expanded="false" aria-controls="panneau-son">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"/><path class="onde" d="M15.5 9a4.2 4.2 0 0 1 0 6"/><path class="onde" d="M17.8 6.8a7.4 7.4 0 0 1 0 10.4"/><path class="barre" d="M4 4l16 16"/></svg>
+      </button>
       <button type="button" id="bouton-theme" aria-label="Changer de mode"></button>
+      <!-- Le réglage du son : on coupe tout, ou on règle les bruitages et la musique (voir js/son-jeu.js) -->
+      <div id="panneau-son" class="panneau-son" hidden role="group" aria-label="Réglages du son">
+        <label class="son-interrupteur"><input type="checkbox" id="son-actif"> <span>Son activé</span></label>
+        <label class="son-curseur"><span>Bruitages</span><input type="range" id="son-volume-sons" min="0" max="100" step="5" aria-label="Volume des bruitages"></label>
+        <label class="son-curseur"><span>Musique</span><input type="range" id="son-volume-musique" min="0" max="100" step="5" aria-label="Volume de la musique"></label>
+      </div>
     </div>
 
     <!-- Les parties bonus (jusqu'à 5 par jour, avec une carte à gagner), puis l'entraînement libre -->
@@ -445,6 +455,14 @@
       </section>
 
       <section class="rubrique">
+        <h2>Le son et la musique</h2>
+        <div class="fiche-texte">
+          <p>Le jeu a ses <strong>bruitages</strong> (clic de stylo, cases qui se retournent, tampon, cartes, succès) et une <strong>musique d'ambiance</strong> douce. Chaque thème a même son petit motif, joué quand ta carte se retourne.</p>
+          <p>Touche le <strong>haut-parleur</strong> en haut de l'écran pour tout couper, ou pour régler séparément le volume des bruitages et celui de la musique. Ton choix est retenu. Le son ne démarre qu'à ton premier toucher : c'est une règle des navigateurs. Sur téléphone, le bouton « silence » de l'appareil peut aussi le couper.</p>
+        </div>
+      </section>
+
+      <section class="rubrique">
         <h2>Parties bonus et entraînement</h2>
         <div class="fiche-texte">
           <p>Une fois la partie du jour jouée, tu peux jouer jusqu'à <strong>5 parties bonus par jour</strong> : un personnage différent à chaque fois, avec <strong>une carte à gagner</strong> comme pour la partie du jour. Tu choisis la difficulté de chaque partie bonus.</p>
@@ -539,6 +557,8 @@
   <script src="js/compte.js"></script>
   <script src="js/effets.js"></script>
   <script src="js/installer.js"></script>
+  <script src="js/sons.js"></script>
+  <script src="js/son-jeu.js"></script>
   <script src="js/jeu.js"></script>
   <script src="js/affichage.js"></script>
 </body>

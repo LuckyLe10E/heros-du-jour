@@ -1,0 +1,85 @@
+/* Héros du Jour : le bouton haut-parleur et son petit panneau de réglage (voir js/son-jeu.js). */
+
+.outils {
+  position: relative;   /* le panneau de son se pose sous la ligne de boutons */
+}
+
+#bouton-son svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Son coupé : les ondes disparaissent et une barre barre le haut-parleur */
+#bouton-son .barre {
+  display: none;
+}
+
+#bouton-son.coupe .barre {
+  display: block;
+}
+
+#bouton-son.coupe .onde {
+  display: none;
+}
+
+.panneau-son {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 30;
+  display: grid;
+  gap: 12px;
+  width: min(280px, 100%);
+  padding: 14px 16px;
+  color: var(--encre);
+  background: var(--papier);
+  border-radius: 3px;
+  box-shadow: 0 14px 28px -10px rgba(0, 0, 0, 0.7);
+}
+
+.panneau-son[hidden] {
+  display: none;
+}
+
+.son-interrupteur {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.son-interrupteur input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--ok);
+}
+
+.son-curseur {
+  display: grid;
+  gap: 4px;
+  font-size: 0.9rem;
+  color: var(--encre-douce);
+}
+
+.son-curseur input {
+  width: 100%;
+  accent-color: var(--encre);
+}
+
+/* Petits écrans : on resserre pour que quatre boutons d'icônes tiennent à côté de « Ma collection » */
+@media (max-width: 400px) {
+  .outils { gap: 5px; }
+  .outils button { padding: 9px 9px; }
+}
+
+@media (max-width: 350px) {
+  .outils { gap: 4px; }
+  .outils button { padding: 9px 7px; }
+}

@@ -398,6 +398,7 @@ async function partagerLaCarte(carte, afficherUnMessage) {
     }
     enregistrerLImage(fichierImage, nom);
     afficherUnMessage("Image enregistrée : tu peux la partager où tu veux.");
+    son("copier");
   } catch (erreur) {
     afficherUnMessage("Impossible de fabriquer l'image. Réessaie dans un instant.");
   }

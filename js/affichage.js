@@ -104,11 +104,15 @@ function choisirPersonnage(id) {
   champSaisie.value = "";
   fermerSuggestions();
   const animer = !animationsReduites();
+  son("stylo");
   afficherEssais(animer ? id : null);   // la nouvelle fiche dévoile ses cases une par une
+  if (animer) jouerLesCases(id);        // et chaque case a son petit son
 
   // Tout ce qui pourrait révéler le résultat attend la fin du retournement des cases
   setTimeout(() => {
     if (partie.statut !== "en cours") {
+      pasDeBruitDeFenetreAvant = performance.now() + 1500;   // la fenêtre de fin s'ouvre avec la musique de victoire, pas avec son bruit de papier
+      son(partie.statut === "gagne" ? "victoire-" + (partie.carte ? partie.carte.rarete : "commune") : "defaite");
       ouvrirFenetreFin();
       if (partie.statut === "gagne") lancerConfettis(partie.carte ? partie.carte.rarete : "commune");
     }
@@ -124,8 +128,15 @@ function texteNombreEssais(nombre) {
 }
 
 // Dessine l'encadré des indices (caché tant qu'il n'y en a aucun).
+let clePartieDesIndices = "";
+let nombreDIndicesAffiches = 0;
+
 function afficherIndices() {
   const indices = indicesDevoiles();
+  const clePartie = partie.mode + "-" + partie.numero + "-" + partie.mystere.id;
+  if (clePartie === clePartieDesIndices && indices.length > nombreDIndicesAffiches) son("indice");   // un nouvel indice vient d'apparaître
+  clePartieDesIndices = clePartie;
+  nombreDIndicesAffiches = indices.length;
   const liste = document.getElementById("liste-indices");
   liste.innerHTML = "";
   const angles = [-1.3, 0.9, -0.6, 1.2];   // chaque post-it est collé un peu de travers, pas pareil que son voisin
@@ -418,6 +429,12 @@ function afficherLaCarteGagnee() {
   if (animer) {
     // On laisse une demi-seconde pour voir le dos de la carte, puis elle se retourne
     setTimeout(() => scene.querySelector(".carte").classList.add("retournee"), 600);
+    son("carte-retourne", { delai: 0.6 });
+    // Après le jingle de victoire : le motif du thème de la carte (ou, si la carte monte d'un cran, la petite gamme)
+    const legendaire = partie.carte.rarete === "legendaire";
+    const sonDuTitre = sonDuTheme(trouverPersonnage(partie.carte.id).univers);
+    if (partie.carteAmelioree) son("carte-amelioree", { delai: legendaire ? 1.8 : 1.2 });
+    else if (sonDuTitre) son(sonDuTitre, { delai: legendaire ? 1.9 : 1.25, volume: 0.8 });
   }
   partie.carteRevelee = true;
 
@@ -442,6 +459,7 @@ function afficherLaCarteGagnee() {
   // Carte Légendaire déjà possédée, retrouvée dans la partie du jour : une partie bonus en plus est offerte pour aujourd'hui
   if (partie.mode === "jour" && carte.rarete === "legendaire" && partiesBonusEnPlus() > 0 && !partie.carteNouvelle && !partie.carteAmelioree) {
     message += " Cadeau : une partie bonus en plus aujourd'hui !";
+    if (animer) son("cadeau-bonus", { delai: 2.6 });
   }
   document.getElementById("fin-carte-message").textContent = message;
 }
@@ -490,6 +508,7 @@ let minuteurMessage = null;
 
 // Affiche un petit message sous les boutons (« Copié ! »…), qui disparaît tout seul après quelques secondes.
 function afficherMessage(texte) {
+  if (texte.indexOf("Copié") === 0 || texte.indexOf("Carte copiée") === 0) son("copier");
   const zone = document.getElementById("fin-message");
   zone.textContent = texte;
   clearTimeout(minuteurMessage);

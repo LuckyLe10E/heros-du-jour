@@ -211,6 +211,7 @@ function montrerLaNotificationSuivante() {
   zone.appendChild(textes);
   zone.hidden = false;
   zone.classList.remove("sortie");
+  son("succes");
 
   setTimeout(() => {
     zone.classList.add("sortie");

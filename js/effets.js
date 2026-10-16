@@ -8,6 +8,7 @@ function animationsReduites() {
 
 // Secoue la case de saisie (le nom tapé n'est pas valable, ou a déjà été proposé).
 function secouerLaSaisie() {
+  son("erreur");   // le petit bruit sourd, même quand l'animation est réduite
   if (animationsReduites()) return;
   const champ = document.getElementById("saisie");
   champ.classList.remove("secousse");
