@@ -141,7 +141,7 @@ window.IMAGES = {
   "thanos": {
     "fichier": "images/personnages/thanos.jpg",
     "credit": "https://marvel.fandom.com/wiki/Thanos_%28Earth-616%29",
-    "cadrage": "50% 14%"
+    "cadrage": "50% 7%"
   },
   "loki": {
     "fichier": "images/personnages/loki.jpg",
