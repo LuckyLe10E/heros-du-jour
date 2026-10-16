@@ -450,6 +450,7 @@ function fermerFenetreFin() {
   document.getElementById("fenetre-fin").hidden = true;
   arreterCompteARebours();
   document.getElementById("bouton-resultat").focus();
+  reessayerLeRappel();   // le rappel de connexion attendait peut-être la fin de cette fenêtre
 }
 
 // ---------- Le compte à rebours jusqu'au prochain héros (minuit, heure du téléphone) ----------
@@ -805,6 +806,7 @@ function ouvrirRegles() {
 function fermerRegles() {
   document.getElementById("fenetre-regles").hidden = true;
   document.getElementById("bouton-aide").focus();
+  reessayerLeRappel();   // à la première visite, le rappel de connexion attend la fin des règles
 }
 
 // ---------- Démarrage ----------
@@ -848,7 +850,8 @@ function demarrerAffichage() {
   document.addEventListener("keydown", evenement => {
     if (evenement.key !== "Escape") return;
     // Échap ferme la fenêtre qui est tout au-dessus
-    if (!document.getElementById("fenetre-rattrapage").hidden) fermerRattrapage();
+    if (!document.getElementById("fenetre-rappel").hidden) fermerLeRappel();
+    else if (!document.getElementById("fenetre-rattrapage").hidden) fermerRattrapage();
     else if (!document.getElementById("fenetre-carte-grand").hidden) fermerCarteEnGrand();
     else if (!document.getElementById("fenetre-collection").hidden) fermerBibliotheque();
     else if (!document.getElementById("ecran-profil").hidden) {

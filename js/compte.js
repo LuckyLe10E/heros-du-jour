@@ -218,6 +218,63 @@ async function supprimerMonCompte() {
   }
 }
 
+// ---------- Le rappel pour se connecter ----------
+// À l'arrivée sur le jeu, si le joueur n'est pas connecté, une petite fenêtre lui rappelle que ses cartes ne sont gardées que sur
+// cet appareil. Au plus une fois par jour (« Plus tard » la cache jusqu'à demain), ou plus jamais (« Ne plus me le rappeler »).
+// Elle ne s'affiche pas en mode test, ni pendant qu'une autre fenêtre est ouverte (à la première visite, après les règles).
+
+const CLE_RAPPEL = "heros-du-jour-rappel";
+let rappelEnAttente = false;   // vrai si une autre fenêtre était ouverte : on réessaiera quand elle se ferme
+
+function lireRappel() {
+  try {
+    const donnees = JSON.parse(localStorage.getItem(CLE_RAPPEL) || "{}");
+    return { vu: typeof donnees.vu === "string" ? donnees.vu : "", jamais: donnees.jamais === true };
+  } catch (erreur) {
+    return { vu: "", jamais: false };
+  }
+}
+
+function ecrireRappel(rappel) {
+  try {
+    localStorage.setItem(CLE_RAPPEL, JSON.stringify(rappel));
+  } catch (erreur) {
+    // pas grave : le rappel pourra s'afficher de nouveau
+  }
+}
+
+function uneFenetreEstOuverte() {
+  return Array.from(document.querySelectorAll(".fenetre-fond, .ecran-plein")).some(f => !f.hidden);
+}
+
+function proposerLaConnexion() {
+  if (!compte.disponible || compte.utilisateur !== null || partie.modeTest) return;   // « null » = on sait qu'il n'est pas connecté
+  const rappel = lireRappel();
+  if (rappel.jamais || rappel.vu === dateDuJourEnTexte()) return;
+  if (uneFenetreEstOuverte()) {
+    rappelEnAttente = true;
+    return;
+  }
+  rappelEnAttente = false;
+  const cartes = Object.keys(lireCollection().cartes).length;
+  document.getElementById("rappel-texte").textContent = (cartes > 0
+    ? "Tu as déjà " + cartes + (cartes > 1 ? " cartes" : " carte") + ", mais elles ne sont gardées que sur cet appareil. "
+    : "Tes cartes et tes statistiques ne sont gardées que sur cet appareil. ")
+    + "Si tu changes de téléphone ou vides ton navigateur, tu les perds. Connecte-toi avec Google (c'est facultatif) pour les retrouver partout.";
+  document.getElementById("fenetre-rappel").hidden = false;
+  document.getElementById("rappel-connexion").focus({ preventScroll: true });
+  ecrireRappel({ vu: dateDuJourEnTexte(), jamais: false });
+}
+
+function fermerLeRappel() {
+  document.getElementById("fenetre-rappel").hidden = true;
+}
+
+// Appelée quand une fenêtre se ferme : si le rappel attendait, c'est le moment.
+function reessayerLeRappel() {
+  if (rappelEnAttente) setTimeout(proposerLaConnexion, 300);
+}
+
 // ---------- Démarrage ----------
 
 // Branche les boutons de la fenêtre, puis charge Firebase en arrière-plan.
@@ -231,6 +288,18 @@ async function demarrerCompte() {
     document.getElementById("compte-suppression").hidden = true;
   });
   document.getElementById("compte-confirmer").addEventListener("click", supprimerMonCompte);
+  document.getElementById("rappel-connexion").addEventListener("click", () => {
+    fermerLeRappel();
+    seConnecter();
+  });
+  document.getElementById("rappel-plus-tard").addEventListener("click", fermerLeRappel);
+  document.getElementById("rappel-jamais").addEventListener("click", () => {
+    ecrireRappel({ vu: dateDuJourEnTexte(), jamais: true });
+    fermerLeRappel();
+  });
+  document.getElementById("fenetre-rappel").addEventListener("mousedown", evenement => {
+    if (evenement.target.id === "fenetre-rappel") fermerLeRappel();
+  });
   afficherCompte();
 
   // La connexion Google ne marche pas quand la page est ouverte par double-clic (adresse « file: »)
@@ -249,10 +318,18 @@ async function demarrerCompte() {
     compte.auth = firebase.auth();
     compte.base = firebase.firestore();
     compte.disponible = true;
+    let premiereReponse = true;
     compte.auth.onAuthStateChanged(utilisateur => {
       compte.utilisateur = utilisateur;
       afficherCompte();
-      if (utilisateur) synchroniserLesCartes();
+      if (utilisateur) {
+        fermerLeRappel();
+        rappelEnAttente = false;
+        synchroniserLesCartes();
+      } else if (premiereReponse) {
+        proposerLaConnexion();   // seulement à l'arrivée : pas après une déconnexion voulue
+      }
+      premiereReponse = false;
     });
   } catch (erreur) {
     compte.disponible = false;

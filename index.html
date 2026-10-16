@@ -326,6 +326,19 @@
     </div>
   </div>
 
+  <!-- Le rappel pour se connecter (affiché à l'arrivée quand on n'est pas connecté : voir js/compte.js) -->
+  <div id="fenetre-rappel" class="fenetre-fond" hidden>
+    <div class="fenetre fenetre-rappel" role="dialog" aria-modal="true" aria-labelledby="rappel-titre">
+      <h2 id="rappel-titre" class="fenetre-titre">Garde tes cartes !</h2>
+      <p id="rappel-texte" class="rappel-texte"></p>
+      <div class="rappel-boutons">
+        <button type="button" id="rappel-connexion" class="bouton">Se connecter avec Google</button>
+        <button type="button" id="rappel-plus-tard" class="bouton bouton-discret">Plus tard</button>
+        <button type="button" id="rappel-jamais" class="rappel-jamais">Ne plus me le rappeler</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Une carte affichée en grand, par-dessus la bibliothèque -->
   <div id="fenetre-carte-grand" class="fenetre-fond" hidden>
     <div class="fenetre fenetre-carte-grand" role="dialog" aria-modal="true" aria-label="Carte en grand">
@@ -462,6 +475,7 @@
           <p>Dans « Mon profil » (l'icône de personnage en haut), tu trouves tes <strong>statistiques</strong> (parties jouées, victoires, série de jours ; le graphique « En combien d'essais ? » ne compte que les parties Normales, les parties Facile et Expert sont résumées à part), ta <strong>carte favorite</strong> en vitrine et le résumé de ta collection.</p>
           <p>Au fil de tes parties, tu débloques des <strong>succès</strong> (séries de jours, collection, thèmes complets, parties bonus…) : une petite notification t'annonce chaque nouveau succès.</p>
           <p>Tu peux te <strong>connecter avec Google</strong> (c'est facultatif) pour retrouver tes cartes, tes statistiques et tes succès sur tous tes appareils. Sans compte, tout reste sur l'appareil que tu utilises.</p>
+          <p>Quand tu n'es pas connecté, une petite fenêtre te le rappelle <strong>à ton arrivée, une fois par jour au plus</strong> : « Plus tard » la cache jusqu'à demain, et « Ne plus me le rappeler » la supprime pour de bon.</p>
         </div>
       </section>
 

@@ -107,6 +107,34 @@
   font-weight: 700;
 }
 
+/* ---------- Le rappel pour se connecter ---------- */
+
+.fenetre-rappel {
+  max-width: 400px;
+}
+
+.rappel-texte {
+  margin: 8px 0 16px;
+  line-height: 1.4;
+}
+
+.rappel-boutons {
+  display: grid;
+  gap: 8px;
+}
+
+.rappel-jamais {
+  margin-top: 4px;
+  padding: 6px;
+  border: 0;
+  background: none;
+  color: var(--encre-douce);
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 /* ---------- La fenêtre « Jour passé » ---------- */
 
 .fenetre-rattrapage {
