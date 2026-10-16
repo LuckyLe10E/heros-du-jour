@@ -6,3 +6,6 @@ maquettes/
 
 # Les images brutes déposées par Luca avant traitement (seules les images traitées de images/personnages/ sont mises en ligne)
 images/a-ajouter/
+
+# Copies de sécurité faites par le panneau admin avant chaque modification
+outils/sauvegardes/

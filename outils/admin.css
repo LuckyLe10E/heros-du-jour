@@ -1,0 +1,496 @@
+/* Le panneau admin : un bureau de travail simple, avec les mêmes couleurs que le jeu (tout vient de css/base.css). */
+
+.page-admin {
+  min-height: 100vh;
+  background: var(--bureau);
+  color: var(--sur-bureau);
+}
+
+.barre {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 20px;
+  background: var(--onglet);
+  color: var(--onglet-texte);
+}
+
+.barre h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.barre-titre {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.barre-info {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+.barre-liens {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.barre-liens a {
+  color: inherit;
+  font-size: 0.9rem;
+}
+
+.admin {
+  display: grid;
+  grid-template-columns: 330px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 18px 20px 60px;
+}
+
+/* ---------- La liste à gauche ---------- */
+
+.panneau-liste {
+  position: sticky;
+  top: 62px;
+  max-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  background: var(--papier);
+  color: var(--encre);
+  border-radius: 4px;
+  box-shadow: var(--ombre-papier);
+  overflow: hidden;
+}
+
+.outils-liste {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border-bottom: 1px solid var(--trait);
+}
+
+.filtres {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.liste-personnages {
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.ligne-perso {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 12px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ligne-perso:hover {
+  background: var(--papier-2);
+}
+
+.ligne-perso[aria-current="true"] {
+  background: var(--papier-2);
+  box-shadow: inset 4px 0 0 var(--c, var(--tampon));
+}
+
+.ligne-perso .mini {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 3px;
+  background: var(--papier-2);
+  color: var(--encre-douce);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  font-size: 0.7rem;
+}
+
+.ligne-perso .mini img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 15%;
+}
+
+.ligne-perso .nom {
+  flex: 1;
+  min-width: 0;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ligne-perso .theme {
+  flex: none;
+  padding: 1px 7px;
+  border-radius: 9px;
+  background: var(--c, var(--encre-douce));
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.liste-vide {
+  padding: 18px 12px;
+  color: var(--encre-douce);
+  font-size: 0.9rem;
+}
+
+/* ---------- L'éditeur à droite ---------- */
+
+.editeur {
+  background: var(--papier);
+  color: var(--encre);
+  border-radius: 4px;
+  box-shadow: var(--ombre-papier);
+  padding: 20px 24px 28px;
+  min-height: 300px;
+}
+
+.accueil-editeur h2 {
+  margin: 0 0 8px;
+}
+
+.note {
+  color: var(--encre-douce);
+  font-size: 0.9rem;
+}
+
+.editeur-tete {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.editeur-tete h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.info-calendrier {
+  font-size: 0.85rem;
+  color: var(--encre-douce);
+}
+
+.editeur-corps {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 290px;
+  gap: 26px;
+  align-items: start;
+}
+
+.formulaire {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.groupe-champs {
+  display: grid;
+  gap: 12px;
+  padding: 14px 16px 16px;
+  border: 1px solid var(--trait);
+  border-radius: 4px;
+  margin: 0;
+  min-width: 0;
+}
+
+.groupe-champs > legend {
+  padding: 0 6px;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.rangee {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+.champ {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.champ > .etiquette {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--encre-douce);
+}
+
+.champ .aide {
+  font-size: 0.78rem;
+  color: var(--encre-douce);
+}
+
+.compteur {
+  font-size: 0.75rem;
+  color: var(--encre-douce);
+  text-align: right;
+}
+
+input[type="text"], input[type="number"], input[type="search"], input[type="url"], select, textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--trait);
+  border-radius: 3px;
+  background: var(--papier);
+  color: var(--encre);
+  font: inherit;
+}
+
+textarea {
+  resize: vertical;
+  line-height: 1.4;
+}
+
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible {
+  outline: 3px solid var(--postit);
+  outline-offset: 1px;
+}
+
+.pastilles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 210px;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+.pastille {
+  padding: 4px 10px;
+  border: 1px solid var(--trait);
+  border-radius: 14px;
+  background: var(--papier);
+  color: var(--encre);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.pastille[aria-pressed="true"] {
+  background: var(--encre);
+  color: var(--papier);
+  border-color: var(--encre);
+}
+
+.ajout-groupe {
+  display: flex;
+  gap: 6px;
+}
+
+.ajout-groupe input {
+  flex: 1;
+}
+
+.case-a-cocher {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* ---------- Boutons ---------- */
+
+.bouton {
+  padding: 8px 14px;
+  border: 1px solid var(--encre);
+  border-radius: 3px;
+  background: var(--papier);
+  color: var(--encre);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.bouton:hover:not(:disabled) {
+  background: var(--papier-2);
+}
+
+.bouton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.bouton-principal {
+  background: var(--encre);
+  color: var(--papier);
+}
+
+.bouton-principal:hover:not(:disabled) {
+  background: var(--encre);
+  filter: brightness(1.2);
+}
+
+.bouton-danger {
+  border-color: var(--non);
+  color: var(--non);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.actions .espace {
+  flex: 1;
+}
+
+.problemes {
+  margin: 0;
+  padding: 10px 14px 10px 30px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--non) 12%, var(--papier));
+  color: var(--encre);
+  font-size: 0.88rem;
+}
+
+.problemes:empty {
+  display: none;
+}
+
+/* ---------- Colonne de droite : carte + image ---------- */
+
+.colonne-apercu {
+  position: sticky;
+  top: 74px;
+  display: grid;
+  gap: 14px;
+}
+
+.apercu-carte {
+  width: 100%;
+}
+
+.choix-rarete {
+  display: flex;
+  gap: 6px;
+}
+
+.choix-rarete .pastille {
+  flex: 1;
+}
+
+.zone-image {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 2px dashed var(--trait);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.zone-image.survol {
+  border-color: var(--tampon);
+  background: var(--papier-2);
+}
+
+.cadre-image {
+  position: relative;
+  aspect-ratio: 2 / 1;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--papier-2);
+  display: grid;
+  place-items: center;
+  color: var(--encre-douce);
+  font-size: 0.85rem;
+}
+
+.cadre-image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.reglage {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  text-align: left;
+}
+
+.reglage input[type="range"] {
+  width: 100%;
+}
+
+.ligne-url {
+  display: flex;
+  gap: 6px;
+}
+
+.ligne-url input {
+  flex: 1;
+  min-width: 0;
+}
+
+.message {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 50;
+  max-width: min(640px, calc(100vw - 32px));
+  padding: 12px 18px;
+  border-radius: 4px;
+  background: var(--onglet);
+  color: var(--onglet-texte);
+  box-shadow: 0 10px 26px -10px rgba(0, 0, 0, 0.6);
+  font-weight: 500;
+}
+
+.message.erreur {
+  background: var(--non);
+  color: #fff;
+}
+
+.message.reussi {
+  background: var(--ok);
+  color: #fff;
+}
+
+@media (max-width: 1000px) {
+  .admin { grid-template-columns: 1fr; }
+  .panneau-liste { position: static; max-height: 360px; }
+  .editeur-corps { grid-template-columns: 1fr; }
+  .colonne-apercu { position: static; }
+}
