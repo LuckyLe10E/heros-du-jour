@@ -160,8 +160,6 @@ function ouvrirCarteEnGrand(carte) {
   zone.innerHTML = "";
   zone.appendChild(creerCarteDom(carte, { retournee: true }));
   document.getElementById("carte-signaler").href = lienDeSignalement(trouverPersonnage(carte.id));
-  const image = imageDuPersonnage(carte.id);
-  document.getElementById("carte-credit").textContent = image && image.credit ? "Image : " + image.credit : "";
   carteEnGrand = carte;
   document.getElementById("carte-message").textContent = "";
   preparerLeBoutonDePartageDeCarte(document.getElementById("carte-partager"), carte);

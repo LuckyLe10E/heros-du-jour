@@ -345,16 +345,6 @@ async function fabriquerLeCanevasDeLaCarte(carte) {
   g.font = "500 34px " + police;
   g.fillText(adresseDuSiteMaintenant().courte, LARGEUR_IMAGE / 2, Y + H + 128);
 
-  // Le crédit de l'image du personnage, en petit tout en bas
-  if (imagePerso && infoImage.credit) {
-    g.fillStyle = "rgba(243,246,251,0.6)";
-    g.font = "400 22px " + police;
-    const credit = "Image : " + infoImage.credit;
-    let texteCredit = credit;
-    while (g.measureText(texteCredit).width > LARGEUR_IMAGE - 80 && texteCredit.length > 10) texteCredit = texteCredit.slice(0, -2);
-    g.fillText(texteCredit === credit ? credit : texteCredit + "…", LARGEUR_IMAGE / 2, HAUTEUR_IMAGE - 26);
-  }
-
   return canevas;
 }
 
