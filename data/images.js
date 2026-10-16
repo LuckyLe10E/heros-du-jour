@@ -882,5 +882,10 @@ window.IMAGES = {
     "fichier": "images/personnages/arsene-lupin.jpg",
     "credit": "https://commons.wikimedia.org/wiki/File%3AArsene_Lupin_art_Pierre_La_Fit.png",
     "cadrage": "50% 14%"
+  },
+  "savage-dragon": {
+    "fichier": "images/personnages/savage-dragon.jpg",
+    "credit": "81AgvpQztWL._AC_UF1000,1000_QL80_.jpg",
+    "cadrage": "50% 46%"
   }
 };
