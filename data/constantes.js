@@ -62,7 +62,7 @@ window.SITE = {
 // L'adresse e-mail où les joueurs peuvent signaler une erreur sur la fiche d'un personnage (lien « Signaler une erreur »).
 window.ADRESSE_CONTACT = "jourduheros@gmail.com";
 
-// Les personnages dont les cartes figurent dans l'image d'aperçu du lien partagé (images/apercu.jpg, fabriquée avec
+// Les personnages dont les cartes figurent dans l'image d'aperçu du lien partagé (images/apercu-2.jpg, fabriquée avec
 // maquettes/apercu.html). Le jour où l'un d'eux est le personnage du jour, l'aperçu le montrerait : la page de vérification
 // du calendrier signale ces jours, et il faut alors remplacer l'image par une autre paire de cartes (voir BRIEF.md, étape 20).
 window.PERSONNAGES_APERCU = ["yoda", "pikachu"];
