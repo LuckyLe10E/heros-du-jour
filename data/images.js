@@ -121,7 +121,7 @@ window.IMAGES = {
   "storm": {
     "fichier": "images/personnages/storm.jpg",
     "credit": "https://marvel.fandom.com/wiki/Ororo_Munroe_%28Earth-616%29",
-    "cadrage": "50% 14%"
+    "cadrage": "50% 54%"
   },
   "cyclops": {
     "fichier": "images/personnages/cyclops.jpg",
