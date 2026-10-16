@@ -216,7 +216,7 @@ window.IMAGES = {
   "silver-surfer": {
     "fichier": "images/personnages/silver-surfer.jpg",
     "credit": "https://marvel.fandom.com/wiki/Norrin_Radd_%28Earth-616%29",
-    "cadrage": "50% 14%"
+    "cadrage": "50% 53%"
   },
   "galactus": {
     "fichier": "images/personnages/galactus.jpg",
