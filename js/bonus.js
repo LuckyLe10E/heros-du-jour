@@ -24,9 +24,10 @@ function lireBonus() {
     let enCours = null;
     const c = donnees.enCours;
     if (c && trouverPersonnage(c.mystere) && Array.isArray(c.essais) && Number.isInteger(c.numeroBonus)
-        && c.essais.length < MAX_ESSAIS && c.essais.every(id => typeof id === "string" && trouverPersonnage(id))
+        && c.essais.length < window.DIFFICULTES[window.DIFFICULTES[c.difficulte] ? c.difficulte : "normal"].essais && c.essais.every(id => typeof id === "string" && trouverPersonnage(id))
         && new Set(c.essais).size === c.essais.length && !c.essais.includes(c.mystere)) {
-      enCours = { numeroBonus: c.numeroBonus, mystere: c.mystere, essais: c.essais, offert: typeof c.offert === "string" ? c.offert : null };
+      enCours = { numeroBonus: c.numeroBonus, mystere: c.mystere, essais: c.essais, offert: typeof c.offert === "string" ? c.offert : null,
+                  difficulte: window.DIFFICULTES[c.difficulte] ? c.difficulte : "normal" };
     }
     return { date: aujourdhui, dejaTires, enCours };
   } catch (erreur) {
@@ -60,14 +61,21 @@ function noterUnePartieBonus() {
   ecrireStats(stats);
 }
 
-// Le personnage d'une nouvelle partie. Jamais le personnage du jour. On pioche d'abord parmi les cartes que le joueur
-// n'a pas encore (pour l'aider à compléter sa collection), sans reprendre un personnage déjà tiré aujourd'hui.
-function choisirUnMystereSupplementaire(dejaTires, seulementLesNouvelles) {
+// Le personnage d'une nouvelle partie. Jamais le personnage du jour, ni un personnage déjà tiré aujourd'hui.
+// Pour les parties bonus (avecCartes = vrai) : le plus souvent un personnage dont le joueur n'a pas encore la carte (pour l'aider à
+// compléter sa collection), mais environ 3 fois sur 10 un personnage dont il a déjà la carte, quand elle peut encore être améliorée
+// (rareté plus haute ou difficulté plus haute) : c'est l'occasion de l'améliorer. Si la collection est complète, on ne propose que ça.
+function choisirUnMystereSupplementaire(dejaTires, avecCartes) {
   const possedees = lireCollection().cartes;
-  let candidats = window.PERSONNAGES.filter(p => p.id !== MYSTERE_DU_JOUR.id && !dejaTires.includes(p.id));
-  if (seulementLesNouvelles) {
-    const nouvelles = candidats.filter(p => !possedees[p.id]);
-    if (nouvelles.length > 0) candidats = nouvelles;
+  const tous = window.PERSONNAGES.filter(p => p.id !== MYSTERE_DU_JOUR.id && !dejaTires.includes(p.id));
+  let candidats = tous;
+  if (avecCartes) {
+    const sommet = RARETES.legendaire.ordre * 10 + window.DIFFICULTES.expert.rang;   // une carte Légendaire Expert ne peut plus monter
+    const nouvelles = tous.filter(p => !possedees[p.id]);
+    const ameliorables = tous.filter(p => possedees[p.id] && valeurDeLaCarte(possedees[p.id]) < sommet);
+    const veutAmeliorer = ameliorables.length > 0 && (nouvelles.length === 0 || Math.random() < 0.3);
+    if (veutAmeliorer) candidats = ameliorables;
+    else if (nouvelles.length > 0) candidats = nouvelles;
   }
   if (candidats.length === 0) candidats = window.PERSONNAGES.filter(p => p.id !== MYSTERE_DU_JOUR.id);
   return candidats[Math.floor(Math.random() * candidats.length)];
@@ -87,7 +95,7 @@ function lancerUnePartieSupplementaire() {
   // Une partie bonus est déjà commencée : on la reprend (impossible de changer de personnage en la quittant)
   if (bonus.enCours) {
     const en = bonus.enCours;
-    reglerLaPartie(trouverPersonnage(en.mystere), "bonus", en.numeroBonus);
+    reglerLaPartie(trouverPersonnage(en.mystere), "bonus", en.numeroBonus, en.difficulte);
     partie.essais = en.essais.slice();
     preparerEssaiOffert(en.offert);
     return;
@@ -99,7 +107,7 @@ function lancerUnePartieSupplementaire() {
     reglerLaPartie(personnage, "bonus", partiesBonusFaites());
     preparerEssaiOffert(null);
     bonus.dejaTires.push(personnage.id);
-    bonus.enCours = { numeroBonus: partie.numeroBonus, mystere: personnage.id, essais: [], offert: partie.offert };
+    bonus.enCours = { numeroBonus: partie.numeroBonus, mystere: personnage.id, essais: [], offert: partie.offert, difficulte: partie.difficulte };
     ecrireBonus(bonus);
     return;
   }
@@ -113,7 +121,7 @@ function lancerUnePartieSupplementaire() {
 function sauvegarderLaPartieBonus() {
   const bonus = lireBonus();
   bonus.enCours = partie.statut === "en cours"
-    ? { numeroBonus: partie.numeroBonus, mystere: partie.mystere.id, essais: partie.essais.slice(), offert: partie.offert }
+    ? { numeroBonus: partie.numeroBonus, mystere: partie.mystere.id, essais: partie.essais.slice(), offert: partie.offert, difficulte: partie.difficulte }
     : null;
   ecrireBonus(bonus);
 }

@@ -326,7 +326,10 @@ function afficherLaCarteGagnee() {
   if (partie.carteNouvelle) {
     message = "Nouvelle carte ajoutée à ta collection !";
   } else if (partie.carteAmelioree) {
-    message = "Carte améliorée : " + RARETES[partie.ancienneRarete].nom + " → " + RARETES[carte.rarete].nom + " !";
+    // Soit la rareté monte, soit (à rareté égale) la carte passe à une difficulté plus haute
+    message = partie.ancienneRarete !== carte.rarete
+      ? "Carte améliorée : " + RARETES[partie.ancienneRarete].nom + " → " + RARETES[carte.rarete].nom + " !"
+      : "Carte améliorée : elle passe de la version " + window.DIFFICULTES[partie.ancienneDifficulte].nom + " à la version " + window.DIFFICULTES[difficulteDeLaCarte(carte)].nom + " !";
   } else if (gagneeDansCettePartie) {
     message = "Carte gagnée aujourd'hui, rangée dans ta collection.";
   }
@@ -489,7 +492,8 @@ function afficherEntetes() {
 function afficherPastilles(termine) {
   const zone = document.getElementById("pastilles");
   zone.innerHTML = "";
-  for (let i = 0; i < MAX_ESSAIS; i++) {
+  zone.classList.toggle("beaucoup", essaisMax() > 10);   // 15 pastilles en Facile : on les rétrécit pour qu'elles tiennent
+  for (let i = 0; i < essaisMax(); i++) {
     const pastille = document.createElement("i");
     if (i < partie.essais.length) pastille.className = "pris";
     else if (i === partie.essais.length && !termine) pastille.className = "actuel";
@@ -542,7 +546,7 @@ function afficherEssais(idNouveau) {
   partie.essais.slice().reverse().forEach(id => {
     listeEssais.appendChild(creerFicheEssai(trouverPersonnage(id), "essai " + (partie.essais.indexOf(id) + 1), false, id === idNouveau));
   });
-  listeEssais.appendChild(creerFicheEssai(trouverPersonnage(partie.offert), "essai offert", true, false));
+  if (partie.offert) listeEssais.appendChild(creerFicheEssai(trouverPersonnage(partie.offert), "essai offert", true, false));   // (pas d'essai offert en Expert)
 
   // Pendant le retournement des cases, le reste (compteur, indices…) attend : on ne dévoile rien avant la fin
   if (idNouveau) {
@@ -559,9 +563,10 @@ function afficherLEtatDeLaPartie() {
   if (partie.statut === "gagne") {
     compteurEssais.textContent = "Trouvé en " + texteNombreEssais(partie.essais.length) + " !";
   } else if (partie.statut === "perdu") {
-    compteurEssais.textContent = "Partie terminée : les " + MAX_ESSAIS + " essais sont utilisés";
+    compteurEssais.textContent = "Partie terminée : les " + essaisMax() + " essais sont utilisés";
   } else {
-    compteurEssais.textContent = "Essai " + (partie.essais.length + 1) + " sur " + MAX_ESSAIS;
+    compteurEssais.textContent = "Essai " + (partie.essais.length + 1) + " sur " + essaisMax()
+      + (partie.difficulte === "normal" ? "" : " (" + window.DIFFICULTES[partie.difficulte].nom + ")");
   }
   afficherPastilles(termine);
   champSaisie.disabled = termine;
@@ -569,6 +574,25 @@ function afficherLEtatDeLaPartie() {
   document.getElementById("bouton-resultat").hidden = !termine;
   afficherIndices();
   afficherLeBonus();
+  afficherLaDifficulte();
+}
+
+// Le choix de la difficulté (Facile / Normal / Expert) : visible seulement avant le premier essai de la partie.
+function afficherLaDifficulte() {
+  const zone = document.getElementById("zone-difficulte");
+  const encoreChoisissable = partie.essais.length === 0 && partie.statut === "en cours";
+  zone.hidden = !encoreChoisissable;
+  if (!encoreChoisissable) return;
+  document.querySelectorAll("#difficulte-boutons button").forEach(bouton => {
+    bouton.setAttribute("aria-pressed", String(bouton.dataset.difficulte === partie.difficulte));
+  });
+  document.getElementById("difficulte-resume").textContent = window.DIFFICULTES[partie.difficulte].resume;
+}
+
+// Le joueur touche un bouton de difficulté.
+function choisirLaDifficulte(difficulte) {
+  if (!changerLaDifficulte(difficulte)) return;
+  afficherEssais(null);   // redessine tout : l'essai offert apparaît ou disparaît, le compteur change
 }
 
 // Gère les touches du clavier dans la case de saisie.
@@ -680,6 +704,9 @@ function demarrerAffichage() {
   document.getElementById("bonus-lancer").addEventListener("click", passerALaPartieSuivante);
   document.getElementById("fin-suite").addEventListener("click", passerALaPartieSuivante);
   document.getElementById("bonus-retour").addEventListener("click", retourALaPartieDuJour);
+  document.querySelectorAll("#difficulte-boutons button").forEach(bouton => {
+    bouton.addEventListener("click", () => choisirLaDifficulte(bouton.dataset.difficulte));
+  });
   document.getElementById("fin-fermer").addEventListener("click", fermerFenetreFin);
   document.getElementById("fin-partager").addEventListener("click", partagerLeResultat);
   document.getElementById("fin-partager-carte").addEventListener("click", () => partagerLaCarte(partie.carte, afficherMessage));

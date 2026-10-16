@@ -13,11 +13,30 @@ const RARETES = {
   commune:    { nom: "Commune",    ordre: 1 }
 };
 
-// La rareté selon le nombre d'essais : 1 à 3 = Légendaire, 4 à 6 = Rare, 7 à 10 = Commune.
-function calculerRarete(nombreEssais) {
+// La rareté selon le nombre d'essais ET la difficulté :
+//  - Normal : 1 à 3 essais = Légendaire, 4 à 6 = Rare, 7 à 10 = Commune ;
+//  - Facile : jamais Légendaire (1 à 6 essais = Rare, 7 à 15 = Commune) ;
+//  - Expert : plus exigeant (1 à 2 essais = Légendaire, 3 à 4 = Rare, 5 à 6 = Commune).
+function calculerRarete(nombreEssais, difficulte) {
+  if (difficulte === "expert") {
+    if (nombreEssais <= 2) return "legendaire";
+    return nombreEssais <= 4 ? "rare" : "commune";
+  }
+  if (difficulte === "facile") return nombreEssais <= 6 ? "rare" : "commune";
   if (nombreEssais <= 3) return "legendaire";
   if (nombreEssais <= 6) return "rare";
   return "commune";
+}
+
+// La difficulté d'une carte : « facile », « normal » ou « expert » (une carte sans marque est une carte Normale).
+function difficulteDeLaCarte(carte) {
+  return carte && window.DIFFICULTES[carte.mode] ? carte.mode : "normal";
+}
+
+// La valeur d'une carte pour savoir laquelle garder : d'abord la rareté, puis (à rareté égale) la difficulté.
+// Ainsi une carte ne descend jamais en rareté, et une carte Expert vaut mieux qu'une Normale, qui vaut mieux qu'une Facile.
+function valeurDeLaCarte(carte) {
+  return RARETES[carte.rarete].ordre * 10 + window.DIFFICULTES[difficulteDeLaCarte(carte)].rang;
 }
 
 // Le nom sous lequel la collection est rangée (la vraie, ou celle des tests).
@@ -30,7 +49,8 @@ function carteValide(carte) {
   return Boolean(carte)
     && typeof carte.id === "string" && Boolean(trouverPersonnage(carte.id))
     && Boolean(RARETES[carte.rarete])
-    && Number.isInteger(carte.essais) && carte.essais >= 1 && carte.essais <= MAX_ESSAIS
+    && (carte.mode === undefined || Boolean(window.DIFFICULTES[carte.mode]))
+    && Number.isInteger(carte.essais) && carte.essais >= 1 && carte.essais <= ESSAIS_MAX_TOUS_MODES
     && typeof carte.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(carte.date)
     && Number.isInteger(carte.numero);
 }
@@ -81,19 +101,22 @@ function dateDuJourEnTexte() {
 
 // Fabrique la carte gagnée pendant cette partie (le personnage trouvé, le nombre d'essais, la date…).
 function creerCarteDeLaPartie() {
-  return {
+  const carte = {
     id: partie.mystere.id,
-    rarete: calculerRarete(partie.essais.length),
+    rarete: calculerRarete(partie.essais.length, partie.difficulte),
     essais: partie.essais.length,
     date: dateDuJourEnTexte(),
     numero: partie.numero
   };
+  if (partie.difficulte !== "normal") carte.mode = partie.difficulte;   // une carte Normale n'a pas de marque
+  return carte;
 }
 
 // À la victoire : le joueur gagne la carte du personnage et elle rejoint sa collection.
 //  - Carte jamais gagnée : elle est ajoutée (partie.carteNouvelle = vrai).
 //  - Carte déjà possédée et le joueur a fait MIEUX (rareté plus haute) : la carte est améliorée
-//    (partie.carteAmelioree = vrai, partie.ancienneRarete = l'ancienne rareté).
+//    (partie.carteAmelioree = vrai, partie.ancienneRarete = l'ancienne rareté, partie.ancienneDifficulte = l'ancienne difficulté).
+//    « Fait mieux » = rareté plus haute, ou, à rareté égale, difficulté plus haute (Expert > Normal > Facile).
 //  - Carte déjà possédée et le joueur n'a pas fait mieux : on garde l'ancienne. Une carte ne descend JAMAIS en rareté.
 // Résultat dans partie.carte : la carte à montrer.
 function gagnerLaCarte() {
@@ -104,18 +127,20 @@ function gagnerLaCarte() {
   partie.carteNouvelle = false;
   partie.carteAmelioree = false;
   partie.ancienneRarete = null;
+  partie.ancienneDifficulte = null;
 
   if (!existante) {
     collection.cartes[gagnee.id] = gagnee;
     ecrireCollection(collection);
     partie.carte = gagnee;
     partie.carteNouvelle = true;
-  } else if (RARETES[gagnee.rarete].ordre > RARETES[existante.rarete].ordre) {
+  } else if (valeurDeLaCarte(gagnee) > valeurDeLaCarte(existante)) {
     collection.cartes[gagnee.id] = gagnee;
     ecrireCollection(collection);
     partie.carte = gagnee;
     partie.carteAmelioree = true;
     partie.ancienneRarete = existante.rarete;
+    partie.ancienneDifficulte = difficulteDeLaCarte(existante);
   } else {
     partie.carte = existante;
   }
@@ -133,13 +158,14 @@ function retrouverLaCarte() {
 // ---------- Fusionner deux collections (appareil + compte en ligne) ----------
 // On ne perd jamais de carte, et une carte ne descend jamais en rareté.
 
-// Entre deux versions de la même carte, garde la meilleure : rareté la plus haute, puis le moins d'essais, puis la plus ancienne.
+// Entre deux versions de la même carte, garde la meilleure : rareté la plus haute, puis difficulté la plus haute (Expert > Normal > Facile),
+// puis le moins d'essais, puis la plus ancienne.
 function meilleureCarte(a, b) {
   if (!a) return b;
   if (!b) return a;
-  const ordreA = RARETES[a.rarete].ordre;
-  const ordreB = RARETES[b.rarete].ordre;
-  if (ordreA !== ordreB) return ordreA > ordreB ? a : b;
+  const valeurA = valeurDeLaCarte(a);
+  const valeurB = valeurDeLaCarte(b);
+  if (valeurA !== valeurB) return valeurA > valeurB ? a : b;
   if (a.essais !== b.essais) return a.essais < b.essais ? a : b;
   return a.date <= b.date ? a : b;
 }
@@ -160,7 +186,8 @@ function memesCartes(cartesA, cartesB) {
   return idsA.every(id => {
     const a = cartesA[id];
     const b = cartesB[id];
-    return Boolean(b) && a.rarete === b.rarete && a.essais === b.essais && a.date === b.date && a.numero === b.numero;
+    return Boolean(b) && a.rarete === b.rarete && a.essais === b.essais && a.date === b.date && a.numero === b.numero
+      && difficulteDeLaCarte(a) === difficulteDeLaCarte(b);
   });
 }
 
@@ -172,6 +199,7 @@ function cartesDuCompte(donnees) {
       const carte = donnees.cartes[id];
       if (carteValide(carte) && carte.id === id) {
         cartes[id] = { id: carte.id, rarete: carte.rarete, essais: carte.essais, date: carte.date, numero: carte.numero };
+        if (carte.mode) cartes[id].mode = carte.mode;
       }
     });
   }

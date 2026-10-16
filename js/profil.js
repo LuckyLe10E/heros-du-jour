@@ -88,8 +88,18 @@ function afficherLesStatistiques() {
     ligne.appendChild(creerElement("span", "nb", String(nombre)));
     repartition.appendChild(ligne);
   };
-  stats.repartition.forEach((nombre, i) => ajouterBarre(String(i + 1), calculerRarete(i + 1), nombre));
+  stats.repartition.forEach((nombre, i) => ajouterBarre(String(i + 1), calculerRarete(i + 1, "normal"), nombre));
   ajouterBarre("X", "perdu", stats.perdues);
+
+  // Les parties jouées en Facile ou en Expert ne sont pas dans ce graphique : on les résume à part
+  const autres = [];
+  ["facile", "expert"].forEach(mode => {
+    const m = stats.autresModes[mode];
+    if (m.parties > 0) autres.push(m.parties + (m.parties > 1 ? " parties" : " partie") + " en " + window.DIFFICULTES[mode].nom + " (" + m.victoires + (m.victoires > 1 ? " victoires" : " victoire") + ")");
+  });
+  const zoneAutres = document.getElementById("stat-autres-modes");
+  zoneAutres.hidden = autres.length === 0;
+  zoneAutres.textContent = autres.length ? "Hors du graphique : " + autres.join(", ") + "." : "";
 }
 
 // Dessine le résumé de la collection : le total, les cartes par rareté, les cartes par thème.

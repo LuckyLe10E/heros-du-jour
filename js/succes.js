@@ -29,7 +29,7 @@ const SUCCES = [
   // ----- Maîtrise -----
   { id: "du-premier-coup", groupe: "maitrise", marque: "!", nom: "Du premier coup", description: "Trouver un personnage dès le premier essai.",
     condition: d => d.cartes.some(c => c.essais === 1) || d.victoiresEn1 >= 1 },
-  { id: "dix-victoires-rapides", groupe: "maitrise", marque: "10", nom: "Œil de lynx", description: "Gagner 10 parties du jour en 3 essais ou moins.",
+  { id: "dix-victoires-rapides", groupe: "maitrise", marque: "10", nom: "Œil de lynx", description: "Gagner 10 parties du jour en 3 essais ou moins (hors mode Facile).",
     condition: d => d.victoiresRapides >= 10, progres: d => [Math.min(d.victoiresRapides, 10), 10] },
   { id: "dix-sans-faute", groupe: "maitrise", marque: "10", nom: "Sans faute", description: "Gagner 10 parties du jour de suite sans en perdre une.",
     condition: d => d.meilleureSerieDeVictoires >= 10, progres: d => [Math.min(d.meilleureSerieDeVictoires, 10), 10] },
@@ -119,7 +119,7 @@ function rassemblerLesDonnees(contexte) {
     parties: dates.length + stats.totalBonus,
     victoires: dates.filter(date => stats.jours[date].gagne).length,
     victoiresEn1: dates.filter(date => stats.jours[date].gagne && stats.jours[date].essais === 1).length,
-    victoiresRapides: dates.filter(date => stats.jours[date].gagne && stats.jours[date].essais <= 3).length,
+    victoiresRapides: dates.filter(date => stats.jours[date].gagne && stats.jours[date].essais <= 3 && stats.jours[date].mode !== "facile").length,
     meilleureSerieDeVictoires: meilleureSuite,
     meilleureSerie: stat.meilleureSerie,
     cartes,

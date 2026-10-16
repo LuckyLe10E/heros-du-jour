@@ -211,6 +211,30 @@
   color: var(--encre-douce);
 }
 
+/* Le sceau du mode sur une carte : « Facile » (clair) ou « Expert » (encre et or), en haut à gauche de l'illustration */
+.carte-sceau {
+  position: absolute;
+  top: 0.55em;
+  left: 0.55em;
+  padding: 0.25em 0.55em 0.15em;
+  font-size: 0.78em;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 0.2em;
+  transform: rotate(-4deg);
+}
+
+.carte-sceau.sceau-facile {
+  color: var(--encre);
+  background: rgba(253, 253, 251, 0.92);
+}
+
+.carte-sceau.sceau-expert {
+  color: #f7e08a;
+  background: #1b2a2b;
+}
+
 /* L'effet brillant des cartes Légendaires : un reflet qui passe sur la carte */
 .carte-brillance {
   position: absolute;
@@ -322,6 +346,32 @@
   letter-spacing: -0.01em;
   overflow-wrap: anywhere;
   background: var(--papier);
+}
+
+/* La petite marque du mode sur une vignette de l'album : « F » (Facile) ou « E » (Expert) */
+.marque-mode {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+  border-radius: 50%;
+}
+
+.marque-mode.marque-facile {
+  color: var(--encre);
+  background: rgba(253, 253, 251, 0.92);
+}
+
+.marque-mode.marque-expert {
+  color: #f7e08a;
+  background: #1b2a2b;
 }
 
 /* La bande du bas de la vignette : or, argent ou bronze selon la rareté */

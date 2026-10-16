@@ -19,7 +19,8 @@ function texteDeLaDate(date) {
 function jourValide(date, jour) {
   return /^\d{4}-\d{2}-\d{2}$/.test(date)
     && Boolean(jour) && typeof jour.gagne === "boolean"
-    && Number.isInteger(jour.essais) && jour.essais >= 1 && jour.essais <= MAX_ESSAIS;
+    && (jour.mode === undefined || Boolean(window.DIFFICULTES[jour.mode]))
+    && Number.isInteger(jour.essais) && jour.essais >= 1 && jour.essais <= ESSAIS_MAX_TOUS_MODES;
 }
 
 // Ne garde que les jours valides d'une liste { date: { gagne, essais } }.
@@ -27,7 +28,10 @@ function nettoyerLesJours(jours) {
   const propres = {};
   if (jours && typeof jours === "object") {
     Object.keys(jours).forEach(date => {
-      if (jourValide(date, jours[date])) propres[date] = { gagne: jours[date].gagne, essais: jours[date].essais };
+      if (jourValide(date, jours[date])) {
+        propres[date] = { gagne: jours[date].gagne, essais: jours[date].essais };
+        if (jours[date].mode) propres[date].mode = jours[date].mode;
+      }
     });
   }
   return propres;
@@ -96,6 +100,7 @@ function noterLaJournee() {
   const stats = lireStats();
   const date = texteDeLaDate(dateDepuisTexte(window.DATE_LANCEMENT, partie.numero - 1));   // la date de CETTE partie
   const jour = { gagne: partie.statut === "gagne", essais: partie.essais.length };
+  if (partie.difficulte !== "normal") jour.mode = partie.difficulte;   // « facile » ou « expert » (rien = Normal)
   stats.jours[date] = meilleureJournee(stats.jours[date], jour);
   ecrireStats(stats);
 }
@@ -107,6 +112,9 @@ function meilleureJournee(a, b) {
   if (!a) return b;
   if (!b) return a;
   if (a.gagne !== b.gagne) return a.gagne ? a : b;
+  const rangA = window.DIFFICULTES[a.mode || "normal"].rang;
+  const rangB = window.DIFFICULTES[b.mode || "normal"].rang;
+  if (rangA !== rangB) return rangA > rangB ? a : b;
   return a.essais <= b.essais ? a : b;
 }
 
@@ -121,7 +129,8 @@ function fusionnerJours(joursA, joursB) {
 function memesJours(joursA, joursB) {
   const dates = Object.keys(joursA);
   if (dates.length !== Object.keys(joursB).length) return false;
-  return dates.every(date => Boolean(joursB[date]) && joursA[date].gagne === joursB[date].gagne && joursA[date].essais === joursB[date].essais);
+  return dates.every(date => Boolean(joursB[date]) && joursA[date].gagne === joursB[date].gagne && joursA[date].essais === joursB[date].essais
+    && (joursA[date].mode || "normal") === (joursB[date].mode || "normal"));
 }
 
 // Entre deux cartes favorites, la dernière choisie l'emporte.
@@ -213,17 +222,27 @@ function calculerStatistiques(jours, aujourdhui) {
   const resultat = {
     parties: dates.length,
     victoires: dates.filter(date => jours[date].gagne).length,
-    repartition: new Array(MAX_ESSAIS).fill(0),   // la case 0 = gagné en 1 essai, la case 9 = en 10 essais
-    perdues: 0,
+    repartition: new Array(MAX_ESSAIS).fill(0),   // parties Normales gagnées : la case 0 = en 1 essai, la case 9 = en 10 essais
+    perdues: 0,                                   // parties Normales perdues
+    autresModes: { facile: { parties: 0, victoires: 0 }, expert: { parties: 0, victoires: 0 } },   // les parties Facile et Expert, à part
     serieActuelle: 0,
     meilleureSerie: 0,
     jouePeutProlonger: false,                     // la série est en vie mais on n'a pas encore joué aujourd'hui
     derniersJours: []                             // les 14 derniers jours, du plus ancien à aujourd'hui
   };
 
+  // Le graphique « en combien d'essais » ne regarde que les parties Normales (le nombre d'essais n'a pas le même sens en Facile
+  // ou en Expert) ; les parties Facile et Expert sont comptées à part.
   dates.forEach(date => {
-    if (jours[date].gagne) resultat.repartition[jours[date].essais - 1]++;
-    else resultat.perdues++;
+    const mode = jours[date].mode;
+    if (mode === "facile" || mode === "expert") {
+      resultat.autresModes[mode].parties++;
+      if (jours[date].gagne) resultat.autresModes[mode].victoires++;
+    } else if (jours[date].gagne) {
+      resultat.repartition[jours[date].essais - 1]++;
+    } else {
+      resultat.perdues++;
+    }
   });
 
   const veille = date => new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1);

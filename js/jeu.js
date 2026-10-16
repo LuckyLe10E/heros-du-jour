@@ -5,8 +5,11 @@ function trouverPersonnage(id) {
   return window.PERSONNAGES.find(p => p.id === id);
 }
 
-// Le nombre maximum d'essais par partie.
+// Le nombre d'essais d'une partie en difficulté Normale (voir window.DIFFICULTES dans data/constantes.js pour les autres).
 const MAX_ESSAIS = 10;
+
+// Le plus grand nombre d'essais possible, toutes difficultés confondues (sert à vérifier les données sauvegardées).
+const ESSAIS_MAX_TOUS_MODES = Math.max(...Object.values(window.DIFFICULTES).map(d => d.essais));
 
 // Le numéro du jour : 1 le jour du lancement, 2 le lendemain, etc. (selon la date du téléphone).
 function numeroDuJour() {
@@ -32,6 +35,7 @@ const mystere = choisirMystere();
 const MYSTERE_DU_JOUR = mystere.personnage;   // le personnage du jour, même quand on joue une partie bonus
 const partie = {
   mode: "jour",                   // "jour" (la partie du jour), "bonus" (une carte à gagner) ou "entrainement" (sans carte)
+  difficulte: lireDifficultePreferee(),   // "facile", "normal" ou "expert" (choisie avant le premier essai, puis figée)
   numeroBonus: 0,                 // en mode bonus : « partie bonus n°… » du jour
   numero: numeroDuJour(),         // « Héros du Jour n°… »
   mystere: mystere.personnage,    // le personnage à deviner
@@ -43,12 +47,15 @@ const partie = {
   carteNouvelle: false,           // vrai si la carte vient d'être gagnée (elle se retourne avec une animation)
   carteAmelioree: false,          // vrai si la carte était déjà possédée et vient de monter en rareté
   ancienneRarete: null,           // la rareté qu'avait la carte avant d'être améliorée
+  ancienneDifficulte: null,       // la difficulté qu'avait la carte avant d'être améliorée
   carteRevelee: false             // vrai quand l'animation de retournement a déjà été montrée
 };
 
 // Remet la partie à zéro pour un nouveau personnage mystère (partie bonus, entraînement) ou pour revenir à la partie du jour.
-function reglerLaPartie(personnage, mode, numeroBonus) {
+function reglerLaPartie(personnage, mode, numeroBonus, difficulte) {
   partie.mode = mode;
+  partie.difficulte = difficulte && window.DIFFICULTES[difficulte] ? difficulte : lireDifficultePreferee();
+  partie.ancienneDifficulte = null;
   partie.numeroBonus = numeroBonus || 0;
   partie.mystere = personnage;
   partie.essais = [];
@@ -61,22 +68,40 @@ function reglerLaPartie(personnage, mode, numeroBonus) {
   partie.carteRevelee = false;
 }
 
+// Le nombre d'essais de la partie en cours (selon sa difficulté).
+function essaisMax() {
+  return window.DIFFICULTES[partie.difficulte].essais;
+}
+
+// Change la difficulté de la partie : seulement avant le premier essai. Renvoie vrai si c'est fait.
+function changerLaDifficulte(difficulte) {
+  if (!window.DIFFICULTES[difficulte] || partie.essais.length > 0 || partie.statut !== "en cours") return false;
+  partie.difficulte = difficulte;
+  ecrireDifficultePreferee(difficulte);   // elle sera proposée par défaut la prochaine fois
+  preparerEssaiOffert(null);              // pas d'essai offert en Expert
+  if (partie.mode === "bonus") sauvegarderLaPartieBonus();   // la partie bonus en cours se souvient du choix
+  return true;
+}
+
 // Combien d'essais ratés jusqu'ici (tous les essais, sauf le bon).
 function nombreEchecs() {
   return partie.essais.filter(id => id !== partie.mystere.id).length;
 }
 
-// La liste des indices déjà dévoilés, selon le nombre d'essais ratés. Chaque indice s'ajoute au précédent :
+// La liste des indices déjà dévoilés, selon le nombre d'essais ratés. Chaque indice s'ajoute au précédent.
+// En difficulté Normale ou Facile (premier indice à 3 essais ratés) :
 //   3 ratés : l'indice discret   |   4 ratés : le titre de l'œuvre
 //   5, 6, 7, 8 ratés : la 1re, 2e, 3e puis 4e phrase de la fiche
+// En Expert, tout commence un essai plus tard (4 essais ratés pour le premier indice).
 // Renvoie une liste de { titre, texte }.
 function indicesDevoiles() {
   const echecs = nombreEchecs();
+  const debut = window.DIFFICULTES[partie.difficulte].indicesDes;
   const indices = [];
-  if (echecs >= 3) indices.push({ titre: "Indice", texte: partie.mystere.indice });
-  if (echecs >= 4) indices.push({ titre: "Œuvre", texte: partie.mystere.oeuvre });
+  if (echecs >= debut) indices.push({ titre: "Indice", texte: partie.mystere.indice });
+  if (echecs >= debut + 1) indices.push({ titre: "Œuvre", texte: partie.mystere.oeuvre });
   decouperEnPhrases(partie.mystere.description).forEach((phrase, i) => {
-    if (echecs >= 5 + i) indices.push({ titre: "Détail " + (i + 1), texte: phrase });
+    if (echecs >= debut + 2 + i) indices.push({ titre: "Détail " + (i + 1), texte: phrase });
   });
   return indices;
 }
@@ -88,15 +113,16 @@ function indicesDevoiles() {
 const CARRES = { vert: "🟩", orange: "🟧", rouge: "🟥" };
 
 // Fabrique le message à partager, SANS révéler le personnage. Exemple :
-//   Héros du Jour n°12 — 4/10
+//   Héros du Jour n°12 — 4/10 (avec « Expert » ou « Facile » à la fin quand ce n'est pas la difficulté Normale)
 //   🟥🟩🟥🟧🟥🟥⬆️
 //   🟩🟩🟩🟩🟩🟩🟩
 //   (l'adresse du site)
 // Une ligne par essai (du premier au dernier). Pour l'année : 🟩 si c'est la bonne, sinon la flèche seule.
-// Si la partie est perdue, on écrit X/10.
+// Si la partie est perdue, on écrit X/10 (X/6 en Expert, X/15 en Facile).
 function texteDePartage() {
   const score = partie.statut === "gagne" ? partie.essais.length : "X";
-  const lignes = ["Héros du Jour n°" + partie.numero + " — " + score + "/" + MAX_ESSAIS];
+  const marque = partie.difficulte === "normal" ? "" : " (" + window.DIFFICULTES[partie.difficulte].nom + ")";
+  const lignes = ["Héros du Jour n°" + partie.numero + " — " + score + "/" + essaisMax() + marque];
 
   partie.essais.forEach(id => {
     const comparaisons = comparerAvecMystere(trouverPersonnage(id));
@@ -210,6 +236,10 @@ function choisirEssaiOffert(mystereDuJour, numero, exclus) {
 // L'essai offert de la partie en cours. Si la partie sauvegardée en avait déjà un valable, on le garde :
 // il ne change pas en cours de journée, même si on ajoute des personnages entre-temps.
 function preparerEssaiOffert(idSauvegarde) {
+  if (!window.DIFFICULTES[partie.difficulte].essaiOffert) {   // en Expert, pas d'essai offert
+    partie.offert = null;
+    return;
+  }
   const garde = idSauvegarde && idSauvegarde !== partie.mystere.id && !partie.essais.includes(idSauvegarde)
     && trouverPersonnage(idSauvegarde);
   // En partie bonus ou entraînement, le « tirage » dépend aussi du numéro de la partie bonus (le mystère change)
@@ -236,7 +266,7 @@ function ajouterEssai(id) {
 function mettreAJourStatut() {
   if (partie.essais.includes(partie.mystere.id)) {
     partie.statut = "gagne";
-  } else if (partie.essais.length >= MAX_ESSAIS) {
+  } else if (partie.essais.length >= essaisMax()) {
     partie.statut = "perdu";
   } else {
     partie.statut = "en cours";
@@ -256,7 +286,8 @@ function sauvegarderPartie() {
     numero: partie.numero,
     mystere: partie.mystere.id,
     essais: partie.essais,
-    offert: partie.offert
+    offert: partie.offert,
+    difficulte: partie.difficulte
   });
 }
 
@@ -286,14 +317,18 @@ function restaurerLesEssais(premierChargement) {
   if (!sauvegarde) return null;
   if (sauvegarde.numero !== partie.numero || sauvegarde.mystere !== partie.mystere.id) return null;
 
-  // On vérifie que chaque essai est un vrai personnage, sans doublon, et pas plus de 10 essais
+  // La difficulté de la partie sauvegardée (une ancienne sauvegarde, sans difficulté, est une partie Normale)
+  const difficulteSauvee = window.DIFFICULTES[sauvegarde.difficulte] ? sauvegarde.difficulte : "normal";
+
+  // On vérifie que chaque essai est un vrai personnage, sans doublon, et pas plus d'essais que la difficulté n'en permet
   const ids = sauvegarde.essais;
-  const valide = ids.length <= MAX_ESSAIS
+  const valide = ids.length <= window.DIFFICULTES[difficulteSauvee].essais
     && ids.every(id => typeof id === "string" && trouverPersonnage(id))
     && new Set(ids).size === ids.length;
   if (!valide) return null;
 
   // Si le bon personnage est dans la liste, la partie s'arrête à lui (on ignore ce qui viendrait après)
+  partie.difficulte = difficulteSauvee;
   const positionDuBon = ids.indexOf(partie.mystere.id);
   partie.essais = positionDuBon === -1 ? ids.slice() : ids.slice(0, positionDuBon + 1);
   mettreAJourStatut();

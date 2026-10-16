@@ -98,6 +98,17 @@
       </div>
     </div>
 
+    <!-- La difficulté : visible seulement avant le premier essai de la partie (voir js/affichage.js) -->
+    <div id="zone-difficulte" class="zone-difficulte" hidden>
+      <p class="difficulte-titre" id="difficulte-titre">Difficulté</p>
+      <div id="difficulte-boutons" class="difficulte-boutons" role="group" aria-labelledby="difficulte-titre">
+        <button type="button" data-difficulte="facile" aria-pressed="false">Facile</button>
+        <button type="button" data-difficulte="normal" aria-pressed="true">Normal</button>
+        <button type="button" data-difficulte="expert" aria-pressed="false">Expert</button>
+      </div>
+      <p id="difficulte-resume" class="difficulte-resume"></p>
+    </div>
+
     <!-- La case de saisie et sa liste de suggestions -->
     <div class="zone-saisie">
       <label for="saisie">Nom du personnage</label>
@@ -226,6 +237,7 @@
 
             <h3 class="sous-titre">En combien d'essais ?</h3>
             <ul id="stat-repartition" class="repartition"></ul>
+            <p id="stat-autres-modes" class="legende-barres" hidden></p>
             <p class="legende-barres">Les couleurs sont celles des cartes : or jusqu'à 3 essais, argent de 4 à 6, bronze de 7 à 10. L'essai offert ne compte pas.</p>
           </div>
         </section>
@@ -331,9 +343,22 @@
         <div class="fiche-texte">
           <ol class="regles-liste">
             <li>Chaque jour, un <strong>personnage de fiction</strong> (héros ou méchant) est à deviner. C'est le même pour tout le monde, et il change chaque jour à minuit.</li>
-            <li>Tape un nom et choisis-le dans la liste. Tu as <strong>10 essais</strong>.</li>
-            <li>Pour t'aider à démarrer, un <strong>essai est offert</strong> : un personnage est déjà comparé au mystère, tout en bas de la liste. Il ne compte pas dans tes 10 essais.</li>
+            <li>Tape un nom et choisis-le dans la liste. Tu as <strong>10 essais</strong> (15 en Facile, 6 en Expert : voir « La difficulté »).</li>
+            <li>Pour t'aider à démarrer, un <strong>essai est offert</strong> : un personnage est déjà comparé au mystère, tout en bas de la liste. Il ne compte pas dans tes essais (il n'y en a pas en Expert).</li>
           </ol>
+        </div>
+      </section>
+
+      <section class="rubrique">
+        <h2>La difficulté</h2>
+        <div class="fiche-texte">
+          <p>Avant ton premier essai de la partie, choisis ta difficulté. Une fois la partie commencée, elle ne change plus ; ton choix est retenu pour la prochaine fois.</p>
+          <ul class="liste-difficultes">
+            <li><strong>Facile</strong> : 15 essais, essai offert. Ta carte porte le sceau « Facile » et ne peut pas être Légendaire.</li>
+            <li><strong>Normal</strong> : 10 essais, essai offert. Ta carte n'a pas de sceau.</li>
+            <li><strong>Expert</strong> : 6 essais, pas d'essai offert, et les indices arrivent un essai plus tard. Ta carte porte le sceau « Expert » et les raretés sont plus exigeantes.</li>
+          </ul>
+          <p>La partie du jour se joue <strong>une seule fois par jour</strong>, dans la difficulté choisie au départ. Pour les parties bonus, tu choisis à chaque partie.</p>
         </div>
       </section>
 
@@ -366,7 +391,7 @@
       <section class="rubrique">
         <h2>Les indices</h2>
         <div class="fiche-texte">
-          <p>Dès <strong>3 essais ratés</strong>, des indices apparaissent sous forme de post-it, de plus en plus précis : d'abord un indice discret, puis l'œuvre d'origine, puis quatre détails sur le personnage.</p>
+          <p>Dès <strong>3 essais ratés</strong> (4 en Expert), des indices apparaissent sous forme de post-it, de plus en plus précis : d'abord un indice discret, puis l'œuvre d'origine, puis quatre détails sur le personnage.</p>
         </div>
       </section>
 
@@ -374,15 +399,23 @@
         <h2>Les cartes</h2>
         <div class="fiche-texte">
           <p>Chaque personnage trouvé devient une <strong>carte à collectionner</strong>, rangée dans « Ma collection » (un emplacement par personnage).</p>
-          <p>La <strong>rareté</strong> dépend du nombre d'essais : <strong>Légendaire</strong> en 1 à 3 essais, <strong>Rare</strong> en 4 à 6, <strong>Commune</strong> en 7 à 10. Si tu retrouves plus tard un personnage en moins d'essais, ta carte est <strong>améliorée</strong> ; elle ne peut jamais descendre.</p>
-          <p>Dans l'album, tu peux filtrer par thème et par rareté, et toucher une carte pour la voir en grand.</p>
+          <p>La <strong>rareté</strong> dépend du nombre d'essais et de la difficulté :</p>
+          <ul class="liste-difficultes">
+            <li><strong>Normal</strong> : Légendaire en 1 à 3 essais, Rare en 4 à 6, Commune en 7 à 10.</li>
+            <li><strong>Facile</strong> : Rare en 1 à 6 essais, Commune en 7 à 15 (jamais Légendaire).</li>
+            <li><strong>Expert</strong> : Légendaire en 1 à 2 essais, Rare en 3 à 4, Commune en 5 à 6.</li>
+          </ul>
+          <h3 class="sous-titre">Améliorer une carte</h3>
+          <p>Tu peux retrouver un personnage dont tu as déjà la carte, et la remplacer par une meilleure version. <strong>Ta carte est améliorée si tu fais mieux</strong> : une rareté plus haute (Commune, puis Rare, puis Légendaire) ou, à rareté égale, une difficulté plus haute (Expert, puis Normal, puis Facile). Une carte ne descend jamais : si tu fais moins bien, tu gardes ta meilleure version.</p>
+          <p>Les occasions : la partie du jour, quand un personnage que tu as déjà revient, et les <strong>parties bonus</strong>, qui te proposent surtout des personnages que tu n'as pas encore mais parfois un personnage dont tu as déjà la carte, pour l'améliorer.</p>
+          <p>Dans l'album, tu peux filtrer par thème et par rareté, et toucher une carte pour la voir en grand. Un petit <strong>F</strong> ou <strong>E</strong> sur une carte indique qu'elle a été gagnée en Facile ou en Expert.</p>
         </div>
       </section>
 
       <section class="rubrique">
         <h2>Parties bonus et entraînement</h2>
         <div class="fiche-texte">
-          <p>Une fois la partie du jour jouée, tu peux jouer jusqu'à <strong>5 parties bonus par jour</strong> : un personnage différent à chaque fois, avec <strong>une carte à gagner</strong> comme pour la partie du jour.</p>
+          <p>Une fois la partie du jour jouée, tu peux jouer jusqu'à <strong>5 parties bonus par jour</strong> : un personnage différent à chaque fois, avec <strong>une carte à gagner</strong> comme pour la partie du jour. Tu choisis la difficulté de chaque partie bonus.</p>
           <p>Après les 5, un <strong>entraînement libre</strong> reste possible, sans limite mais sans carte. Les parties bonus et l'entraînement ne comptent pas dans tes statistiques ni dans ta série.</p>
         </div>
       </section>
@@ -398,7 +431,7 @@
       <section class="rubrique">
         <h2>Mon profil et mes succès</h2>
         <div class="fiche-texte">
-          <p>Dans « Mon profil » (l'icône de personnage en haut), tu trouves tes <strong>statistiques</strong> (parties jouées, victoires, série de jours), ta <strong>carte favorite</strong> en vitrine et le résumé de ta collection.</p>
+          <p>Dans « Mon profil » (l'icône de personnage en haut), tu trouves tes <strong>statistiques</strong> (parties jouées, victoires, série de jours ; le graphique « En combien d'essais ? » ne compte que les parties Normales, les parties Facile et Expert sont résumées à part), ta <strong>carte favorite</strong> en vitrine et le résumé de ta collection.</p>
           <p>Au fil de tes parties, tu débloques des <strong>succès</strong> (séries de jours, collection, thèmes complets, parties bonus…) : une petite notification t'annonce chaque nouveau succès.</p>
           <p>Tu peux te <strong>connecter avec Google</strong> (c'est facultatif) pour retrouver tes cartes, tes statistiques et tes succès sur tous tes appareils. Sans compte, tout reste sur l'appareil que tu utilises.</p>
         </div>

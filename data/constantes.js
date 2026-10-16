@@ -67,6 +67,19 @@ window.ADRESSE_CONTACT = "jourduheros@gmail.com";
 // du calendrier signale ces jours, et il faut alors remplacer l'image par une autre paire de cartes (voir BRIEF.md, étape 20).
 window.PERSONNAGES_APERCU = ["gandalf", "yoda"];
 
+// Les trois niveaux de difficulté (choisis avant le premier essai d'une partie).
+//  essais : nombre d'essais | essaiOffert : le jeu joue un premier personnage à la place du joueur | indicesDes : nombre d'essais
+//  ratés à partir duquel les indices apparaissent | rang : sert à comparer deux cartes de même rareté (Expert > Normal > Facile).
+// Les raretés selon le nombre d'essais sont dans js/collection.js (calculerRarete).
+window.DIFFICULTES = {
+  facile: { nom: "Facile", essais: 15, essaiOffert: true,  indicesDes: 3, rang: 1,
+            resume: "15 essais, essai offert. La carte gagnée est marquée « Facile » et ne peut pas être Légendaire." },
+  normal: { nom: "Normal", essais: 10, essaiOffert: true,  indicesDes: 3, rang: 2,
+            resume: "10 essais, essai offert." },
+  expert: { nom: "Expert", essais: 6,  essaiOffert: false, indicesDes: 4, rang: 3,
+            resume: "6 essais, pas d'essai offert, indices plus tardifs. La carte gagnée est marquée « Expert » et plus rare." }
+};
+
 // La grande icône de chaque carte, selon l'espèce du personnage (de simples émojis, aucune image officielle).
 window.ICONES_ESPECES = {
   "Humain": "👤",

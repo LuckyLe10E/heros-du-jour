@@ -177,6 +177,55 @@
   font-weight: 700;
 }
 
+/* ---------- Le choix de la difficulté ---------- */
+
+.zone-difficulte {
+  margin-bottom: 18px;
+}
+
+.zone-difficulte[hidden] {
+  display: none;
+}
+
+.difficulte-titre {
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.difficulte-boutons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.difficulte-boutons button {
+  padding: 9px 4px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--encre);
+  background: var(--papier);
+  border: 0;
+  border-radius: 3px;
+  box-shadow: var(--ombre-papier);
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+/* Le mode choisi est « enfoncé » : encre pleine */
+.difficulte-boutons button[aria-pressed="true"] {
+  color: var(--papier);
+  background: var(--encre);
+  opacity: 1;
+}
+
+.difficulte-resume {
+  margin-top: 8px;
+  font-size: 0.88rem;
+  line-height: 1.35;
+  opacity: 0.9;
+}
+
 /* ---------- La case de saisie et les suggestions ---------- */
 
 .zone-saisie {
@@ -310,6 +359,21 @@
   margin-bottom: 18px;
 }
 
+/* En Facile il y a 15 pastilles : plus petites pour que la ligne tienne */
+.pastilles.beaucoup {
+  gap: 3px;
+}
+
+.pastilles.beaucoup i {
+  width: 11px;
+  height: 11px;
+  border-width: 1.5px;
+}
+
+.essais {
+  flex-wrap: wrap;
+}
+
 /* ---------- Les indices : des post-it ---------- */
 
 .indices {
@@ -399,6 +463,18 @@
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+/* En Expert, avant le premier essai, il n'y a aucune fiche (pas d'essai offert) : une fiche vide montre où elles viendront */
+.liste-essais:empty::before {
+  content: "Tes propositions apparaîtront ici.";
+  display: block;
+  padding: 18px 12px;
+  text-align: center;
+  color: var(--encre-douce);
+  background: var(--papier);
+  border-radius: 0 0 3px 3px;
+  box-shadow: var(--ombre-papier);
 }
 
 .essai {

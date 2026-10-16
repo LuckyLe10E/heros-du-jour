@@ -65,13 +65,17 @@ function creerVignetteDom(carte, id, apresToucher) {
 
   const bouton = creerElement("button", "vignette rarete-" + carte.rarete + " " + classeDuTheme(p.univers));
   bouton.type = "button";
-  bouton.setAttribute("aria-label", p.nom + ", carte " + rarete.nom + ". Toucher pour la voir en grand.");
+  const marqueMode = difficulteDeLaCarte(carte) !== "normal" ? " version " + window.DIFFICULTES[difficulteDeLaCarte(carte)].nom : "";
+  bouton.setAttribute("aria-label", p.nom + ", carte " + rarete.nom + marqueMode + ". Toucher pour la voir en grand.");
 
   const corps = creerElement("span", "corps");
   corps.appendChild(creerElement("span", "numero-carte", numeroDeCarte(carte.id)));
   const art = creerElement("span", "art");
   art.appendChild(creerSilhouette());
   corps.appendChild(art);
+  if (difficulteDeLaCarte(carte) !== "normal") {   // la petite marque du mode, en haut à droite de la vignette
+    corps.appendChild(creerElement("span", "marque-mode marque-" + difficulteDeLaCarte(carte), difficulteDeLaCarte(carte) === "expert" ? "E" : "F"));
+  }
   corps.appendChild(creerElement("strong", "vignette-nom", p.nom));
   bouton.appendChild(corps);
   bouton.appendChild(creerElement("span", "feuille"));
@@ -89,7 +93,7 @@ function creerCarteDom(carte, options) {
 
   const scene = creerElement("div", "carte-scene");
   scene.setAttribute("role", "group");
-  scene.setAttribute("aria-label", "Carte " + rarete.nom + " : " + p.nom);
+  scene.setAttribute("aria-label", "Carte " + rarete.nom + (difficulteDeLaCarte(carte) !== "normal" ? " " + window.DIFFICULTES[difficulteDeLaCarte(carte)].nom : "") + " : " + p.nom);
 
   const carteElement = creerElement("div", "carte" + (options && options.retournee ? " retournee sans-animation" : ""));
   scene.appendChild(carteElement);
@@ -114,6 +118,9 @@ function creerCarteDom(carte, options) {
   const illustration = creerElement("div", "carte-illustration");
   illustration.appendChild(creerSilhouette());
   illustration.appendChild(creerElement("span", "carte-tampon", rarete.nom.toUpperCase()));
+  if (difficulteDeLaCarte(carte) !== "normal") {   // le sceau du mode, en haut à gauche de l'illustration
+    illustration.appendChild(creerElement("span", "carte-sceau sceau-" + difficulteDeLaCarte(carte), window.DIFFICULTES[difficulteDeLaCarte(carte)].nom));
+  }
   interieur.appendChild(illustration);
 
   interieur.appendChild(creerElement("p", "carte-sous-titre", p.oeuvre + ", " + p.annee));

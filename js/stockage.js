@@ -47,6 +47,27 @@ function noterReglesVues() {
   }
 }
 
+// La difficulté choisie en dernier par le joueur (« facile », « normal » ou « expert ») : elle est proposée par défaut.
+const CLE_DIFFICULTE = "heros-du-jour-difficulte";
+
+function lireDifficultePreferee() {
+  try {
+    const choix = localStorage.getItem(CLE_DIFFICULTE);
+    if (window.DIFFICULTES[choix]) return choix;
+  } catch (erreur) {
+    // pas grave : on prend « normal »
+  }
+  return "normal";
+}
+
+function ecrireDifficultePreferee(difficulte) {
+  try {
+    localStorage.setItem(CLE_DIFFICULTE, difficulte);
+  } catch (erreur) {
+    // pas grave : le choix durera juste jusqu'à la fermeture de la page
+  }
+}
+
 // Efface la partie sauvegardée.
 function effacerSauvegarde() {
   try {

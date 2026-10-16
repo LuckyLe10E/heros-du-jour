@@ -251,6 +251,26 @@ async function fabriquerLeCanevasDeLaCarte(carte) {
   g.textAlign = "center";
   g.fillText(texteTampon, 0, 1);
   g.restore();
+  // Le sceau du mode (Facile / Expert), en haut à gauche de l'illustration. Une carte Normale n'en a pas.
+  const modeDeLaCarte = difficulteDeLaCarte(carte);
+  if (modeDeLaCarte !== "normal") {
+    g.save();
+    g.font = "800 " + 0.78 * u + "px " + police;
+    try { g.letterSpacing = (0.05 * 0.78 * u) + "px"; } catch (erreur) { /* vieux navigateur : sans espacement */ }
+    const texteSceau = window.DIFFICULTES[modeDeLaCarte].nom.toUpperCase();
+    const largeurSceau = g.measureText(texteSceau).width + 1.1 * u;
+    const hauteurSceau = 0.78 * u + 0.5 * u;
+    g.translate(ax + 0.55 * u + largeurSceau / 2, y + 0.55 * u + hauteurSceau / 2);
+    g.rotate(-4 * Math.PI / 180);
+    rectangleArrondi(g, -largeurSceau / 2, -hauteurSceau / 2, largeurSceau, hauteurSceau, 0.2 * u);
+    g.fillStyle = modeDeLaCarte === "expert" ? "#1b2a2b" : "rgba(253,253,251,0.92)";
+    g.fill();
+    g.fillStyle = modeDeLaCarte === "expert" ? "#f7e08a" : "#1b2a2b";
+    g.textAlign = "center";
+    g.textBaseline = "middle";
+    g.fillText(texteSceau, 0, 1);
+    g.restore();
+  }
   y += hauteurArt;
 
   // Sous-titre (l'œuvre et l'année)
