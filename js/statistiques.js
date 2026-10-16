@@ -63,15 +63,25 @@ function nettoyerLesSucces(succes) {
   return propres;
 }
 
-// Lit les données du profil. Renvoie { jours, favori, bonus, succes, totalBonus }.
+// Le compteur de jours rattrapés : { date, faites } (même forme que celui des parties bonus, avec la limite MAX_RATTRAPAGES).
+function rattrapageJourValide(compteur) {
+  return Boolean(compteur) && /^\d{4}-\d{2}-\d{2}$/.test(compteur.date)
+    && Number.isInteger(compteur.faites) && compteur.faites >= 0 && compteur.faites <= MAX_RATTRAPAGES;
+}
+
+// Lit les données du profil. Renvoie { jours, favori, bonus, succes, totalBonus, rattrapages, rattrapageJour }.
+// « rattrapages » : les résultats des jours rejoués après coup (même forme que « jours », mais à part : ils ne comptent pas dans la série).
+
 function lireStats() {
-  const stats = { jours: {}, favori: null, bonus: null, succes: {}, totalBonus: 0 };
+  const stats = { jours: {}, favori: null, bonus: null, succes: {}, totalBonus: 0, rattrapages: {}, rattrapageJour: null };
   try {
     const texte = localStorage.getItem(CLE_STATS);
     if (!texte) return stats;
     const donnees = JSON.parse(texte);
     if (donnees && donnees.version === 1) {
       stats.jours = nettoyerLesJours(donnees.jours);
+      stats.rattrapages = nettoyerLesJours(donnees.rattrapages);
+      if (rattrapageJourValide(donnees.rattrapageJour)) stats.rattrapageJour = { date: donnees.rattrapageJour.date, faites: donnees.rattrapageJour.faites };
       if (favoriValide(donnees.favori)) stats.favori = { id: donnees.favori.id, maj: donnees.favori.maj };
       if (bonusValide(donnees.bonus)) stats.bonus = { date: donnees.bonus.date, faites: donnees.bonus.faites };
       stats.succes = nettoyerLesSucces(donnees.succes);
@@ -85,7 +95,7 @@ function lireStats() {
 
 function ecrireStats(stats) {
   try {
-    localStorage.setItem(CLE_STATS, JSON.stringify({ version: 1, jours: stats.jours, favori: stats.favori, bonus: stats.bonus, succes: stats.succes, totalBonus: stats.totalBonus }));
+    localStorage.setItem(CLE_STATS, JSON.stringify({ version: 1, jours: stats.jours, favori: stats.favori, bonus: stats.bonus, succes: stats.succes, totalBonus: stats.totalBonus, rattrapages: stats.rattrapages, rattrapageJour: stats.rattrapageJour }));
   } catch (erreur) {
     // pas grave : les statistiques ne seront pas retrouvées au prochain chargement
   }
@@ -96,7 +106,16 @@ function ecrireStats(stats) {
 // Quand la partie du jour est finie (gagnée ou perdue), on note le résultat de la journée.
 // On peut l'appeler plusieurs fois sans risque (au chargement de la page aussi) : un jour n'est noté qu'une fois.
 function noterLaJournee() {
-  if (partie.modeTest || partie.mode !== "jour" || partie.statut === "en cours") return;   // seules les parties du jour comptent
+  if (partie.modeTest || partie.statut === "en cours") return;
+  if (partie.mode === "rattrapage") {   // un jour rattrapé est noté à part : il ne compte pas dans la série
+    const stats = lireStats();
+    const resultat = { gagne: partie.statut === "gagne", essais: partie.essais.length };
+    if (partie.difficulte !== "normal") resultat.mode = partie.difficulte;
+    stats.rattrapages[partie.jourRattrape] = meilleureJournee(stats.rattrapages[partie.jourRattrape], resultat);
+    ecrireStats(stats);
+    return;
+  }
+  if (partie.mode !== "jour") return;   // seules les parties du jour (et les jours rattrapés, ci-dessus) sont notées
   const stats = lireStats();
   const date = texteDeLaDate(dateDepuisTexte(window.DATE_LANCEMENT, partie.numero - 1));   // la date de CETTE partie
   const jour = { gagne: partie.statut === "gagne", essais: partie.essais.length };
@@ -175,8 +194,10 @@ function memesSucces(a, b) {
 
 // Lit les jours, le favori et le compteur bonus reçus du compte en ligne (on ne fait jamais confiance aux données reçues).
 function statsDuCompte(donnees) {
-  const stats = { jours: {}, favori: null, bonus: null, succes: {}, totalBonus: 0 };
+  const stats = { jours: {}, favori: null, bonus: null, succes: {}, totalBonus: 0, rattrapages: {}, rattrapageJour: null };
   if (donnees) {
+    stats.rattrapages = nettoyerLesJours(donnees.rattrapages);
+    if (rattrapageJourValide(donnees.rattrapageJour)) stats.rattrapageJour = { date: donnees.rattrapageJour.date, faites: donnees.rattrapageJour.faites };
     stats.succes = nettoyerLesSucces(donnees.succes);
     if (Number.isInteger(donnees.totalBonus) && donnees.totalBonus >= 0) stats.totalBonus = Math.min(donnees.totalBonus, 100000);
     stats.jours = nettoyerLesJours(donnees.jours);

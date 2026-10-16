@@ -16,6 +16,13 @@ function numeroDuJour() {
   return joursEntre(window.DATE_LANCEMENT, new Date()) + 1;
 }
 
+// Le personnage mystère d'un jour donné (par son numéro) : calendrier[(numéro - 1) % nombre de personnages].
+function mystereDuNumero(numero) {
+  const total = window.CALENDRIER.length;
+  const position = ((numero - 1) % total + total) % total;   // reste toujours entre 0 et total - 1
+  return trouverPersonnage(window.CALENDRIER[position]);
+}
+
 // Choisit le personnage mystère du jour : calendrier[(numéro - 1) % nombre de personnages].
 // Mode test : si l'adresse finit par ?perso=batman, c'est ce personnage (réservé à Luca, pour tester).
 function choisirMystere() {
@@ -25,16 +32,15 @@ function choisirMystere() {
     if (personnage) return { personnage, modeTest: true };
     console.warn("Mode test : personnage inconnu « " + idDemande + " », il est ignoré.");
   }
-  const total = window.CALENDRIER.length;
-  const position = ((numeroDuJour() - 1) % total + total) % total;   // reste toujours entre 0 et total - 1
-  return { personnage: trouverPersonnage(window.CALENDRIER[position]), modeTest: false };
+  return { personnage: mystereDuNumero(numeroDuJour()), modeTest: false };
 }
 
 // L'état de la partie en cours (celle qu'on voit à l'écran : la partie du jour, une partie bonus ou un entraînement).
 const mystere = choisirMystere();
 const MYSTERE_DU_JOUR = mystere.personnage;   // le personnage du jour, même quand on joue une partie bonus
 const partie = {
-  mode: "jour",                   // "jour" (la partie du jour), "bonus" (une carte à gagner) ou "entrainement" (sans carte)
+  mode: "jour",                   // "jour" (la partie du jour), "bonus", "rattrapage" (un jour passé) ou "entrainement" (sans carte)
+  jourRattrape: null,             // en mode rattrapage : la date du jour rejoué (« 2026-10-12 »)
   difficulte: lireDifficultePreferee(),   // "facile", "normal" ou "expert" (choisie avant le premier essai, puis figée)
   numeroBonus: 0,                 // en mode bonus : « partie bonus n°… » du jour
   numero: numeroDuJour(),         // « Héros du Jour n°… »
@@ -52,8 +58,11 @@ const partie = {
 };
 
 // Remet la partie à zéro pour un nouveau personnage mystère (partie bonus, entraînement) ou pour revenir à la partie du jour.
-function reglerLaPartie(personnage, mode, numeroBonus, difficulte) {
+// numero : le numéro du jour de la partie (par défaut, celui d'aujourd'hui ; celui du jour rejoué en mode rattrapage).
+function reglerLaPartie(personnage, mode, numeroBonus, difficulte, numero) {
   partie.mode = mode;
+  partie.numero = numero || numeroDuJour();
+  partie.jourRattrape = null;
   partie.difficulte = difficulte && window.DIFFICULTES[difficulte] ? difficulte : lireDifficultePreferee();
   partie.ancienneDifficulte = null;
   partie.numeroBonus = numeroBonus || 0;
@@ -80,6 +89,7 @@ function changerLaDifficulte(difficulte) {
   ecrireDifficultePreferee(difficulte);   // elle sera proposée par défaut la prochaine fois
   preparerEssaiOffert(null);              // pas d'essai offert en Expert
   if (partie.mode === "bonus") sauvegarderLaPartieBonus();   // la partie bonus en cours se souvient du choix
+  if (partie.mode === "rattrapage") sauvegarderLeRattrapage();   // le rattrapage en cours aussi
   return true;
 }
 
@@ -121,7 +131,8 @@ const CARRES = { vert: "🟩", orange: "🟧", rouge: "🟥" };
 // Si la partie est perdue, on écrit X/10 (X/6 en Expert, X/15 en Facile).
 function texteDePartage() {
   const score = partie.statut === "gagne" ? partie.essais.length : "X";
-  const marque = partie.difficulte === "normal" ? "" : " (" + window.DIFFICULTES[partie.difficulte].nom + ")";
+  const marque = (partie.difficulte === "normal" ? "" : " (" + window.DIFFICULTES[partie.difficulte].nom + ")")
+    + (partie.mode === "rattrapage" ? " (jour rattrapé)" : "");
   const lignes = ["Héros du Jour n°" + partie.numero + " — " + score + "/" + essaisMax() + marque];
 
   partie.essais.forEach(id => {
@@ -243,7 +254,8 @@ function preparerEssaiOffert(idSauvegarde) {
   const garde = idSauvegarde && idSauvegarde !== partie.mystere.id && !partie.essais.includes(idSauvegarde)
     && trouverPersonnage(idSauvegarde);
   // En partie bonus ou entraînement, le « tirage » dépend aussi du numéro de la partie bonus (le mystère change)
-  const graine = partie.mode === "jour" ? partie.numero : "bonus" + partie.numeroBonus + "-" + partie.numero;
+  // (un jour rattrapé a le même essai offert que le jour où il a été joué normalement)
+  const graine = partie.mode === "jour" || partie.mode === "rattrapage" ? partie.numero : "bonus" + partie.numeroBonus + "-" + partie.numero;
   partie.offert = garde ? idSauvegarde : choisirEssaiOffert(partie.mystere, graine, partie.essais);
 }
 
@@ -279,6 +291,10 @@ function sauvegarderPartie() {
   if (partie.modeTest || partie.mode === "entrainement") return;
   if (partie.mode === "bonus") {
     sauvegarderLaPartieBonus();
+    return;
+  }
+  if (partie.mode === "rattrapage") {
+    sauvegarderLeRattrapage();
     return;
   }
   ecrireSauvegarde({

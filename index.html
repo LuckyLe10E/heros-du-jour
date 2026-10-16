@@ -91,6 +91,10 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
           <span id="bonus-lancer-texte"></span> <span id="bonus-lancer-compte" class="compte"></span>
         </button>
+        <button type="button" id="rattrapage-lancer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="1.5"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>
+          <span id="rattrapage-lancer-texte"></span> <span id="rattrapage-lancer-compte" class="compte"></span>
+        </button>
         <button type="button" id="bonus-retour" hidden>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>
           Retour à la partie du jour
@@ -309,6 +313,18 @@
     </div>
   </div>
 
+  <!-- La fenêtre « Jour passé » : rejouer un des 30 derniers jours (3 par jour au maximum) -->
+  <div id="fenetre-rattrapage" class="fenetre-fond" hidden>
+    <div class="fenetre fenetre-rattrapage" role="dialog" aria-modal="true" aria-labelledby="rattrapage-titre">
+      <h2 id="rattrapage-titre" class="fenetre-titre">Jour passé</h2>
+      <p id="rattrapage-restants" class="rattrapage-intro"></p>
+      <p class="rattrapage-regle">Rejoue le personnage d'un des 30 derniers jours : une carte à gagner, mais jamais Légendaire, et sans effet sur ta série de jours.</p>
+      <p id="rattrapage-aucun" class="rattrapage-intro" hidden></p>
+      <ul id="rattrapage-liste" class="rattrapage-liste"></ul>
+      <button type="button" id="rattrapage-fermer" class="bouton">Fermer</button>
+    </div>
+  </div>
+
   <!-- Une carte affichée en grand, par-dessus la bibliothèque -->
   <div id="fenetre-carte-grand" class="fenetre-fond" hidden>
     <div class="fenetre fenetre-carte-grand" role="dialog" aria-modal="true" aria-label="Carte en grand">
@@ -422,6 +438,14 @@
       </section>
 
       <section class="rubrique">
+        <h2>Jour passé</h2>
+        <div class="fiche-texte">
+          <p>Tu as raté un jour ? Le bouton <strong>« Jour passé »</strong> te laisse rejouer le personnage mystère d'un des <strong>30 derniers jours</strong>, avec les mêmes difficultés que d'habitude.</p>
+          <p>Pour que la partie du jour garde son intérêt, il y a des limites : <strong>3 jours rattrapés par jour au maximum</strong>, un jour déjà joué ne se rejoue pas, et la carte gagnée ne peut pas dépasser <strong>Rare</strong> (la Légendaire est réservée à ceux qui jouent le jour même). Un jour rattrapé <strong>ne compte pas dans ta série de jours</strong> ; il apparaît à part dans tes statistiques.</p>
+        </div>
+      </section>
+
+      <section class="rubrique">
         <h2>Partager</h2>
         <div class="fiche-texte">
           <p>À la fin de la partie du jour, <strong>« Partager mon résultat »</strong> envoie ton résultat sous forme de petits carrés de couleur, <strong>sans jamais révéler le personnage</strong> : tes amis peuvent comparer sans être spoilés. Pense à ne pas leur donner le nom !</p>
@@ -487,6 +511,7 @@
   <script src="js/collection.js"></script>
   <script src="js/statistiques.js"></script>
   <script src="js/bonus.js"></script>
+  <script src="js/rattrapage.js"></script>
   <script src="js/succes.js"></script>
   <script src="js/carte.js"></script>
   <script src="js/partage-carte.js"></script>

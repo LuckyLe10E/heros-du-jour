@@ -97,6 +97,12 @@ function afficherLesStatistiques() {
     const m = stats.autresModes[mode];
     if (m.parties > 0) autres.push(m.parties + (m.parties > 1 ? " parties" : " partie") + " en " + window.DIFFICULTES[mode].nom + " (" + m.victoires + (m.victoires > 1 ? " victoires" : " victoire") + ")");
   });
+  // Les jours rejoués après coup, à part
+  const rattrapes = Object.values(lireStats().rattrapages);
+  if (rattrapes.length > 0) {
+    const gagnes = rattrapes.filter(r => r.gagne).length;
+    autres.push(rattrapes.length + (rattrapes.length > 1 ? " jours rattrapés" : " jour rattrapé") + " (" + gagnes + (gagnes > 1 ? " victoires" : " victoire") + ")");
+  }
   const zoneAutres = document.getElementById("stat-autres-modes");
   zoneAutres.hidden = autres.length === 0;
   zoneAutres.textContent = autres.length ? "Hors du graphique : " + autres.join(", ") + "." : "";

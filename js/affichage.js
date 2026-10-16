@@ -154,6 +154,11 @@ function afficherEnTete() {
     nombre.textContent = partie.numero;
     tampon.setAttribute("aria-label", "Numéro " + partie.numero);
     date.textContent = dateDuJourEnFrancais();
+  } else if (partie.mode === "rattrapage") {
+    etiquette.textContent = "PASSÉ";
+    nombre.textContent = partie.numero;
+    tampon.setAttribute("aria-label", "Jour rattrapé, numéro " + partie.numero);
+    date.textContent = "Jour rattrapé : " + dateDepuisTexte(partie.jourRattrape).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
   } else if (partie.mode === "bonus") {
     etiquette.textContent = "BONUS";
     nombre.textContent = partie.numeroBonus;
@@ -174,15 +179,21 @@ function texteBonusRestants(nombre) {
 
 // Le texte du bouton qui lance la partie suivante (une fois la partie bonus finie).
 function libelleDeLaPartieSuivante() {
+  if (partie.mode === "rattrapage") return "Rattraper un autre jour (" + texteJoursRestants(rattrapagesRestants()) + ")";
   return typeDeLaProchainePartie() === "bonus"
     ? "Nouvelle partie bonus (" + texteBonusRestants(partiesBonusRestantes()) + ")"
     : "Entraînement libre";
 }
 
-// Les boutons des parties bonus, sous le bandeau : ils changent selon la partie qu'on joue.
+// Écrit « 3 restants » ou « 1 restant » (jours à rattraper).
+function texteJoursRestants(nombre) {
+  return nombre + (nombre > 1 ? " restants" : " restant");
+}
+
+// Les boutons sous le bandeau (parties bonus, jours passés) : ils changent selon la partie qu'on joue.
 function afficherLeBonus() {
   const zone = document.getElementById("zone-bonus");
-  if (partie.modeTest) {   // pas de parties bonus en mode test
+  if (partie.modeTest) {   // pas de parties bonus ni de jours passés en mode test
     zone.hidden = true;
     return;
   }
@@ -192,7 +203,23 @@ function afficherLeBonus() {
   const retour = document.getElementById("bonus-retour");
   const texte = document.getElementById("bonus-lancer-texte");
   const compte = document.getElementById("bonus-lancer-compte");
+  const passe = document.getElementById("rattrapage-lancer");
+  const texteDuPasse = document.getElementById("rattrapage-lancer-texte");
+  const compteDuPasse = document.getElementById("rattrapage-lancer-compte");
   const reste = partiesBonusRestantes();
+  const joursRestants = rattrapagesRestants();
+
+  // Le bouton « jour passé » : « Reprendre » si un rattrapage est commencé, sinon le nombre de jours qu'il reste à rattraper aujourd'hui
+  const montrerLeBoutonDuJourPasse = (libelle) => {
+    passe.hidden = false;
+    if (lireRattrapage().enCours) {
+      texteDuPasse.textContent = "Reprendre le jour passé";
+      compteDuPasse.textContent = "";
+    } else {
+      texteDuPasse.textContent = libelle;
+      compteDuPasse.textContent = texteJoursRestants(joursRestants);
+    }
+  };
 
   if (partie.mode === "jour") {
     etat.hidden = true;
@@ -209,15 +236,20 @@ function afficherLeBonus() {
       texte.textContent = "Entraînement libre";
       compte.textContent = "";
     }
+    montrerLeBoutonDuJourPasse("Jour passé");
     return;
   }
 
   etat.hidden = false;
   retour.hidden = false;
-  etat.textContent = partie.mode === "bonus"
-    ? "Partie bonus " + partie.numeroBonus + " sur " + MAX_BONUS + " : un personnage rien que pour toi, avec une carte à gagner."
-    : "Entraînement libre : pas de carte à gagner, et rien n'entre dans tes statistiques.";
-  lancer.hidden = (partie.statut === "en cours");   // on termine d'abord la partie en cours
+  if (partie.mode === "bonus") {
+    etat.textContent = "Partie bonus " + partie.numeroBonus + " sur " + MAX_BONUS + " : un personnage rien que pour toi, avec une carte à gagner.";
+  } else if (partie.mode === "rattrapage") {
+    etat.textContent = "Jour rattrapé : une carte à gagner, mais jamais Légendaire, et sans effet sur ta série de jours.";
+  } else {
+    etat.textContent = "Entraînement libre : pas de carte à gagner, et rien n'entre dans tes statistiques.";
+  }
+  lancer.hidden = (partie.mode === "rattrapage") || (partie.statut === "en cours");   // on termine d'abord la partie en cours
   if (typeDeLaProchainePartie() === "bonus") {
     texte.textContent = "Nouvelle partie bonus";
     compte.textContent = texteBonusRestants(reste);
@@ -225,6 +257,72 @@ function afficherLeBonus() {
     texte.textContent = "Entraînement libre";
     compte.textContent = "";
   }
+  // Un jour passé fini : on peut en rattraper un autre (s'il en reste aujourd'hui)
+  passe.hidden = true;
+  if (partie.mode === "rattrapage" && partie.statut !== "en cours" && joursRestants > 0) montrerLeBoutonDuJourPasse("Rattraper un autre jour");
+}
+
+// ---------- La fenêtre « Jour passé » ----------
+
+// Dessine la liste des jours passés qu'on peut rattraper (les 30 derniers).
+function dessinerLesJoursPasses() {
+  const joursRestants = rattrapagesRestants();
+  const jours = joursARattraper();
+  document.getElementById("rattrapage-restants").textContent = joursRestants > 0
+    ? "Aujourd'hui, tu peux encore rattraper " + joursRestants + (joursRestants > 1 ? " jours" : " jour") + "."
+    : "Tu as rattrapé tous les jours possibles aujourd'hui. Reviens demain !";
+
+  const liste = document.getElementById("rattrapage-liste");
+  liste.innerHTML = "";
+  const nonJoues = jours.filter(j => j.etat === "disponible" || j.etat === "en-cours");
+  document.getElementById("rattrapage-aucun").hidden = jours.length > 0 && nonJoues.length > 0;
+  document.getElementById("rattrapage-aucun").textContent = jours.length === 0
+    ? "Il n'y a pas encore de jour passé à rejouer."
+    : "Tu as déjà joué tous les jours des 30 derniers jours : bravo !";
+
+  jours.forEach(jour => {
+    const ligne = creerElement("li", "rattrapage-ligne");
+    const date = dateDepuisTexte(jour.date);
+    const titre = creerElement("span", "rattrapage-date");
+    titre.appendChild(creerElement("strong", "", date.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })));
+    titre.appendChild(creerElement("small", "", "numéro " + jour.numero));
+    ligne.appendChild(titre);
+
+    if (jour.etat === "disponible" || jour.etat === "en-cours") {
+      const bouton = creerElement("button", "bouton rattrapage-jouer", jour.etat === "en-cours" ? "Reprendre" : "Jouer");
+      bouton.type = "button";
+      const impossible = jour.etat === "disponible" && joursRestants <= 0;
+      bouton.disabled = impossible;
+      if (impossible) bouton.title = "Tu as déjà rattrapé tous les jours possibles aujourd'hui.";
+      bouton.addEventListener("click", () => demarrerUnJourPasse(jour.date));
+      ligne.appendChild(bouton);
+    } else {
+      const textes = { "joue-gagne": "Joué : gagné", "joue-perdu": "Joué : perdu", "rattrape-gagne": "Rattrapé : gagné", "rattrape-perdu": "Rattrapé : perdu" };
+      ligne.appendChild(creerElement("span", "rattrapage-etat " + (jour.etat.endsWith("gagne") ? "gagne" : "perdu"), textes[jour.etat]));
+    }
+    liste.appendChild(ligne);
+  });
+}
+
+function ouvrirRattrapage() {
+  dessinerLesJoursPasses();
+  document.getElementById("fenetre-fin").hidden = true;
+  arreterCompteARebours();
+  document.getElementById("fenetre-rattrapage").hidden = false;
+  document.querySelector("#fenetre-rattrapage .fenetre").scrollTop = 0;
+  document.getElementById("rattrapage-fermer").focus({ preventScroll: true });
+}
+
+function fermerRattrapage() {
+  document.getElementById("fenetre-rattrapage").hidden = true;
+}
+
+// Le joueur choisit un jour passé : on lance (ou on reprend) ce rattrapage.
+function demarrerUnJourPasse(date) {
+  fermerRattrapage();
+  if (!lancerUnRattrapage(date)) return;
+  afficherLaPartie();
+  verifierLesSucces({});
 }
 
 // Redessine tout l'écran de jeu après un changement de partie (bonus, entraînement, retour à la partie du jour).
@@ -239,6 +337,10 @@ function afficherLaPartie() {
 }
 
 function passerALaPartieSuivante() {
+  if (partie.mode === "rattrapage") {   // après un jour passé : on choisit un autre jour
+    ouvrirRattrapage();
+    return;
+  }
   lancerUnePartieSupplementaire();
   afficherLaPartie();
   verifierLesSucces({});   // une partie bonus de plus a été lancée
@@ -258,7 +360,7 @@ function ouvrirFenetreFin() {
     ? "Bravo ! Trouvé en " + texteNombreEssais(partie.essais.length)
     : "Raté !";
   document.getElementById("fin-intro").textContent = gagne
-    ? (partie.mode === "jour" ? "Le héros du jour était :" : "Le personnage était :")
+    ? (partie.mode === "jour" ? "Le héros du jour était :" : partie.mode === "rattrapage" ? "Le héros de ce jour-là était :" : "Le personnage était :")
     : "C'était…";
   document.getElementById("fin-nom").textContent = p.nom;
   document.getElementById("fin-oeuvre").textContent = p.univers + ", " + p.oeuvre + " (" + p.annee + ")";
@@ -276,12 +378,13 @@ function ouvrirFenetreFin() {
 
   // Parties bonus et entraînement : pas de partage (chacun a un personnage différent), un bouton pour enchaîner
   const surLaPartieDuJour = (partie.mode === "jour");
-  document.getElementById("fin-partager").hidden = !surLaPartieDuJour;
+  const resultatPartageable = (partie.mode === "jour" || partie.mode === "rattrapage");   // un jour passé se partage aussi, avec la mention « jour rattrapé »
+  document.getElementById("fin-partager").hidden = !resultatPartageable;
   const boutonCarte = document.getElementById("fin-partager-carte");
   boutonCarte.hidden = !avecCarte;
   if (avecCarte) preparerLeBoutonDePartageDeCarte(boutonCarte, partie.carte);
   const suite = document.getElementById("fin-suite");
-  suite.hidden = surLaPartieDuJour;
+  suite.hidden = surLaPartieDuJour || (partie.mode === "rattrapage" && rattrapagesRestants() <= 0);
   suite.textContent = libelleDeLaPartieSuivante();
 
   document.getElementById("fin-signaler").href = lienDeSignalement(p);
@@ -295,7 +398,9 @@ function ouvrirFenetreFin() {
     arreterCompteARebours();
     document.getElementById("fin-compte-a-rebours").textContent = partie.mode === "bonus"
       ? "Parties bonus lancées aujourd'hui : " + partiesBonusFaites() + " sur " + MAX_BONUS
-      : "Entraînement libre : pas de carte à gagner.";
+      : partie.mode === "rattrapage"
+        ? "Jours rattrapés aujourd'hui : " + rattrapagesFaits() + " sur " + MAX_RATTRAPAGES
+        : "Entraînement libre : pas de carte à gagner.";
   }
 }
 
@@ -704,6 +809,11 @@ function demarrerAffichage() {
   document.getElementById("bonus-lancer").addEventListener("click", passerALaPartieSuivante);
   document.getElementById("fin-suite").addEventListener("click", passerALaPartieSuivante);
   document.getElementById("bonus-retour").addEventListener("click", retourALaPartieDuJour);
+  document.getElementById("rattrapage-lancer").addEventListener("click", ouvrirRattrapage);
+  document.getElementById("rattrapage-fermer").addEventListener("click", fermerRattrapage);
+  document.getElementById("fenetre-rattrapage").addEventListener("mousedown", evenement => {
+    if (evenement.target.id === "fenetre-rattrapage") fermerRattrapage();
+  });
   document.querySelectorAll("#difficulte-boutons button").forEach(bouton => {
     bouton.addEventListener("click", () => choisirLaDifficulte(bouton.dataset.difficulte));
   });
@@ -732,7 +842,8 @@ function demarrerAffichage() {
   document.addEventListener("keydown", evenement => {
     if (evenement.key !== "Escape") return;
     // Échap ferme la fenêtre qui est tout au-dessus
-    if (!document.getElementById("fenetre-carte-grand").hidden) fermerCarteEnGrand();
+    if (!document.getElementById("fenetre-rattrapage").hidden) fermerRattrapage();
+    else if (!document.getElementById("fenetre-carte-grand").hidden) fermerCarteEnGrand();
     else if (!document.getElementById("fenetre-collection").hidden) fermerBibliotheque();
     else if (!document.getElementById("ecran-profil").hidden) {
       if (!document.getElementById("profil-choix").hidden) fermerLeChoixDuFavori();

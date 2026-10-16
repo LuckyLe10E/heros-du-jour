@@ -118,19 +118,23 @@ async function synchroniserLesCartes() {
       favori: fusionnerFavoris(statsAppareil.favori, statsEnLigne.favori),
       bonus: fusionnerBonus(statsAppareil.bonus, statsEnLigne.bonus),
       succes: fusionnerSucces(statsAppareil.succes, statsEnLigne.succes),
+      rattrapages: fusionnerJours(statsAppareil.rattrapages, statsEnLigne.rattrapages),
+      rattrapageJour: fusionnerBonus(statsAppareil.rattrapageJour, statsEnLigne.rattrapageJour),
       totalBonus: Math.max(statsAppareil.totalBonus, statsEnLigne.totalBonus)
     };
 
     if (!memesCartes(fusion, surAppareil)) ecrireCollection({ cartes: fusion });
     if (!memesJours(statsFusion.jours, statsAppareil.jours) || !memesFavoris(statsFusion.favori, statsAppareil.favori)
       || !memesBonus(statsFusion.bonus, statsAppareil.bonus) || !memesSucces(statsFusion.succes, statsAppareil.succes)
-      || statsFusion.totalBonus !== statsAppareil.totalBonus) {
+      || statsFusion.totalBonus !== statsAppareil.totalBonus
+      || !memesJours(statsFusion.rattrapages, statsAppareil.rattrapages) || !memesBonus(statsFusion.rattrapageJour, statsAppareil.rattrapageJour)) {
       ecrireStats(statsFusion);
     }
     const aJour = memesCartes(fusion, enLigne)
       && memesJours(statsFusion.jours, statsEnLigne.jours) && memesFavoris(statsFusion.favori, statsEnLigne.favori)
       && memesBonus(statsFusion.bonus, statsEnLigne.bonus) && memesSucces(statsFusion.succes, statsEnLigne.succes)
-      && statsFusion.totalBonus === statsEnLigne.totalBonus;
+      && statsFusion.totalBonus === statsEnLigne.totalBonus
+      && memesJours(statsFusion.rattrapages, statsEnLigne.rattrapages) && memesBonus(statsFusion.rattrapageJour, statsEnLigne.rattrapageJour);
     if (!aJour) {
       await reference.set({
         version: 1,
@@ -140,6 +144,8 @@ async function synchroniserLesCartes() {
         bonus: statsFusion.bonus,
         succes: statsFusion.succes,
         totalBonus: statsFusion.totalBonus,
+        rattrapages: statsFusion.rattrapages,
+        rattrapageJour: statsFusion.rattrapageJour,
         maj: firebase.firestore.FieldValue.serverTimestamp()
       });
     }

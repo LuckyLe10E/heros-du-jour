@@ -116,7 +116,7 @@ function rassemblerLesDonnees(contexte) {
     && maintenant.getMonth() === lancement.getMonth() && maintenant.getFullYear() > lancement.getFullYear();
 
   return {
-    parties: dates.length + stats.totalBonus,
+    parties: dates.length + stats.totalBonus + Object.keys(stats.rattrapages).length,
     victoires: dates.filter(date => stats.jours[date].gagne).length,
     victoiresEn1: dates.filter(date => stats.jours[date].gagne && stats.jours[date].essais === 1).length,
     victoiresRapides: dates.filter(date => stats.jours[date].gagne && stats.jours[date].essais <= 3 && stats.jours[date].mode !== "facile").length,

@@ -101,9 +101,11 @@ function dateDuJourEnTexte() {
 
 // Fabrique la carte gagnée pendant cette partie (le personnage trouvé, le nombre d'essais, la date…).
 function creerCarteDeLaPartie() {
+  let rarete = calculerRarete(partie.essais.length, partie.difficulte);
+  if (partie.mode === "rattrapage" && rarete === "legendaire") rarete = "rare";   // la Légendaire est réservée à ceux qui jouent le jour même
   const carte = {
     id: partie.mystere.id,
-    rarete: calculerRarete(partie.essais.length, partie.difficulte),
+    rarete,
     essais: partie.essais.length,
     date: dateDuJourEnTexte(),
     numero: partie.numero
