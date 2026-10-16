@@ -66,7 +66,7 @@ window.IMAGES = {
   "captain-america": {
     "fichier": "images/personnages/captain-america.jpg",
     "credit": "https://marvel.fandom.com/wiki/Steven_Rogers_%28Earth-616%29",
-    "cadrage": "50% 14%"
+    "cadrage": "50% 44%"
   },
   "thor": {
     "fichier": "images/personnages/thor.jpg",
