@@ -1,4 +1,4 @@
-# Le petit serveur du « Panneau admin » de Héros du Jour (outils/admin.html).
+# Le petit serveur du « Panneau admin » de Héros du Jour (admin.html).
 #
 # Il tourne UNIQUEMENT sur l'ordinateur de Luca (adresse 127.0.0.1, port 8125) : personne d'autre ne peut s'y connecter.
 # Il sert à lire et à modifier les fichiers du projet (data/personnages.js, data/calendrier.js, data/constantes.js, data/images.js,
@@ -487,7 +487,7 @@ class Gestionnaire(http.server.SimpleHTTPRequestHandler):
         adresse = urllib.parse.urlparse(self.path)
         if adresse.path == "/":
             self.send_response(302)
-            self.send_header("Location", "/outils/admin.html")
+            self.send_header("Location", "/admin.html")
             self.end_headers()
             return
         if adresse.path == "/api/recuperer":
@@ -560,8 +560,8 @@ if __name__ == "__main__":
     try:
         serveur = Serveur(("127.0.0.1", PORT), Gestionnaire)
     except OSError:
-        print("Le panneau admin est déjà lancé : ouvre http://localhost:%d/outils/admin.html" % PORT, flush=True)
+        print("Le panneau admin est déjà lancé : ouvre http://localhost:%d/admin.html" % PORT, flush=True)
         sys.exit(0)
-    print("Panneau admin prêt : http://localhost:%d/outils/admin.html" % PORT, flush=True)
+    print("Panneau admin prêt : http://localhost:%d/admin.html" % PORT, flush=True)
     print("(Laisse cette fenêtre ouverte tant que tu utilises le panneau. Ferme-la pour l'arrêter.)", flush=True)
     serveur.serve_forever()

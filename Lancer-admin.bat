@@ -9,7 +9,7 @@ echo   Le panneau va s'ouvrir dans ton navigateur.
 echo   Laisse cette fenetre ouverte tant que tu l'utilises.
 echo   Pour arreter : ferme cette fenetre.
 echo.
-start "" "http://localhost:8125/outils/admin.html"
+start "" "http://localhost:8125/admin.html"
 python outils\serveur-admin.py
 if errorlevel 1 py outils\serveur-admin.py
 echo.

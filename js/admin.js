@@ -92,7 +92,7 @@
   // ---------------------------------------------------------------------------------------------------------------
   // Deux façons d'enregistrer :
   //  - le panneau lancé sur l'ordinateur (« Lancer-admin.bat ») parle au petit serveur local (outils/serveur-admin.py) ;
-  //  - le panneau en ligne parle directement à GitHub (outils/admin-depot.js), après connexion Google (outils/admin-acces.js).
+  //  - le panneau en ligne parle directement à GitHub (js/admin-depot.js), après connexion Google (js/admin-acces.js).
   // ---------------------------------------------------------------------------------------------------------------
 
   const parametres = new URLSearchParams(location.search);
