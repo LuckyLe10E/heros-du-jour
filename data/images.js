@@ -621,7 +621,7 @@ window.IMAGES = {
   "invincible": {
     "fichier": "images/personnages/invincible.jpg",
     "credit": "https://invincible.fandom.com/wiki/Invincible",
-    "cadrage": "50% 8%"
+    "cadrage": "50% 0%"
   },
   "omni-man": {
     "fichier": "images/personnages/omni-man.jpg",
