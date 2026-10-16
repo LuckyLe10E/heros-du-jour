@@ -45,7 +45,7 @@ window.IMAGES = {
   },
   "harry-potter": {
     "fichier": "images/personnages/harry-potter.jpg",
-    "credit": "https://harrypotter.fandom.com/wiki/Harry_Potter",
+    "credit": "https://harrypotter.fandom.com/wiki/File%3APOA_promo_front_Harry_Potter_wand.jpg",
     "cadrage": "50% 14%"
   },
   "darth-vader": {
@@ -645,8 +645,8 @@ window.IMAGES = {
   },
   "rick-grimes": {
     "fichier": "images/personnages/rick-grimes.jpg",
-    "credit": "https://walkingdead.fandom.com/wiki/Rick_Grimes_%28TV_Universe%29",
-    "cadrage": "50% 14%"
+    "credit": "https://walkingdead.fandom.com/wiki/File%3ARick_Grimes_%28TV_SERIES%29_2.png",
+    "cadrage": "50% 35%"
   },
   "negan": {
     "fichier": "images/personnages/negan.jpg",
@@ -655,8 +655,8 @@ window.IMAGES = {
   },
   "michonne": {
     "fichier": "images/personnages/michonne.jpg",
-    "credit": "https://walkingdead.fandom.com/wiki/Michonne_Grimes_%28TV_Universe%29",
-    "cadrage": "50% 14%"
+    "credit": "https://walkingdead.fandom.com/wiki/File%3AMichonne-katana-sheath.jpg",
+    "cadrage": "50% 22%"
   },
   "luke-skywalker": {
     "fichier": "images/personnages/luke-skywalker.jpg",
@@ -665,8 +665,8 @@ window.IMAGES = {
   },
   "leia": {
     "fichier": "images/personnages/leia.jpg",
-    "credit": "https://starwars.fandom.com/wiki/Leia_Skywalker_Organa_Solo",
-    "cadrage": "50% 14%"
+    "credit": "https://starwars.fandom.com/wiki/File%3ALeiaOrgana-SWG4.png",
+    "cadrage": "50% 22%"
   },
   "yoda": {
     "fichier": "images/personnages/yoda.jpg",
@@ -690,7 +690,7 @@ window.IMAGES = {
   },
   "ripley": {
     "fichier": "images/personnages/ripley.jpg",
-    "credit": "https://avp.fandom.com/wiki/Ellen_Ripley",
+    "credit": "https://avp.fandom.com/wiki/File%3AEllen_Ripley.jpg",
     "cadrage": "50% 14%"
   },
   "jack-sparrow": {
@@ -750,8 +750,8 @@ window.IMAGES = {
   },
   "spock": {
     "fichier": "images/personnages/spock.jpg",
-    "credit": "https://memory-alpha.fandom.com/wiki/Spock",
-    "cadrage": "50% 35%"
+    "credit": "https://memory-alpha.fandom.com/wiki/File%3ASpock_dress_uniform.jpg",
+    "cadrage": "50% 22%"
   },
   "james-kirk": {
     "fichier": "images/personnages/james-kirk.jpg",
@@ -770,12 +770,12 @@ window.IMAGES = {
   },
   "tony-soprano": {
     "fichier": "images/personnages/tony-soprano.jpg",
-    "credit": "https://sopranos.fandom.com/wiki/Tony_Soprano",
-    "cadrage": "50% 22%"
+    "credit": "https://sopranos.fandom.com/wiki/File%3ATony_Soprano_Season_5.png",
+    "cadrage": "50% 14%"
   },
   "dr-house": {
     "fichier": "images/personnages/dr-house.jpg",
-    "credit": "https://house.fandom.com/wiki/Gregory_House",
+    "credit": "https://house.fandom.com/wiki/File%3AHugh-Laurie-as-Dr.-Gregory-House-and-Amy-Irving-as-Alice.jpg",
     "cadrage": "50% 14%"
   },
   "link": {
@@ -835,8 +835,8 @@ window.IMAGES = {
   },
   "hermione": {
     "fichier": "images/personnages/hermione.jpg",
-    "credit": "https://harrypotter.fandom.com/wiki/Hermione_Granger",
-    "cadrage": "50% 14%"
+    "credit": "https://harrypotter.fandom.com/wiki/File%3AHermione_Granger%E2%84%A2_in_Robe_Arms_Crossed_-_Harry_Potter_and_the_Half-Blood_Prince%E2%84%A2.png",
+    "cadrage": "50% 8%"
   },
   "voldemort": {
     "fichier": "images/personnages/voldemort.jpg",
