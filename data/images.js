@@ -196,7 +196,7 @@ window.IMAGES = {
   "groot": {
     "fichier": "images/personnages/groot.jpg",
     "credit": "https://marvel.fandom.com/wiki/Groot_%28Earth-616%29",
-    "cadrage": "50% 14%"
+    "cadrage": "50% 35%"
   },
   "gamora": {
     "fichier": "images/personnages/gamora.jpg",
@@ -340,8 +340,8 @@ window.IMAGES = {
   },
   "deathstroke": {
     "fichier": "images/personnages/deathstroke.jpg",
-    "credit": "https://dc.fandom.com/wiki/File%3ADeathstroke_0017.jpg",
-    "cadrage": "50% 35%"
+    "credit": "https://dc.fandom.com/wiki/File%3ADeathstroke_%28DC_Dark_Legion%29_001.jpg",
+    "cadrage": "50% 0%"
   },
   "bane": {
     "fichier": "images/personnages/bane.jpg",
@@ -361,7 +361,7 @@ window.IMAGES = {
   "penguin": {
     "fichier": "images/personnages/penguin.jpg",
     "credit": "https://dc.fandom.com/wiki/Oswald_Cobblepot_%28New_Earth%29",
-    "cadrage": "50% 14%"
+    "cadrage": "50% 55%"
   },
   "supergirl": {
     "fichier": "images/personnages/supergirl.jpg",
@@ -666,7 +666,7 @@ window.IMAGES = {
   "leia": {
     "fichier": "images/personnages/leia.jpg",
     "credit": "https://starwars.fandom.com/wiki/File%3ALeiaOrgana-SWG4.png",
-    "cadrage": "50% 22%"
+    "cadrage": "50% 5%"
   },
   "yoda": {
     "fichier": "images/personnages/yoda.jpg",
@@ -691,7 +691,7 @@ window.IMAGES = {
   "ripley": {
     "fichier": "images/personnages/ripley.jpg",
     "credit": "https://avp.fandom.com/wiki/File%3AEllen_Ripley.jpg",
-    "cadrage": "50% 14%"
+    "cadrage": "50% 3%"
   },
   "jack-sparrow": {
     "fichier": "images/personnages/jack-sparrow.jpg",
@@ -766,12 +766,12 @@ window.IMAGES = {
   "dana-scully": {
     "fichier": "images/personnages/dana-scully.jpg",
     "credit": "https://x-files.fandom.com/wiki/Dana_Scully",
-    "cadrage": "50% 14%"
+    "cadrage": "50% 12%"
   },
   "tony-soprano": {
     "fichier": "images/personnages/tony-soprano.jpg",
     "credit": "https://sopranos.fandom.com/wiki/File%3ATony_Soprano_Season_5.png",
-    "cadrage": "50% 14%"
+    "cadrage": "50% 8%"
   },
   "dr-house": {
     "fichier": "images/personnages/dr-house.jpg",
@@ -796,7 +796,7 @@ window.IMAGES = {
   "lara-croft": {
     "fichier": "images/personnages/lara-croft.jpg",
     "credit": "https://tombraider.fandom.com/wiki/File%3ASOTTR-Croft.png",
-    "cadrage": "50% 14%"
+    "cadrage": "50% 30%"
   },
   "master-chief": {
     "fichier": "images/personnages/master-chief.jpg",
@@ -815,8 +815,8 @@ window.IMAGES = {
   },
   "solid-snake": {
     "fichier": "images/personnages/solid-snake.jpg",
-    "credit": "https://metalgear.fandom.com/wiki/File%3ASolid_Snake.jpg",
-    "cadrage": "50% 22%"
+    "credit": "https://metalgear.fandom.com/wiki/File%3ASolid_Snake_The_Twin_Snakes.jpg",
+    "cadrage": "50% 0%"
   },
   "bowser": {
     "fichier": "images/personnages/bowser.jpg",

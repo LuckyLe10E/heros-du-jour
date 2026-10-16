@@ -98,6 +98,35 @@ function nombreEchecs() {
   return partie.essais.filter(id => id !== partie.mystere.id).length;
 }
 
+// Les petits mots qui ne comptent pas quand on cherche le nom du personnage dans un titre.
+const MOTS_VIDES_DES_TITRES = ["le", "la", "les", "l", "un", "une", "des", "du", "de", "d", "et", "au", "aux", "a", "en", "the", "of", "and", "an", "dr", "mr", "ms"];
+
+// Le titre de l'œuvre, SANS les mots du nom du personnage : l'indice « Œuvre » ne doit jamais donner la réponse
+// (« Bob l'éponge », « Naruto », « Captain America Comics »…). Les mots du nom (nom, autres noms, identifiant) sont remplacés par « … ».
+// Si le titre ne contient rien d'autre que le nom, on dit seulement qu'il porte son nom. Un titre sans le nom reste tel quel.
+function titreDeLOeuvreSansLeNom(personnage) {
+  const motsDuNom = new Set();
+  [personnage.nom].concat(personnage.autresNoms, personnage.id.replace(/-/g, " ")).forEach(nom => {
+    simplifier(nom).split(" ").forEach(mot => {
+      if (mot.length >= 3 && !MOTS_VIDES_DES_TITRES.includes(mot)) motsDuNom.add(mot);
+    });
+  });
+  let motsRestants = 0;
+  let masque = false;
+  const texte = personnage.oeuvre.replace(/[\p{L}\p{N}]+/gu, mot => {
+    const simple = simplifier(mot);
+    if (motsDuNom.has(simple)) {
+      masque = true;
+      return "\u0000";
+    }
+    if (!MOTS_VIDES_DES_TITRES.includes(simple)) motsRestants++;
+    return mot;
+  });
+  if (!masque) return personnage.oeuvre;
+  if (motsRestants === 0) return "Le titre de l'œuvre porte son nom.";
+  return texte.replace(/\u0000(?:[\s'’\-]+\u0000)*/g, "…");
+}
+
 // La liste des indices déjà dévoilés, selon le nombre d'essais ratés. Chaque indice s'ajoute au précédent.
 // En difficulté Normale ou Facile (premier indice à 3 essais ratés) :
 //   3 ratés : l'indice discret   |   4 ratés : le titre de l'œuvre
@@ -109,7 +138,7 @@ function indicesDevoiles() {
   const debut = window.DIFFICULTES[partie.difficulte].indicesDes;
   const indices = [];
   if (echecs >= debut) indices.push({ titre: "Indice", texte: partie.mystere.indice });
-  if (echecs >= debut + 1) indices.push({ titre: "Œuvre", texte: partie.mystere.oeuvre });
+  if (echecs >= debut + 1) indices.push({ titre: "Œuvre", texte: titreDeLOeuvreSansLeNom(partie.mystere) });
   decouperEnPhrases(partie.mystere.description).forEach((phrase, i) => {
     if (echecs >= debut + 2 + i) indices.push({ titre: "Détail " + (i + 1), texte: phrase });
   });

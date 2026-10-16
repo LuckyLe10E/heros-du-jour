@@ -294,7 +294,7 @@ window.PERSONNAGES = [
     pouvoirs: ["Énergie/Rayons", "Vol"], groupes: ["Justice League"],
     annee: 1959, oeuvre: "Showcase",
     indice: "Sa seule arme est sa volonté, qui ne doit jamais faiblir.",
-    description: "Pilote d'essai de l'armée de l'air, originaire de Coast City, connu pour son absence de peur. Un extraterrestre mourant, tombé près de lui, lui confie son anneau et sa lanterne. L'anneau transforme sa volonté en objets de lumière verte, mais il est faible face à la couleur jaune. Policier de l'espace d'un secteur de la galaxie, il combat son ancien mentor et vit une relation intermittente avec la dirigeante d'une entreprise d'aviation." },
+    description: "Pilote d'essai de l'armée de l'air, originaire de Coast City, connu pour son absence de peur. Un extraterrestre mourant, tombé près de lui, lui confie son anneau de pouvoir. L'anneau transforme sa volonté en objets de lumière verte, mais il est faible face à la couleur jaune. Policier de l'espace d'un secteur de la galaxie, il combat son ancien mentor et vit une relation intermittente avec la dirigeante d'une entreprise d'aviation." },
 
   { id: "aquaman", nom: "Aquaman", autresNoms: ["Arthur Curry"],
     univers: "DC", camp: "Héros", genre: "Homme", espece: "Hybride/Animal",
@@ -769,7 +769,7 @@ window.PERSONNAGES = [
     pouvoirs: ["Énergie/Rayons", "Contrôle des éléments"], groupes: ["Quatre Fantastiques"],
     annee: 1961, oeuvre: "Fantastic Four",
     indice: "Le cœur discret d'une famille hors du commun.",
-    description: "Jeune femme américaine née dans une famille de scientifiques, elle est fiancée à un génie de la physique. Lors d'un vol spatial non autorisé avec son frère cadet, son fiancé et un ami pilote, elle est frappée par des rayons cosmiques. Elle devient invisible et projette des champs de force, et elle a un jour perdu la raison sous l'influence d'un maître de l'émotion. Mariée au chef élastique de l'équipe, mère de deux enfants, elle est l'ancienne amoureuse d'un roi aquatique." },
+    description: "Jeune femme américaine née dans une famille de scientifiques, elle est fiancée à un génie de la physique. Lors d'un vol spatial non autorisé avec son frère cadet, son fiancé et un ami pilote, elle est frappée par des rayons cosmiques. Elle peut disparaître à volonté aux yeux de tous et projette des champs de force, et elle a un jour perdu la raison sous l'influence d'un maître de l'émotion. Mariée au chef élastique de l'équipe, mère de deux enfants, elle est l'ancienne amoureuse d'un roi aquatique." },
 
   { id: "wasp", nom: "Wasp", autresNoms: ["Janet van Dyne", "La Guêpe"],
     univers: "Marvel", camp: "Héros", genre: "Femme", espece: "Humain modifié",
